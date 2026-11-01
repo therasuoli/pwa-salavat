@@ -749,26 +749,55 @@ function toggleDhikrAudio(){
   updateAudioButton();
   saveLocal();
 }
+// Windows/Chrome TTS: فهرست صداها ممکن است با تأخیر بارگذاری شود.
+let systemVoices=[];
+function refreshSystemVoices(){
+  try{ systemVoices=window.speechSynthesis.getVoices()||[]; }catch(e){ systemVoices=[]; }
+}
+if('speechSynthesis' in window){
+  refreshSystemVoices();
+  window.speechSynthesis.onvoiceschanged=refreshSystemVoices;
+}
+
 function speakDhikr(){
-  if(!data.voiceEnabled || !('speechSynthesis' in window)) return;
+  if(!data.voiceEnabled) return;
+  if(!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance==='undefined'){
+    showAudioError('گفتار سیستم‌عامل در این مرورگر در دسترس نیست.');
+    return;
+  }
   const textToSpeak=(dhikrs[data.selected] && dhikrs[data.selected][1]) || 'اللهم صل على محمد وآل محمد';
   try{
+    refreshSystemVoices();
     window.speechSynthesis.cancel();
+    // رفع مشکل رایج Chrome ویندوز که speechSynthesis در حالت pause باقی می‌ماند.
+    if(window.speechSynthesis.paused) window.speechSynthesis.resume();
+
     const utterance=new SpeechSynthesisUtterance(textToSpeak);
     utterance.lang='ar-SA';
     utterance.rate=0.9;
     utterance.pitch=1;
-    const voices=window.speechSynthesis.getVoices();
-    const preferred=voices.find(v=>/^ar/i.test(v.lang)) ||
-                    voices.find(v=>/arabic/i.test(v.name));
+    utterance.volume=1;
+
+    const preferred=systemVoices.find(v=>/^ar/i.test(v.lang)) ||
+                    systemVoices.find(v=>/arabic|arab/i.test(v.name)) ||
+                    systemVoices.find(v=>/^fa/i.test(v.lang)) ||
+                    systemVoices[0];
     if(preferred) utterance.voice=preferred;
-    utterance.onerror=()=>showAudioError('پخش صدای سیستم‌عامل انجام نشد. صدای گفتار دستگاه را بررسی کنید.');
+
+    utterance.onstart=()=>clearAudioError();
     utterance.onend=clearAudioError;
+    utterance.onerror=(e)=>{
+      console.warn('TTS error:',e);
+      showAudioError('صدای گفتار اجرا نشد. در ویندوز بررسی کنید صدای خروجی قطع نباشد و یک Voice در Settings > Accessibility > Speech نصب باشد.');
+    };
+
+    // اجرای مستقیم داخل رویداد کلیک برای سازگاری با Chrome ویندوز
     window.speechSynthesis.speak(utterance);
-    clearAudioError();
+    // Chrome گاهی اولین درخواست را نادیده می‌گیرد؛ resume مجدد کمک می‌کند.
+    setTimeout(()=>{ try{ if(window.speechSynthesis.paused) window.speechSynthesis.resume(); }catch(e){} },100);
   }catch(err){
     console.error('System TTS failed:',err);
-    showAudioError('گفتار سیستم‌عامل در این مرورگر در دسترس نیست.');
+    showAudioError('گفتار سیستم‌عامل اجرا نشد. تنظیمات صدای Windows و Chrome را بررسی کنید.');
   }
 }
 
