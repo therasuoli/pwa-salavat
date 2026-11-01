@@ -1,0 +1,1449 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#063d32">
+<title>صلوات شمار</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root {
+  --bg:#061d19;
+  --panel:#0c3028;
+  --panel2:#104337;
+  --gold:#d9b66d;
+  --gold2:#f3dda1;
+  --text:#f6f2e8;
+  --muted:#a9c0b7;
+  --border:#285548;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:radial-gradient(circle at top,#164d3d,var(--bg) 65%);
+  color:var(--text);
+  font-family:Tahoma,Arial,sans-serif;
+  min-height:100vh;
+}
+header{
+  text-align:center;
+  padding:25px 12px 12px;
+}
+header h1{
+  color:var(--gold2);
+  margin:8px 0;
+  font-size:25px;
+}
+header p{color:var(--muted);font-size:13px}
+.container{max-width:850px;margin:auto;padding:12px}
+.card{
+  background:linear-gradient(145deg,var(--panel2),var(--panel));
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:18px;
+  margin:13px 0;
+  box-shadow:0 10px 35px #0003;
+}
+.section-title{
+  color:var(--gold2);
+  margin:0 0 14px;
+  font-size:16px;
+}
+.counter{
+  text-align:center;
+  padding:24px 10px;
+}
+.count{
+  font-size:68px;
+  font-weight:bold;
+  color:var(--gold2);
+  margin:20px 0;
+  direction:ltr;
+}
+.arabic{
+  font-family:serif;
+  font-size:25px;
+  line-height:2;
+  color:#f6e5b6;
+}
+.translation{color:var(--muted);font-size:13px}
+button,input,select{
+  font:inherit;
+  border-radius:12px;
+  border:1px solid var(--border);
+  padding:12px;
+}
+button{
+  cursor:pointer;
+  background:var(--panel2);
+  color:var(--text);
+}
+button.gold{
+  background:linear-gradient(135deg,#f2d58e,#b88a39);
+  color:#15271e;
+  border:0;
+  font-weight:bold;
+}
+button.danger{background:#672e32}
+button:active{transform:scale(.97)}
+.big-button{
+  width:175px;height:175px;
+  border-radius:50%;
+  border:7px solid var(--gold);
+  background:radial-gradient(circle,#216b53,#0a392c);
+  font-size:24px;
+  font-weight:bold;
+  box-shadow:0 0 30px #d9b66d22;
+}
+.controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row>*{flex:1;min-width:100px}
+input,select{
+  background:#061e19;color:white;width:100%;
+  margin:5px 0;
+}
+button.full{width:100%;margin-top:8px}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
+.stat{
+  background:#061f1a;
+  padding:14px;
+  border-radius:14px;
+  text-align:center;
+}
+.stat strong{
+  display:block;
+  color:var(--gold2);
+  font-size:24px;
+  margin-top:7px;
+}
+.small{font-size:12px;color:var(--muted)}
+.progress{
+  height:12px;background:#061b17;
+  border-radius:20px;overflow:hidden;
+  margin:12px 0;
+}
+.progress div{
+  height:100%;width:0;
+  background:linear-gradient(90deg,#b58b3d,#f5df9b);
+}
+.item{
+  padding:12px;
+  border-bottom:1px solid var(--border);
+}
+.item:last-child{border:0}
+.hidden{display:none!important}
+footer{
+  text-align:center;color:var(--muted);
+  padding:25px;font-size:12px;
+}
+.tabs{
+  display:flex;gap:7px;overflow:auto;
+  padding:5px 0 12px;
+}
+.tabs button{white-space:nowrap;flex:1}
+.status{font-size:12px;color:var(--gold2)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gold2);outline-offset:2px}
+button:disabled{opacity:.55;cursor:not-allowed}
+.item .small{line-height:1.9}
+.progress div{transition:width .25s ease}
+.auth-note{line-height:1.9}
+
+.asma-slider{max-width:420px;margin:14px auto 12px;padding:13px 18px;border:1px solid #8c7447;border-radius:18px;background:linear-gradient(135deg,#0b3027,#174b3b);display:flex;flex-direction:column;gap:5px;min-height:104px;justify-content:center;box-shadow:0 8px 25px #0003}
+.daily-dhikr-slider{max-width:420px;margin:0 auto 12px;padding:11px 16px;border:1px solid #547b68;border-radius:16px;background:linear-gradient(135deg,#102b24,#173d32);display:flex;flex-direction:column;gap:5px;min-height:82px;justify-content:center;box-shadow:0 7px 20px #0002}
+.daily-dhikr-caption{font-size:11px;color:var(--gold2)}
+.daily-dhikr-slider strong{font-size:15px;color:#f3dfb0}
+.daily-dhikr-slider span:last-child{font-family:serif;font-size:17px;color:#fff;line-height:1.8}
+.about-contact{margin-top:18px;padding-top:14px;border-top:1px solid #8c7447}
+.about-contact a{color:var(--gold2);text-decoration:none;direction:ltr;unicode-bidi:embed}
+.about-contact p{overflow-wrap:anywhere}
+
+.asma-caption{font-size:11px;color:var(--muted)}
+.asma-slider strong{font-family:serif;font-size:27px;color:var(--gold2);animation:asmaFade .65s ease}
+.asma-slider span:last-child{font-size:12px;color:#e4d4aa}
+@keyframes asmaFade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.header-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:10px auto}
+.header-actions button{font-size:12px;padding:9px 13px}
+.memorial-card{text-align:center;border-color:#9c8048;background:linear-gradient(145deg,#174b3b,#0b3027)}
+.memorial-card p{line-height:2;font-size:13px;margin:7px 0;color:#f1e8d4}
+.modal{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:18px}
+.modal.hidden{display:none!important}
+.modal-backdrop{position:absolute;inset:0;background:#000b;backdrop-filter:blur(5px)}
+.modal-panel{position:relative;width:min(100%,470px);padding:25px 20px 20px;border:1px solid var(--gold);border-radius:22px;background:linear-gradient(145deg,#174b3b,#071f19);box-shadow:0 20px 70px #0009;text-align:center}
+.modal-panel h2{font-size:19px;color:var(--gold2);margin:8px 0 18px}
+.modal-panel h3{font-size:16px;color:#f3dda1}
+.modal-panel p{font-size:13px;line-height:2;color:var(--text)}
+.modal-close{position:absolute;left:12px;top:10px;width:35px;height:35px;padding:0;border-radius:50%;font-size:24px;line-height:1}
+.help-step-count{font-size:12px;color:var(--muted)}
+.help-progress{height:7px;background:#061b17;border-radius:20px;overflow:hidden;margin:20px 0}
+.help-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,#b58b3d,#f5df9b);transition:width .25s ease}
+.modal-actions{display:flex;gap:9px;justify-content:space-between}
+.modal-actions button{flex:1}
+.about-symbol{font-size:36px;color:var(--gold)}
+.network-indicator{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:8px 12px 0;font-size:12px;color:var(--muted)}
+.network-dot{width:9px;height:9px;border-radius:50%;display:inline-block;background:#d45b5b;box-shadow:0 0 8px currentColor}
+.network-dot.online{background:#62d69b;color:#62d69b}
+.network-dot.offline{background:#e06b6b;color:#e06b6b}
+.cloud-status{border-right:1px solid var(--border);padding-right:9px}
+.cloud-panel{max-width:850px;margin:0 auto}
+.cloud-panel.hidden{display:none!important}
+.group-stat-line{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:8px 0;color:var(--muted);font-size:12px}
+@media(max-width:450px){.asma-slider{margin-top:10px}.modal-panel{padding:24px 16px 18px}}
+
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+@media(max-width:450px){
+  .count{font-size:56px}
+  .big-button{width:155px;height:155px}
+  .grid{grid-template-columns:1fr 1fr}
+}
+</style>
+
+  <meta name="application-name" content="صلوات شمار">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon.svg">
+</head>
+
+<body>
+
+<audio id="dhikrAudio" preload="none" playsinline></audio>
+
+
+<header>
+  <div style="color:var(--gold);font-size:30px">۞</div>
+  <h1>صلوات شمار</h1>
+  <div class="asma-slider" aria-live="polite" aria-label="اسلایدر اسماء الهی">
+    <span class="asma-caption">از نام‌های زیبای خداوند</span>
+    <strong id="asmaName">الرَّحْمٰن</strong>
+    <span id="asmaMeaning">بخشاینده</span>
+  </div>
+  <div class="daily-dhikr-slider" aria-live="polite" aria-label="ذکر هر روز">
+    <span class="daily-dhikr-caption">ذکر هر روز</span>
+    <strong id="dailyDhikrName">استغفار</strong>
+    <span id="dailyDhikrText">أَسْتَغْفِرُ اللَّهَ رَبِّي وَأَتُوبُ إِلَيْهِ</span>
+  </div>
+  <div class="header-actions">
+    <button type="button" class="gold" onclick="toggleCloudPanel()">☁ فضای ابری</button>
+    <button type="button" onclick="openHelp()">راهنمای استفاده از اپ</button>
+    <button type="button" onclick="openAbout()">درباره ما</button>
+  </div>
+  <div class="network-indicator" role="status" aria-live="polite">
+    <span id="networkDot" class="network-dot offline"></span>
+    <strong id="networkLabel">در حال بررسی اتصال…</strong>
+    <span id="connectionStatus" class="cloud-status">وضعیت فضای ابری: بررسی نشده</span>
+  </div>
+</header>
+
+<div class="container">
+
+<div id="cloudPanel" class="cloud-panel hidden">
+<div class="card" id="authCard">
+  <h3 class="section-title">فضای ابری | ثبت‌نام، ورود و همگام‌سازی</h3>
+  <p class="small">برای ذخیره اطلاعات در حساب شخصی و مشارکت در ختم‌های گروهی، وارد حساب شوید.</p>
+  <input id="email" type="email" placeholder="ایمیل">
+  <input id="password" type="password" placeholder="رمز عبور">
+  <div class="row">
+    <button class="gold" onclick="signUp()">ثبت‌نام</button>
+    <button onclick="signIn()">ورود</button>
+  </div>
+  <button class="full" onclick="resetPassword()">بازیابی رمز عبور</button>
+  <p class="small auth-note" id="authMessage" role="status" aria-live="polite"></p>
+</div>
+
+<div class="card hidden" id="accountCard">
+  <div class="row">
+    <div>
+      <strong id="accountEmail"></strong>
+      <p class="small">حساب ابری فعال است</p>
+    </div>
+    <button onclick="signOut()">خروج</button>
+  </div>
+  <button class="full" onclick="syncCloud()">همگام‌سازی دستی</button>
+</div>
+</div>
+
+<div class="tabs">
+  <button class="gold" onclick="showTab('counterTab')">شمارنده</button>
+  <button onclick="showTab('statsTab')">آمار</button>
+  <button onclick="showTab('khatmTab')">ختم شخصی</button>
+  <button onclick="showTab('groupTab')">ختم گروهی</button>
+  <button onclick="showTab('settingsTab')">تنظیمات</button>
+</div>
+
+<section id="counterTab">
+
+<div class="card counter">
+  <h3 class="section-title">ذکر انتخابی</h3>
+
+  <select id="dhikrSelect" onchange="changeDhikr()"></select>
+
+  <div class="arabic" id="arabicText"></div>
+  <div class="translation" id="translation"></div>
+
+  <div class="count" id="count">۰</div>
+
+  <div class="controls">
+    <button class="big-button" onclick="increment()">ذکر</button>
+  </div>
+
+  <div class="controls" style="margin-top:18px">
+    <button onclick="undo()">↶ بازگشت</button>
+    <button onclick="resetCount()" class="danger">شروع مجدد</button>
+    <button id="audioToggle" onclick="toggleDhikrAudio()" aria-pressed="true">🔊 صدا روشن</button>
+  </div>
+
+  <div style="margin-top:20px">
+    <div class="row">
+      <span class="small">هدف روزانه</span>
+      <strong id="goalText">۱۰۰</strong>
+    </div>
+    <div class="progress"><div id="goalProgress"></div></div>
+  </div>
+</div>
+
+</section>
+
+<section id="statsTab" class="hidden">
+  <div class="card">
+    <h3 class="section-title">گزارش فعالیت</h3>
+    <div class="grid">
+      <div class="stat">امروز<strong id="todayStat">۰</strong></div>
+      <div class="stat">این هفته<strong id="weekStat">۰</strong></div>
+      <div class="stat">این ماه<strong id="monthStat">۰</strong></div>
+      <div class="stat">مجموع کل<strong id="totalStat">۰</strong></div>
+      <div class="stat">روزهای فعال<strong id="activeDays">۰</strong></div>
+      <div class="stat">رکورد روزانه<strong id="recordStat">۰</strong></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3 class="section-title">هفت روز اخیر</h3>
+    <div id="weeklyHistory"></div>
+  </div>
+</section>
+
+<section id="khatmTab" class="hidden">
+  <div class="card">
+    <h3 class="section-title">ساخت ختم شخصی</h3>
+    <input id="khatmTitle" placeholder="عنوان ختم">
+    <input id="khatmTarget" type="number" min="1" value="1000" placeholder="تعداد هدف">
+    <input id="khatmIntention" placeholder="نیت ختم">
+    <button class="gold full" onclick="createKhatm()">ایجاد ختم</button>
+  </div>
+  <div class="card">
+    <h3 class="section-title">ختم‌های من</h3>
+    <div id="khatmList"></div>
+  </div>
+</section>
+
+<section id="groupTab" class="hidden">
+  <div class="card">
+    <h3 class="section-title">ساخت ختم گروهی</h3>
+    <input id="groupName" placeholder="نام ختم گروهی">
+    <input id="groupTarget" type="number" value="10000" placeholder="هدف کل">
+    <button class="gold full" onclick="createGroup()">ساخت گروه</button>
+  </div>
+
+  <div class="card">
+    <h3 class="section-title">عضویت با کد دعوت</h3>
+    <input id="inviteCode" placeholder="کد دعوت">
+    <button class="full" onclick="joinGroup()">عضویت در گروه</button>
+  </div>
+
+  <div class="card">
+    <h3 class="section-title">آمار کلی ختم‌های گروهی</h3>
+    <div class="grid">
+      <div class="stat">مجموع صلوات گروه‌ها<strong id="allGroupTotal">۰</strong></div>
+      <div class="stat">تعداد گروه‌های فعال<strong id="activeGroupCount">۰</strong></div>
+      <div class="stat">مجموع اهداف گروه‌ها<strong id="allGroupTarget">۰</strong></div>
+      <div class="stat">درصد پیشرفت کل<strong id="allGroupPercent">۰٪</strong></div>
+    </div>
+    <p class="small auth-note">این آمار بر اساس مشارکت‌هایی است که اعضا در فضای ابری ثبت کرده‌اند.</p>
+  </div>
+  <div class="card">
+    <h3 class="section-title">گروه‌های من و آمار هر گروه</h3>
+    <div id="groupList"></div>
+  </div>
+</section>
+
+<section id="settingsTab" class="hidden">
+  <div class="card">
+    <h3 class="section-title">تنظیمات برنامه</h3>
+    <label>هدف روزانه</label>
+    <input type="number" id="dailyGoal" min="1" value="100"
+      onchange="setGoal(this.value)">
+    <label for="vlLanguage" style="display:block;margin-top:14px">زبان گفتار (زبان‌های پشتیبانی‌شده Aisha)</label>
+    <select id="vlLanguage" style="width:100%;margin:6px 0 10px" onchange="onAishaLanguageChange()">
+      <option value="uz">ازبکی — uz</option>
+      <option value="en">انگلیسی — en</option>
+      <option value="ru">روسی — ru</option>
+    </select>
+    <label for="vlMood" style="display:block">حالت صدا (فقط ازبکی)</label>
+    <select id="vlMood" style="width:100%;margin:6px 0 10px" onchange="saveAishaSettings()">
+      <option value="Neutral">معمولی</option>
+      <option value="Cheerful">شاد</option>
+      <option value="Happy">خوشحال</option>
+      <option value="Sad">غمگین</option>
+    </select>
+    <label for="vlSpeed">سرعت گفتار (فقط ازبکی)</label>
+    <input id="vlSpeed" type="number" min="0.5" max="2" step="0.1" value="1" style="width:100%;margin:6px 0 10px" onchange="saveAishaSettings()">
+    <p id="vlCatalogStatus" class="small">Aisha طبق مستندات فعلی از سه زبان ازبکی، انگلیسی و روسی پشتیبانی می‌کند. برای ازبکی صدای داخلی Gulnoza در دسترس است. برای انگلیسی و روسی فقط زبان ارسال می‌شود.</p>
+    <label><input type="checkbox" id="vibration" checked
+      style="width:auto" onchange="saveSettings()"> لرزش هنگام شمارش</label>
+    <label><input type="checkbox" id="sound" 
+      style="width:auto" onchange="saveSettings()"> صدای شمارش</label>
+    <label><input type="checkbox" id="touchMode"
+      style="width:auto" onchange="saveSettings()"> شمارش با لمس کل صفحه</label>
+  </div>
+
+  <div class="card">
+    <h3 class="section-title">پشتیبان‌گیری و بازیابی</h3>
+    <button class="gold full" onclick="exportBackup()">دریافت فایل پشتیبان JSON</button>
+    <input type="file" accept=".json,application/json" id="backupFile">
+    <button class="full" onclick="importBackup()">ادغام و بازیابی اطلاعات</button>
+  </div>
+
+</section>
+
+</div>
+
+<footer>توسعه و برنامه نویسی هادی رسولی</footer>
+
+<!-- راهنمای پویا و پنجره درباره ما -->
+<div class="modal hidden" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+  <div class="modal-backdrop" onclick="closeModal('helpModal')"></div>
+  <div class="modal-panel">
+    <button class="modal-close" type="button" onclick="closeModal('helpModal')" aria-label="بستن">×</button>
+    <h2 id="helpTitle">راهنمای استفاده از صلوات شمار</h2>
+    <div class="help-step-count" id="helpStepCount"></div>
+    <h3 id="helpStepTitle"></h3>
+    <p id="helpStepText"></p>
+    <div class="help-progress"><span id="helpProgress"></span></div>
+    <div class="modal-actions">
+      <button type="button" onclick="changeHelpStep(-1)" id="helpPrev">مرحله قبل</button>
+      <button type="button" class="gold" onclick="changeHelpStep(1)" id="helpNext">مرحله بعد</button>
+    </div>
+  </div>
+</div>
+<div class="modal hidden" id="aboutModal" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+  <div class="modal-backdrop" onclick="closeModal('aboutModal')"></div>
+  <div class="modal-panel about-panel">
+    <button class="modal-close" type="button" onclick="closeModal('aboutModal')" aria-label="بستن">×</button>
+    <div class="about-symbol">۞</div>
+    <h2 id="aboutTitle">درباره صلوات شمار</h2>
+    <div class="card memorial-card">
+      <h3 class="section-title">هدیه‌ای از جنس صلوات</h3>
+      <p>این اپلیکیشن به یاد زنده‌یاد عبدالعزیز رسولی منتشر شده است.</p>
+      <p>کاربر گرامی، برای شادی روح این مرحوم مغفور، یک صلوات هدیه بفرمایید.</p>
+    </div>
+    <p><strong>توسعه و برنامه نویسی هادی رسولی</strong></p>
+    <p>ورژن ۱.۱.۱</p>
+    <p>انتشار: آبان ماه ۱۴۰۵</p>
+    <div class="about-contact">
+      <h3 class="section-title">ارتباط با ما</h3>
+      <p>ایمیل: <a href="mailto:HADI76DEN@GMAIL.COM">HADI76DEN@GMAIL.COM</a></p>
+      <p>صفحه اینستاگرام: <a href="https://www.instagram.com/the.rasuoli/" target="_blank" rel="noopener noreferrer">THE.RASUOLI</a></p>
+    </div>
+  </div>
+</div>
+
+<script>
+// =======================================
+// SUPABASE CONFIGURATION — مقادیر پروژه موجود حفظ شده‌اند؛ هیچ جدول/رکوردی حذف نمی‌شود
+// =======================================
+
+const SUPABASE_URL =
+'https://ywysztcedqralijeccmz.supabase.co';
+
+const SUPABASE_KEY =
+'sb_publishable_H4KXnNLT85Q5zUdmBfz8Hw_-dDfgfjT';
+
+// اگر کتابخانه Supabase به‌دلیل محدودیت اینترنت یا CDN بارگذاری نشود،
+// بخش شمارش و ذخیره‌سازی محلی همچنان باید بدون خطا کار کند.
+let db = null;
+try {
+  if (window.supabase && typeof window.supabase.createClient === 'function') {
+    db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  }
+} catch (e) {
+  console.error('راه‌اندازی Supabase ناموفق بود:', e);
+}
+
+// =======================================
+// DHIKR LIBRARY
+// =======================================
+
+const dhikrs = [
+ ['صلوات','اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ وَآلِ مُحَمَّدٍ','خدایا بر محمد و خاندان محمد درود فرست'],
+ ['استغفار','أَسْتَغْفِرُ اللَّهَ رَبِّي وَأَتُوبُ إِلَيْهِ','از خداوند آمرزش می‌خواهم و به سوی او بازمی‌گردم'],
+ ['تسبیحات اربعه','سُبْحَانَ اللَّهِ وَالْحَمْدُ لِلَّهِ وَلَا إِلَهَ إِلَّا اللَّهُ وَاللَّهُ أَكْبَرُ','پاکی از آن خداست و ستایش برای اوست'],
+ ['سبحان الله','سُبْحَانَ اللَّهِ','خداوند پاک و منزه است'],
+ ['الحمدلله','الْحَمْدُ لِلَّهِ','همه ستایش‌ها از آن خداست'],
+ ['الله اکبر','اللَّهُ أَكْبَرُ','خداوند بزرگ‌تر است'],
+ ['لا اله الا الله','لَا إِلَهَ إِلَّا اللَّهُ','معبودی جز خدا نیست'],
+ ['یا رحمان','يَا رَحْمَٰنُ','ای بخشنده'],
+ ['یا رحیم','يَا رَحِيمُ','ای مهربان'],
+ ['یا کریم','يَا كَرِيمُ','ای بزرگوار'],
+ ['یا لطیف','يَا لَطِيفُ','ای مهربان و لطیف'],
+ ['یا رزاق','يَا رَزَّاقُ','ای روزی‌رسان'],
+ ['یا فتاح','يَا فَتَّاحُ','ای گشاینده'],
+ ['یا نور','يَا نُورُ','ای نور'],
+ ['یا سلام','يَا سَلَامُ','ای سرچشمه سلامتی'],
+ ['یا غفور','يَا غَفُورُ','ای بسیار آمرزنده'],
+ ['یا ودود','يَا وَدُودُ','ای دوستدار'],
+ ['یا حی','يَا حَيُّ','ای زنده'],
+ ['یا قیوم','يَا قَيُّومُ','ای پاینده'],
+ ['حسبی الله','حَسْبِيَ اللَّهُ','خداوند مرا کافی است'],
+ ['توکلت علی الله','تَوَكَّلْتُ عَلَى اللَّهِ','بر خدا توکل کردم'],
+ ['لا حول و لا قوة','لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ','هیچ نیرو و توانی جز به خدا نیست'],
+ ['رب اغفر لی','رَبِّ اغْفِرْ لِي','پروردگارا مرا بیامرز'],
+ ['یا الله','يَا اللَّهُ','ای خدا'],
+ ['یا حی یا قیوم','يَا حَيُّ يَا قَيُّومُ','ای زنده و پاینده'],
+ ['ربنا آتنا','رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً','پروردگارا در دنیا به ما نیکی عطا کن'],
+ ['سبحان ربی العظیم','سُبْحَانَ رَبِّيَ الْعَظِيمِ','پروردگار بزرگ من پاک و منزه است'],
+ ['سبحان ربی الاعلی','سُبْحَانَ رَبِّيَ الْأَعْلَى','پروردگار بلندمرتبه من پاک و منزه است'],
+ ['یا شکور','يَا شَكُورُ','ای بسیار سپاس‌پذیر'],
+ ['یا هادی','يَا هَادِي','ای هدایتگر']
+];
+
+// =======================================
+// LOCAL STATE
+// =======================================
+
+const KEY = 'salavat_shomar_v3';
+
+function todayKey(){
+  const d = new Date();
+  return d.getFullYear()+'-'+
+    String(d.getMonth()+1).padStart(2,'0')+'-'+
+    String(d.getDate()).padStart(2,'0');
+}
+
+let data = {
+  count:0,
+  total:0,
+  goal:100,
+  selected:0,
+  daily:{},
+  khatms:[],
+  vibration:true,
+  sound:false,
+  touchMode:false,
+  voiceEnabled:true,
+  history:[]
+};
+
+let user = null;
+let undoSnapshot = null;
+let syncTimer = null;
+let groups = [];
+
+function normalizeData(source={}){
+  const base={
+    count:0,total:0,goal:100,selected:0,daily:{},khatms:[],
+    vibration:true,sound:false,touchMode:false,voiceEnabled:true,history:[]
+  };
+  const out={...base,...(source&&typeof source==='object'?source:{})};
+  out.count=Math.max(0,Number(out.count)||0);
+  out.total=Math.max(0,Number(out.total)||0);
+  out.goal=Math.max(1,Number(out.goal)||100);
+  out.selected=Math.min(dhikrs.length-1,Math.max(0,Number(out.selected)||0));
+  out.daily=out.daily&&typeof out.daily==='object'&&!Array.isArray(out.daily)?out.daily:{};
+  out.khatms=Array.isArray(out.khatms)?out.khatms:[];
+  out.history=Array.isArray(out.history)?out.history:[];
+  out.vibration=out.vibration!==false;
+  out.sound=!!out.sound;
+  out.touchMode=!!out.touchMode;
+  out.voiceEnabled=out.voiceEnabled!==false;
+  return out;
+}
+
+function loadLocal(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(KEY));
+    if(saved) data=normalizeData(saved);
+  }catch(e){
+    console.warn('ذخیره محلی قابل خواندن نیست:',e);
+  }
+}
+
+function saveLocalOnly(){
+  try{localStorage.setItem(KEY,JSON.stringify(data));}
+  catch(e){console.error('ذخیره محلی انجام نشد:',e);}
+  render();
+}
+
+function saveLocal(){
+  data=normalizeData(data);
+  saveLocalOnly();
+  scheduleCloudSave();
+}
+
+// ادغام محافظه‌کارانه: داده ابری حذف یا با داده خالی جایگزین نمی‌شود.
+// برای شمارنده‌های تجمعی از مقدار بزرگ‌تر استفاده می‌شود تا همگام‌سازی تکراری دوباره‌شماری نکند.
+function mergeStates(localState,cloudState){
+  const local=normalizeData(localState);
+  const cloud=normalizeData(cloudState);
+  const merged={...local,...cloud};
+  merged.count=Math.max(local.count,cloud.count);
+  merged.total=Math.max(local.total,cloud.total);
+  merged.goal=cloud.goal||local.goal||100;
+  merged.selected=Number.isInteger(cloud.selected)?cloud.selected:local.selected;
+  merged.daily={...local.daily};
+  for(const [day,value] of Object.entries(cloud.daily)){
+    merged.daily[day]=Math.max(Number(merged.daily[day])||0,Number(value)||0);
+  }
+  const historyMap=new Map();
+  [...local.history,...cloud.history].forEach(item=>{
+    if(item&&typeof item==='object') historyMap.set(JSON.stringify(item),item);
+  });
+  merged.history=[...historyMap.values()].slice(-3000);
+  const khatmMap=new Map();
+  [...local.khatms,...cloud.khatms].forEach(k=>{
+    if(!k||!k.id)return;
+    const old=khatmMap.get(k.id);
+    khatmMap.set(k.id,old?{...old,...k,current_count:Math.max(Number(old.current_count)||0,Number(k.current_count)||0)}:k);
+  });
+  merged.khatms=[...khatmMap.values()];
+  return normalizeData(merged);
+}
+
+function todayCount(){
+  return Number(data.daily[todayKey()] || 0);
+}
+
+function number(n){
+  return Number(n || 0).toLocaleString('fa-IR');
+}
+
+// =======================================
+// INITIALIZE
+// =======================================
+
+function init(){
+  loadLocal();
+  const select = document.getElementById('dhikrSelect');
+
+  dhikrs.forEach((d,i)=>{
+    const o = document.createElement('option');
+    o.value = i;
+    o.textContent = d[0];
+    select.appendChild(o);
+  });
+
+  select.value = data.selected;
+  document.getElementById('dailyGoal').value = data.goal;
+  loadVoiceLabSettings();
+  document.getElementById('vibration').checked = data.vibration;
+  document.getElementById('sound').checked = data.sound;
+  document.getElementById('touchMode').checked = data.touchMode;
+  updateAudioButton();
+  updateNetworkStatus();
+  window.addEventListener('online',updateNetworkStatus);
+  window.addEventListener('offline',updateNetworkStatus);
+
+  changeDhikr();
+  render();
+  loadAuth();
+
+  document.addEventListener('keydown',e=>{
+    if(e.code==='Space' && ['BODY','HTML'].includes(document.activeElement.tagName)){
+      e.preventDefault();
+      increment();
+    }
+  });
+
+  document.addEventListener('click',e=>{
+    if(data.touchMode &&
+       !e.target.closest('button,input,select,textarea,label,a,[role=button]') &&
+       !e.target.closest('.tabs')){
+      increment();
+    }
+  });
+}
+
+// =======================================
+// COUNTER
+// =======================================
+
+function increment(amount=1){
+  const n=Number(amount);
+  if(!Number.isFinite(n)||n<=0||n>1000000)return;
+  undoSnapshot=JSON.stringify(data);
+  data.count+=n;
+  data.total+=n;
+  data.daily[todayKey()]=(Number(data.daily[todayKey()])||0)+n;
+  data.history.push({date:todayKey(),count:n,dhikr:data.selected,at:new Date().toISOString()});
+  if(data.history.length>3000)data.history=data.history.slice(-3000);
+
+  // هر ختم فعال سهم خودش را دریافت می‌کند.
+  data.khatms.forEach(k=>{
+    if(k.status==='active'){
+      k.current_count=(Number(k.current_count)||0)+n;
+      if(k.current_count>=Number(k.target_count))k.status='completed';
+    }
+  });
+  if(data.vibration&&navigator.vibrate)navigator.vibrate(20);
+  if(data.voiceEnabled) speakDhikr();
+  if(data.sound){
+    try{
+      const AudioCtx=window.AudioContext||window.webkitAudioContext;
+      if(AudioCtx){
+        const a=new AudioCtx(),osc=a.createOscillator(),gain=a.createGain();
+        osc.connect(gain);gain.connect(a.destination);osc.frequency.value=750;
+        gain.gain.value=.035;osc.start();osc.stop(a.currentTime+.06);
+        osc.onended=()=>a.close();
+      }
+    }catch(e){console.warn('صدای شمارش پشتیبانی نشد',e);}
+  }
+  saveLocal();
+}
+
+function addMany(n){increment(n)}
+
+function undo(){
+  if(!undoSnapshot) return;
+  data = JSON.parse(undoSnapshot);
+  undoSnapshot=null;
+  saveLocal();
+}
+
+function resetCount(){
+  if(!confirm('فقط شمارنده فعلی صفر شود؟ آمار روزانه و مجموع کل حفظ می‌شوند.'))return;
+  undoSnapshot=JSON.stringify(data);
+  data.count=0;
+  saveLocal();
+}
+
+function changeDhikr(){
+  const select=document.getElementById('dhikrSelect');
+  const index=Number(select.value);
+  if(!Number.isInteger(index)||!dhikrs[index])return;
+  data.selected=index;
+  const d=dhikrs[index];
+  document.getElementById('arabicText').textContent=d[1];
+  document.getElementById('translation').textContent=d[2];
+  saveLocal();
+}
+
+function updateAudioButton(){
+  const btn=document.getElementById('audioToggle');
+  if(!btn)return;
+  btn.textContent=data.voiceEnabled?'🔊 صدا روشن':'🔇 صدا خاموش';
+  btn.setAttribute('aria-pressed',String(data.voiceEnabled));
+}
+function toggleDhikrAudio(){
+  data.voiceEnabled=!data.voiceEnabled;
+  const audio=document.getElementById('dhikrAudio');
+  if(!data.voiceEnabled && audio){
+    audio.pause();
+    if(audio.src && audio.src.startsWith('blob:')) URL.revokeObjectURL(audio.src);
+    audio.removeAttribute('src');
+    audio.load();
+  }
+  updateAudioButton();
+  saveLocal();
+}
+function loadVoiceLabSettings(){
+  const language=localStorage.getItem('aishaLanguage')||'uz';
+  const mood=localStorage.getItem('aishaMood')||'Neutral';
+  const speed=localStorage.getItem('aishaSpeed')||'1';
+  document.getElementById('vlLanguage').value=['uz','en','ru'].includes(language)?language:'uz';
+  document.getElementById('vlMood').value=['Neutral','Cheerful','Happy','Sad'].includes(mood)?mood:'Neutral';
+  document.getElementById('vlSpeed').value=speed;
+  updateAishaControls();
+}
+function saveAishaSettings(){
+  localStorage.setItem('aishaLanguage',document.getElementById('vlLanguage').value);
+  localStorage.setItem('aishaMood',document.getElementById('vlMood').value);
+  localStorage.setItem('aishaSpeed',document.getElementById('vlSpeed').value||'1');
+  updateAishaControls();
+}
+function updateAishaControls(){
+  const uz=document.getElementById('vlLanguage').value==='uz';
+  document.getElementById('vlMood').disabled=!uz;
+  document.getElementById('vlSpeed').disabled=!uz;
+  document.getElementById('vlCatalogStatus').textContent=uz
+    ? 'زبان ازبکی انتخاب شده است؛ صدای داخلی Gulnoza استفاده می‌شود. حالت و سرعت قابل تنظیم هستند.'
+    : 'زبان '+(document.getElementById('vlLanguage').value==='en'?'انگلیسی':'روسی')+' انتخاب شده است. طبق مستندات Aisha، مدل و حالت و سرعت ارسال نمی‌شوند.';
+}
+function onAishaLanguageChange(){saveAishaSettings();}
+async function speakDhikr(){
+  if(!data.voiceEnabled)return;
+  const audio=document.getElementById('dhikrAudio');
+  const textToSpeak=(dhikrs[data.selected] && dhikrs[data.selected][1]) || 'اللهم صل على محمد وآل محمد';
+  try{
+    saveAishaSettings();
+    const language=document.getElementById('vlLanguage').value;
+    const body={text:textToSpeak,language:language};
+    if(language==='uz'){
+      body.mood=document.getElementById('vlMood').value;
+      body.speed=Number(document.getElementById('vlSpeed').value||1);
+    }
+    const response=await fetch('/api/synthesize',{
+      method:'POST',headers:{'Content-Type':'application/json','Accept':'audio/wav, application/json'},
+      body:JSON.stringify(body)
+    });
+    if(!response.ok){
+      let detail='خطا در سرویس Aisha';
+      try{const err=await response.json();detail=err.error||detail;}catch(e){detail=(await response.text()).slice(0,400)||detail;}
+      throw new Error(detail);
+    }
+    const blob=await response.blob();
+    if(!blob.size)throw new Error('Aisha فایل صوتی خالی برگرداند.');
+    const oldSrc=audio.src;
+    audio.pause();
+    audio.src=URL.createObjectURL(blob);
+    if(oldSrc && oldSrc.startsWith('blob:'))URL.revokeObjectURL(oldSrc);
+    await audio.play();
+    clearAudioError();
+  }catch(err){
+    console.error('Aisha synthesis failed:',err);
+    showAudioError('سرویس Aisha در دسترس نیست: '+(err.message||'تنظیمات API را بررسی کن.'));
+  }
+}
+function showAudioError(message){
+  let status=document.getElementById('audioStatus');
+  if(!status){
+    status=document.createElement('div');
+    status.id='audioStatus';
+    status.setAttribute('role','status');
+    status.style.cssText='font-size:12px;color:#f3dda1;margin:8px auto 0;text-align:center;max-width:440px;';
+    const btn=document.getElementById('audioToggle');
+    if(btn && btn.parentNode)btn.parentNode.appendChild(status);
+  }
+  status.textContent=message;
+}
+function clearAudioError(){
+  const status=document.getElementById('audioStatus');
+  if(status)status.textContent='';
+}
+
+function setGoal(v){
+  data.goal=Math.max(1,Number(v)||100);
+  saveLocal();
+}
+
+function saveSettings(){
+  data.vibration=document.getElementById('vibration').checked;
+  data.sound=document.getElementById('sound').checked;
+  data.touchMode=document.getElementById('touchMode').checked;
+  saveLocal();
+}
+
+// =======================================
+// RENDER
+// =======================================
+
+function render(){
+  document.getElementById('count').textContent=number(data.count);
+  document.getElementById('goalText').textContent=number(data.goal);
+  document.getElementById('goalProgress').style.width=
+    Math.min(100,todayCount()/Math.max(1,Number(data.goal)||100)*100)+'%';
+
+  document.getElementById('todayStat').textContent=number(todayCount());
+  document.getElementById('totalStat').textContent=number(data.total);
+  document.getElementById('goalProgress').title=
+    Math.floor(todayCount()/data.goal*100)+'%';
+
+  const now=new Date();
+  const month=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  let monthTotal=0,weekTotal=0,active=0,record=0;
+
+  Object.entries(data.daily).forEach(([date,count])=>{
+    const safeCount=Math.max(0,Number(count)||0);
+    if(date.startsWith(month)) monthTotal+=safeCount;
+    if(safeCount>0) active++;
+    record=Math.max(record,safeCount);
+
+    const d=new Date(date+'T12:00:00');
+    const diff=(now-d)/86400000;
+    if(diff>=0 && diff<7) weekTotal+=safeCount;
+  });
+
+  document.getElementById('weekStat').textContent=number(weekTotal);
+  document.getElementById('monthStat').textContent=number(monthTotal);
+  document.getElementById('activeDays').textContent=number(active);
+  document.getElementById('recordStat').textContent=number(record);
+
+  const history=document.getElementById('weeklyHistory');
+  history.innerHTML='';
+  for(let i=6;i>=0;i--){
+    const d=new Date();
+    d.setDate(d.getDate()-i);
+    const key=d.getFullYear()+'-'+
+      String(d.getMonth()+1).padStart(2,'0')+'-'+
+      String(d.getDate()).padStart(2,'0');
+    const div=document.createElement('div');
+    div.className='item';
+    div.textContent=d.toLocaleDateString('fa-IR')+
+      ' — '+number(data.daily[key]||0)+' ذکر';
+    history.appendChild(div);
+  }
+
+  renderKhatms();
+}
+
+// =======================================
+// PERSONAL KHATMS
+// =======================================
+
+async function createKhatm(){
+  const title=document.getElementById('khatmTitle').value.trim();
+  const target=Number(document.getElementById('khatmTarget').value);
+  const intention=document.getElementById('khatmIntention').value.trim();
+  if(!title||!Number.isSafeInteger(target)||target<=0)return alert('عنوان و هدف معتبر وارد کن');
+  const k={id:crypto.randomUUID(),title,target_count:target,current_count:0,intention,status:'active'};
+  data.khatms.push(k);
+  saveLocal();
+  document.getElementById('khatmTitle').value='';
+  document.getElementById('khatmIntention').value='';
+  if(user){
+    const {error}=await db.from('khatms').insert({
+      id:k.id,user_id:user.id,title:k.title,target_count:k.target_count,current_count:0,intention:k.intention
+    });
+    if(error){
+      document.getElementById('connectionStatus').textContent='ختم روی دستگاه ذخیره شد؛ ذخیره ابری ناموفق بود';
+      alert('ختم روی دستگاه باقی ماند، اما در فضای ابری ذخیره نشد: '+error.message);
+    }
+  }
+}
+
+function renderKhatms(){
+  const el=document.getElementById('khatmList');
+  el.innerHTML='';
+
+  data.khatms.forEach(k=>{
+    const target=Math.max(1,Number(k.target_count)||1);
+    const current=Math.max(0,Number(k.current_count)||0);
+    const p=Math.min(100,current/target*100);
+    const div=document.createElement('div');
+    div.className='item';
+
+    const title=document.createElement('strong');
+    title.textContent=k.title;
+
+    const detail=document.createElement('p');
+    detail.className='small';
+    detail.textContent=number(current)+' از '+number(target)+' · '+(k.status==='completed'?'تکمیل‌شده':'در حال انجام');
+
+    const bar=document.createElement('div');
+    bar.className='progress';
+    const fill=document.createElement('div');
+    fill.style.width=p+'%';
+    bar.appendChild(fill);
+
+    const remove=document.createElement('button');
+    remove.textContent='حذف ختم';
+    remove.onclick=()=>deleteKhatm(k.id);
+
+    div.append(title,detail,bar,remove);
+    el.appendChild(div);
+  });
+}
+
+async function deleteKhatm(id){
+  if(!confirm('این ختم حذف شود؟')) return;
+  data.khatms=data.khatms.filter(k=>k.id!==id);
+  saveLocal();
+  if(user){
+    await db.from('khatms').delete().eq('id',id);
+  }
+}
+
+// =======================================
+// CLOUD PANEL + NETWORK STATUS
+// =======================================
+
+function toggleCloudPanel(){
+  const panel=document.getElementById('cloudPanel');
+  panel.classList.toggle('hidden');
+  if(!panel.classList.contains('hidden')){
+    panel.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+}
+function updateNetworkStatus(){
+  const online=navigator.onLine;
+  const dot=document.getElementById('networkDot');
+  const label=document.getElementById('networkLabel');
+  if(!dot||!label)return;
+  dot.classList.toggle('online',online);
+  dot.classList.toggle('offline',!online);
+  label.textContent=online?'اینترنت متصل است':'آفلاین — بدون اینترنت';
+  if(!online)document.getElementById('connectionStatus').textContent='وضعیت فضای ابری: در حالت آفلاین';
+  else if(!user)document.getElementById('connectionStatus').textContent='وضعیت فضای ابری: برای همگام‌سازی وارد شوید';
+}
+
+// =======================================
+// AUTHENTICATION
+// =======================================
+
+function authMessage(t){
+  document.getElementById('authMessage').textContent=t;
+}
+
+async function signUp(){
+  if(!db) return authMessage('کتابخانه اتصال ابری بارگذاری نشده است؛ شمارش محلی فعال است. اتصال اینترنت را بررسی و صفحه را دوباره باز کنید.');
+  const email=document.getElementById('email').value.trim();
+  const password=document.getElementById('password').value;
+  if(!email || password.length<6) return authMessage('ایمیل و رمز حداقل ۶ کاراکتری وارد کن');
+
+  const {data:d,error}=await db.auth.signUp({
+    email,password,
+    options:{data:{display_name:email.split('@')[0]}}
+  });
+
+  if(error) return authMessage(error.message);
+
+  if(d.session){
+    authMessage('ثبت‌نام موفق بود');
+  }else{
+    authMessage('ثبت‌نام انجام شد. ایمیل خود را برای تأیید بررسی کن.');
+  }
+}
+
+async function signIn(){
+  if(!db) return authMessage('کتابخانه اتصال ابری بارگذاری نشده است؛ شمارش محلی فعال است. اتصال اینترنت را بررسی و صفحه را دوباره باز کنید.');
+  const email=document.getElementById('email').value.trim();
+  const password=document.getElementById('password').value;
+
+  const {error}=await db.auth.signInWithPassword({email,password});
+  if(error) return authMessage(error.message);
+  authMessage('ورود موفق؛ در حال دریافت اطلاعات شما…');
+}
+
+async function resetPassword(){
+  if(!db) return authMessage('اتصال ابری در دسترس نیست؛ اتصال اینترنت را بررسی کنید.');
+  const email=document.getElementById('email').value.trim();
+  if(!email) return authMessage('ابتدا ایمیل را وارد کن');
+
+  const {error}=await db.auth.resetPasswordForEmail(email,{
+    redirectTo:location.href
+  });
+
+  authMessage(error?error.message:'لینک بازیابی رمز ارسال شد.');
+}
+
+async function signOut(){
+  if(!db) return;
+  await db.auth.signOut();
+}
+
+let activeUserId=null;
+let authListenerRegistered=false;
+
+async function loadAuth(){
+  if(!db){
+    authMessage('شمارش و ذخیره‌سازی روی همین دستگاه فعال است؛ برای ورود و همگام‌سازی ابری، اتصال اینترنت و بارگذاری کتابخانه Supabase لازم است.');
+    return;
+  }
+  try{
+    const {data:d,error}=await db.auth.getSession();
+    if(error)throw error;
+    if(d.session)await setUser(d.session.user);
+  }catch(e){
+    document.getElementById('connectionStatus').textContent='وضعیت فضای ابری: در دسترس نیست؛ ذخیره محلی فعال است';
+    console.error(e);
+  }
+  if(!authListenerRegistered){
+    authListenerRegistered=true;
+    db.auth.onAuthStateChange((event,session)=>{
+      // کارهای async خارج از callback اصلی Auth اجرا می‌شوند.
+      setTimeout(()=>{
+        if(session?.user)setUser(session.user);
+        else{
+          activeUserId=null;user=null;
+          document.getElementById('authCard').classList.remove('hidden');
+          document.getElementById('accountCard').classList.add('hidden');
+          document.getElementById('connectionStatus').textContent='وضعیت فضای ابری: حساب خارج شده؛ ذخیره محلی فعال است';
+        }
+      },0);
+    });
+  }
+}
+
+async function setUser(u){
+  if(!u)return;
+  user=u;
+  document.getElementById('authCard').classList.add('hidden');
+  document.getElementById('accountCard').classList.remove('hidden');
+  document.getElementById('accountEmail').textContent=u.email||'کاربر';
+  if(activeUserId===u.id)return;
+  activeUserId=u.id;
+  document.getElementById('connectionStatus').textContent='وضعیت فضای ابری: در حال دریافت اطلاعات…';
+  await loadCloud();
+}
+
+// =======================================
+// CLOUD SYNC — keeps the existing Supabase project and tables
+// =======================================
+let cloudSaveInProgress=false;
+let cloudSaveQueued=false;
+
+function scheduleCloudSave(){
+  if(!user)return;
+  clearTimeout(syncTimer);
+  syncTimer=setTimeout(()=>saveCloud(),1500);
+}
+
+async function saveCloud(){
+  if(!user)return false;
+  if(cloudSaveInProgress){cloudSaveQueued=true;return false;}
+  cloudSaveInProgress=true;
+  const savingUserId=user.id;
+  try{
+    const {error}=await db.from('user_app_state').upsert({
+      user_id:savingUserId,state:data,updated_at:new Date().toISOString()
+    },{onConflict:'user_id'});
+    if(error)throw error;
+    if(user&&user.id===savingUserId)
+      document.getElementById('connectionStatus').textContent='وضعیت فضای ابری: همگام‌سازی موفق';
+    return true;
+  }catch(e){
+    console.error('Cloud save error:',e);
+    document.getElementById('connectionStatus').textContent='وضعیت فضای ابری: خطا در همگام‌سازی؛ اطلاعات محلی محفوظ است';
+    return false;
+  }finally{
+    cloudSaveInProgress=false;
+    if(cloudSaveQueued){cloudSaveQueued=false;scheduleCloudSave();}
+  }
+}
+
+async function loadCloud(){
+  if(!user)return;
+  const loadingUserId=user.id;
+  try{
+    const {data:cloudRow,error}=await db.from('user_app_state')
+      .select('state').eq('user_id',loadingUserId).maybeSingle();
+    if(error)throw error;
+    if(user?.id!==loadingUserId)return;
+
+    // ردیف‌های قدیمی جدول khatms نیز خوانده و با وضعیت ذخیره‌شده ادغام می‌شوند.
+    const {data:rows,error:khatmError}=await db.from('khatms').select('*').eq('user_id',loadingUserId);
+    if(khatmError)console.warn('دریافت ختم‌ها از جدول جداگانه ناموفق بود:',khatmError);
+
+    if(cloudRow?.state)data=mergeStates(data,cloudRow.state);
+    if(Array.isArray(rows)){
+      const map=new Map(data.khatms.map(k=>[k.id,k]));
+      rows.forEach(row=>{
+        const old=map.get(row.id);
+        map.set(row.id,old?{...old,...row,current_count:Math.max(Number(old.current_count)||0,Number(row.current_count)||0)}:{...row,status:row.status||'active'});
+      });
+      data.khatms=[...map.values()];
+    }
+    saveLocalOnly();
+    // پس از ادغام، نسخه ترکیبی ذخیره می‌شود؛ هیچ رکوردی حذف نمی‌شود.
+    await saveCloud();
+    await loadGroups();
+    render();
+  }catch(e){
+    console.error('Cloud load error:',e);
+    document.getElementById('connectionStatus').textContent='وضعیت فضای ابری: دریافت ناموفق؛ اطلاعات محلی حفظ شد';
+  }
+}
+
+async function syncCloud(){
+  if(!user)return alert('ابتدا وارد حساب کاربری شو');
+  document.getElementById('connectionStatus').textContent='وضعیت فضای ابری: در حال همگام‌سازی…';
+  await loadCloud();
+  alert('فرایند همگام‌سازی پایان یافت. وضعیت را بالای صفحه بررسی کن.');
+}
+
+async function loadKhatms(){
+  if(!user)return;
+  const {data:rows,error}=await db.from('khatms').select('*').eq('user_id',user.id);
+  if(error){console.warn(error);return;}
+  if(rows){
+    const map=new Map(data.khatms.map(k=>[k.id,k]));
+    rows.forEach(row=>{
+      const old=map.get(row.id);
+      map.set(row.id,old?{...old,...row,current_count:Math.max(Number(old.current_count)||0,Number(row.current_count)||0)}:{...row,status:row.status||'active'});
+    });
+    data.khatms=[...map.values()];
+    saveLocalOnly();
+  }
+}
+
+
+
+// =======================================
+// GROUP KHATMS
+// =======================================
+
+async function createGroup(){
+  if(!user) return alert('برای ساخت گروه ابتدا وارد حساب شو');
+
+  const name=document.getElementById('groupName').value.trim();
+  const target=Number(document.getElementById('groupTarget').value);
+
+  if(!name || !Number.isSafeInteger(target) || target<=0) return alert('نام و هدف معتبر وارد کن');
+
+  const {error}=await db.from('group_khatms').insert({
+    owner_id:user.id,
+    name,
+    target_count:target
+  });
+
+  if(error) return alert(error.message);
+
+  await loadGroups();
+  alert('گروه ساخته شد');
+}
+
+async function joinGroup(){
+  if(!user) return alert('ابتدا وارد حساب شو');
+
+  const code=document.getElementById('inviteCode').value.trim();
+  if(!code) return;
+
+  const {data:d,error}=await db.rpc('join_group_by_code',{
+    p_code:code
+  });
+
+  if(error) return alert(error.message);
+
+  await loadGroups();
+  alert('عضویت در گروه موفق بود');
+}
+
+async function loadGroups(){
+  if(!user)return;
+  try{
+    const [{data:members,error:mErr},{data:owned,error:oErr}]=await Promise.all([
+      db.from('group_members').select('group_id').eq('user_id',user.id),
+      db.from('group_khatms').select('*').eq('owner_id',user.id)
+    ]);
+    if(mErr)throw mErr;
+    if(oErr)throw oErr;
+    const ids=[...new Set((members||[]).map(x=>x.group_id).filter(Boolean))];
+    let joined=[];
+    if(ids.length){
+      const {data:rows,error}=await db.from('group_khatms').select('*').in('id',ids);
+      if(error)throw error;
+      joined=rows||[];
+    }
+    const map=new Map();
+    [...(owned||[]),...joined].forEach(g=>map.set(g.id,g));
+    groups=[...map.values()];
+    if(groups.length){
+      const groupIds=groups.map(g=>g.id);
+      const {data:progressRows,error}=await db.from('group_progress').select('group_id,user_id,count').in('group_id',groupIds);
+      if(!error){
+        const totals={},memberCounts={};
+        (progressRows||[]).forEach(r=>{
+          totals[r.group_id]=(totals[r.group_id]||0)+(Number(r.count)||0);
+          memberCounts[r.group_id]=(memberCounts[r.group_id]||0)+1;
+        });
+        groups=groups.map(g=>({...g,current_total:totals[g.id]||0,member_contributors:memberCounts[g.id]||0}));
+      }
+    }
+    renderGroups();
+  }catch(e){console.error(e);document.getElementById('connectionStatus').textContent='خطا در دریافت گروه‌ها';}
+}
+
+function renderGroups(){
+  const el=document.getElementById('groupList');
+  el.innerHTML='';
+  const total=groups.reduce((s,g)=>s+(Number(g.current_total)||0),0);
+  const target=groups.reduce((s,g)=>s+(Number(g.target_count)||0),0);
+  const active=groups.filter(g=>(Number(g.current_total)||0)<(Number(g.target_count)||0)).length;
+  document.getElementById('allGroupTotal').textContent=number(total);
+  document.getElementById('activeGroupCount').textContent=number(active);
+  document.getElementById('allGroupTarget').textContent=number(target);
+  document.getElementById('allGroupPercent').textContent=number(target?Math.round(total/target*100):0)+'٪';
+
+  if(!groups.length){
+    const empty=document.createElement('p');
+    empty.className='small';
+    empty.textContent='هنوز عضو هیچ ختم گروهی نیستید. برای مشاهده آمار گروه، وارد فضای ابری شوید و یک گروه بسازید یا با کد دعوت عضو شوید.';
+    el.appendChild(empty);
+  }
+  groups.forEach(g=>{
+    const div=document.createElement('div');
+    div.className='item';
+
+    const title=document.createElement('strong');
+    title.textContent=g.name;
+
+    const code=document.createElement('p');
+    code.className='small';
+    code.textContent='کد دعوت: '+(g.invite_code||'در دسترس نیست');
+    const summary=document.createElement('p');
+    summary.className='small';
+    summary.textContent='مجموع صلوات ثبت‌شده: '+number(g.current_total||0)+' از '+number(g.target_count||0);
+    const contributors=document.createElement('p');
+    contributors.className='small';
+    contributors.textContent='تعداد اعضای مشارکت‌کننده: '+number(g.member_contributors||0);
+    const bar=document.createElement('div');bar.className='progress';
+    const fill=document.createElement('div');
+    fill.style.width=Math.min(100,(Number(g.current_total)||0)/Math.max(1,Number(g.target_count)||1)*100)+'%';
+    bar.appendChild(fill);
+
+    const copy=document.createElement('button');
+    copy.textContent='کپی کد دعوت';
+    copy.onclick=async()=>{try{await navigator.clipboard.writeText(g.invite_code||'');alert('کد دعوت کپی شد');}catch(e){alert('کپی خودکار ممکن نیست؛ کد را دستی انتخاب کن');}};
+
+    const progress=document.createElement('button');
+    progress.textContent='ثبت ۱ ذکر برای گروه';
+    progress.onclick=()=>addGroupProgress(g.id);
+
+    div.append(title,code,summary,contributors,bar,copy,progress);
+    el.appendChild(div);
+  });
+}
+
+async function addGroupProgress(groupId){
+  if(!user) return;
+
+  const {data:old,error}=await db.from('group_progress')
+    .select('count').eq('group_id',groupId)
+    .eq('user_id',user.id).maybeSingle();
+
+  if(error) return alert(error.message);
+
+  const next=(old?.count||0)+1;
+
+  const {error:e}=await db.from('group_progress').upsert({
+    group_id:groupId,
+    user_id:user.id,
+    count:next,
+    updated_at:new Date().toISOString()
+  },{onConflict:'group_id,user_id'});
+
+  if(e) return alert(e.message);
+  alert('یک ذکر برای ختم گروه ثبت شد');
+}
+
+// =======================================
+// BACKUP
+// =======================================
+
+function exportBackup(){
+  const blob=new Blob(
+    [JSON.stringify(data,null,2)],
+    {type:'application/json'}
+  );
+
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='salavat-backup-'+todayKey()+'.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importBackup(){
+  const file=document.getElementById('backupFile').files[0];
+  if(!file)return alert('فایل پشتیبان را انتخاب کن');
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const imported=JSON.parse(reader.result);
+      if(!imported||typeof imported!=='object'||Array.isArray(imported))throw new Error('ساختار نامعتبر');
+      if(!confirm('اطلاعات پشتیبان با اطلاعات فعلی ادغام شود؟ داده‌های فعلی و ابری حذف نمی‌شوند.'))return;
+      data=mergeStates(data,imported);
+      saveLocal();
+      alert('اطلاعات پشتیبان با داده‌های فعلی ادغام شد.');
+    }catch(e){alert('فایل پشتیبان معتبر نیست یا ساختار آن قابل خواندن نیست.');}
+  };
+  reader.onerror=()=>alert('خواندن فایل پشتیبان ناموفق بود');
+  reader.readAsText(file);
+}
+
+// =======================================
+// NAVIGATION
+// =======================================
+
+function showTab(id){
+  ['counterTab','statsTab','khatmTab','groupTab','settingsTab']
+    .forEach(x=>document.getElementById(x).classList.add('hidden'));
+
+  document.getElementById(id).classList.remove('hidden');
+}
+
+
+// اسلایدر خودکار اسماء الهی
+const asmaNames = [
+  ['الرَّحْمٰن','بخشاینده'],['الرَّحِيم','مهربان'],['الْمَلِك','فرمانروا'],
+  ['الْقُدُّوس','پاک و منزّه'],['السَّلَام','سلامت‌بخش'],['الْمُؤْمِن','ایمنی‌بخش'],
+  ['الْعَزِيز','شکست‌ناپذیر'],['الْغَفَّار','بسیار آمرزنده'],['الرَّزَّاق','روزی‌رسان'],
+  ['النُّور','نور و روشنایی'],['الْوَدُود','دوستدار'],['الْهَادِي','هدایتگر']
+];
+let asmaIndex = 0;
+function rotateAsma(){
+  const name=document.getElementById('asmaName');
+  const meaning=document.getElementById('asmaMeaning');
+  if(!name || !meaning) return;
+  asmaIndex=(asmaIndex+1)%asmaNames.length;
+  name.textContent=asmaNames[asmaIndex][0];
+  meaning.textContent=asmaNames[asmaIndex][1];
+  name.style.animation='none'; void name.offsetWidth; name.style.animation='asmaFade .65s ease';
+}
+setInterval(rotateAsma,3500);
+
+// ذکر روز؛ بر اساس روز سال انتخاب می‌شود و هر روز به‌صورت خودکار تغییر می‌کند.
+const dailyDhikrs = [
+  ['صلوات','اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ وَآلِ مُحَمَّدٍ'],
+  ['استغفار','أَسْتَغْفِرُ اللَّهَ رَبِّي وَأَتُوبُ إِلَيْهِ'],
+  ['سبحان الله','سُبْحَانَ اللَّهِ'],
+  ['الحمدلله','الْحَمْدُ لِلَّهِ'],
+  ['الله اکبر','اللَّهُ أَكْبَرُ'],
+  ['لا اله الا الله','لَا إِلَهَ إِلَّا اللَّهُ'],
+  ['یا رحمان','يَا رَحْمَٰنُ']
+];
+function renderDailyDhikr(){
+  const dayNumber=Math.floor((new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate())-new Date(new Date().getFullYear(),0,0))/86400000);
+  const item=dailyDhikrs[dayNumber%dailyDhikrs.length];
+  const title=document.getElementById('dailyDhikrName');
+  const text=document.getElementById('dailyDhikrText');
+  if(title && text){title.textContent=item[0];text.textContent=item[1];}
+}
+renderDailyDhikr();
+
+// راهنمای مرحله‌ای و پویا
+const helpSteps=[
+  ['شروع شمارش','از فهرست «ذکر انتخابی» ذکر موردنظر را انتخاب کنید؛ متن عربی و ترجمه آن نمایش داده می‌شود. سپس دکمه بزرگ «ذکر» را لمس کنید.'],
+  ['بازگشت و شروع مجدد','برای برگشت از آخرین عملیات شمارش، «بازگشت» را بزنید. با «شروع مجدد» شمارنده فعلی صفر می‌شود؛ پیش از تأیید، پیام نمایش داده خواهد شد.'],
+  ['هدف روزانه و آمار','در بخش تنظیمات هدف روزانه را تعیین کنید. از بخش «آمار» می‌توانید گزارش امروز، هفته، ماه و مجموع فعالیت را ببینید.'],
+  ['ختم شخصی','عنوان، تعداد هدف و نیت ختم را وارد و گزینه «ایجاد ختم» را انتخاب کنید. پیشرفت ختم در بخش ختم‌های من نمایش داده می‌شود.'],
+  ['ختم گروهی','برای ساخت یا پیوستن به ختم گروهی، ابتدا با ایمیل وارد حساب شوید. سپس گروه بسازید یا کد دعوت را وارد کنید.'],
+  ['فضای ابری','از دکمه «فضای ابری» در بالای برنامه وارد بخش ثبت‌نام و ورود شوید. پس از ورود، اطلاعات حساب همگام‌سازی می‌شود.'],
+  ['پشتیبان‌گیری','از بخش تنظیمات فایل پشتیبان JSON دریافت کنید. برای بازیابی، فایل را انتخاب کنید و گزینه بازیابی را بزنید. فایل پشتیبان را در جای امن نگه دارید.']
+];
+let helpIndex=0;
+function renderHelpStep(){
+  const step=helpSteps[helpIndex];
+  document.getElementById('helpStepCount').textContent=`مرحله ${number(helpIndex+1)} از ${number(helpSteps.length)}`;
+  document.getElementById('helpStepTitle').textContent=step[0];
+  document.getElementById('helpStepText').textContent=step[1];
+  document.getElementById('helpProgress').style.width=((helpIndex+1)/helpSteps.length*100)+'%';
+  document.getElementById('helpPrev').disabled=helpIndex===0;
+  document.getElementById('helpNext').textContent=helpIndex===helpSteps.length-1?'پایان':'مرحله بعد';
+}
+function openHelp(){helpIndex=0;renderHelpStep();document.getElementById('helpModal').classList.remove('hidden');}
+function changeHelpStep(direction){
+  if(helpIndex===helpSteps.length-1 && direction>0){closeModal('helpModal');return;}
+  helpIndex=Math.max(0,Math.min(helpSteps.length-1,helpIndex+direction));renderHelpStep();
+}
+function openAbout(){document.getElementById('aboutModal').classList.remove('hidden');}
+function closeModal(id){document.getElementById(id).classList.add('hidden');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal('helpModal');closeModal('aboutModal');}});
+
+
+init();
+</script>
+
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(console.error));
+}
+</script>
+</body>
+</html>
