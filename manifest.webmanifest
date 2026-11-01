@@ -1,15 +1,21 @@
 {
+  "id": "./",
   "name": "صلوات شمار",
   "short_name": "صلوات شمار",
-  "description": "شمارنده ذکر و صلوات با ذخیره‌سازی محلی و امکانات آماری",
+  "description": "شمارنده ذکر و صلوات با نیت شخصی و گروهی، آمار فعالیت و همگام‌سازی ابری",
   "lang": "fa",
   "dir": "rtl",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#061d19",
-  "theme_color": "#063d32",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#07211c",
+  "theme_color": "#07211c",
+  "categories": ["lifestyle", "education"],
+  "prefer_related_applications": false,
   "icons": [
-    {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+    {"src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any"},
+    {"src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable"}
   ]
 }
