@@ -196,6 +196,13 @@ button:disabled{opacity:.55;cursor:not-allowed}
 .group-stat-line{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:8px 0;color:var(--muted);font-size:12px}
 @media(max-width:450px){.asma-slider{margin-top:10px}.modal-panel{padding:24px 16px 18px}}
 
+
+/* نصب وب‌اپلیکیشن */
+.install-banner{position:fixed;left:12px;right:12px;bottom:14px;z-index:1200;max-width:520px;margin:auto;padding:14px;border:1px solid var(--gold);border-radius:18px;background:linear-gradient(145deg,#174b3b,#071f19);box-shadow:0 15px 45px #0009;display:flex;align-items:center;gap:10px;justify-content:space-between}
+.install-banner .install-text{font-size:12px;line-height:1.8;flex:1}
+.install-banner .install-actions{display:flex;gap:7px;align-items:center}
+.install-banner button{padding:9px 12px}
+
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
 @media(max-width:450px){
   .count{font-size:56px}
@@ -214,6 +221,14 @@ button:disabled{opacity:.55;cursor:not-allowed}
 <body>
 
 <audio id="dhikrAudio" preload="none" playsinline></audio>
+
+<div id="installBanner" class="install-banner hidden" role="dialog" aria-label="نصب برنامه">
+  <div class="install-text"><strong>صلوات شمار را نصب کنید</strong><br><span>برای دسترسی سریع‌تر، برنامه را روی گوشی نصب کنید.</span></div>
+  <div class="install-actions">
+    <button type="button" class="gold" id="installAppBtn">نصب</button>
+    <button type="button" id="closeInstallBtn" aria-label="بستن">×</button>
+  </div>
+</div>
 
 
 <header>
@@ -378,22 +393,7 @@ button:disabled{opacity:.55;cursor:not-allowed}
     <label>هدف روزانه</label>
     <input type="number" id="dailyGoal" min="1" value="100"
       onchange="setGoal(this.value)">
-    <label for="vlLanguage" style="display:block;margin-top:14px">زبان گفتار (زبان‌های پشتیبانی‌شده Aisha)</label>
-    <select id="vlLanguage" style="width:100%;margin:6px 0 10px" onchange="onAishaLanguageChange()">
-      <option value="uz">ازبکی — uz</option>
-      <option value="en">انگلیسی — en</option>
-      <option value="ru">روسی — ru</option>
-    </select>
-    <label for="vlMood" style="display:block">حالت صدا (فقط ازبکی)</label>
-    <select id="vlMood" style="width:100%;margin:6px 0 10px" onchange="saveAishaSettings()">
-      <option value="Neutral">معمولی</option>
-      <option value="Cheerful">شاد</option>
-      <option value="Happy">خوشحال</option>
-      <option value="Sad">غمگین</option>
-    </select>
-    <label for="vlSpeed">سرعت گفتار (فقط ازبکی)</label>
-    <input id="vlSpeed" type="number" min="0.5" max="2" step="0.1" value="1" style="width:100%;margin:6px 0 10px" onchange="saveAishaSettings()">
-    <p id="vlCatalogStatus" class="small">Aisha طبق مستندات فعلی از سه زبان ازبکی، انگلیسی و روسی پشتیبانی می‌کند. برای ازبکی صدای داخلی Gulnoza در دسترس است. برای انگلیسی و روسی فقط زبان ارسال می‌شود.</p>
+    <p class="small" id="systemVoiceStatus">با فعال بودن صدا، پس از هر بار لمس دکمه «ذکر»، متن ذکر با صدای موتور گفتار سیستم‌عامل خوانده می‌شود.</p>
     <label><input type="checkbox" id="vibration" checked
       style="width:auto" onchange="saveSettings()"> لرزش هنگام شمارش</label>
     <label><input type="checkbox" id="sound" 
@@ -639,7 +639,6 @@ function init(){
 
   select.value = data.selected;
   document.getElementById('dailyGoal').value = data.goal;
-  loadVoiceLabSettings();
   document.getElementById('vibration').checked = data.vibration;
   document.getElementById('sound').checked = data.sound;
   document.getElementById('touchMode').checked = data.touchMode;
@@ -750,64 +749,29 @@ function toggleDhikrAudio(){
   updateAudioButton();
   saveLocal();
 }
-function loadVoiceLabSettings(){
-  const language=localStorage.getItem('aishaLanguage')||'uz';
-  const mood=localStorage.getItem('aishaMood')||'Neutral';
-  const speed=localStorage.getItem('aishaSpeed')||'1';
-  document.getElementById('vlLanguage').value=['uz','en','ru'].includes(language)?language:'uz';
-  document.getElementById('vlMood').value=['Neutral','Cheerful','Happy','Sad'].includes(mood)?mood:'Neutral';
-  document.getElementById('vlSpeed').value=speed;
-  updateAishaControls();
-}
-function saveAishaSettings(){
-  localStorage.setItem('aishaLanguage',document.getElementById('vlLanguage').value);
-  localStorage.setItem('aishaMood',document.getElementById('vlMood').value);
-  localStorage.setItem('aishaSpeed',document.getElementById('vlSpeed').value||'1');
-  updateAishaControls();
-}
-function updateAishaControls(){
-  const uz=document.getElementById('vlLanguage').value==='uz';
-  document.getElementById('vlMood').disabled=!uz;
-  document.getElementById('vlSpeed').disabled=!uz;
-  document.getElementById('vlCatalogStatus').textContent=uz
-    ? 'زبان ازبکی انتخاب شده است؛ صدای داخلی Gulnoza استفاده می‌شود. حالت و سرعت قابل تنظیم هستند.'
-    : 'زبان '+(document.getElementById('vlLanguage').value==='en'?'انگلیسی':'روسی')+' انتخاب شده است. طبق مستندات Aisha، مدل و حالت و سرعت ارسال نمی‌شوند.';
-}
-function onAishaLanguageChange(){saveAishaSettings();}
-async function speakDhikr(){
-  if(!data.voiceEnabled)return;
-  const audio=document.getElementById('dhikrAudio');
+function speakDhikr(){
+  if(!data.voiceEnabled || !('speechSynthesis' in window)) return;
   const textToSpeak=(dhikrs[data.selected] && dhikrs[data.selected][1]) || 'اللهم صل على محمد وآل محمد';
   try{
-    saveAishaSettings();
-    const language=document.getElementById('vlLanguage').value;
-    const body={text:textToSpeak,language:language};
-    if(language==='uz'){
-      body.mood=document.getElementById('vlMood').value;
-      body.speed=Number(document.getElementById('vlSpeed').value||1);
-    }
-    const response=await fetch('/api/synthesize',{
-      method:'POST',headers:{'Content-Type':'application/json','Accept':'audio/wav, application/json'},
-      body:JSON.stringify(body)
-    });
-    if(!response.ok){
-      let detail='خطا در سرویس Aisha';
-      try{const err=await response.json();detail=err.error||detail;}catch(e){detail=(await response.text()).slice(0,400)||detail;}
-      throw new Error(detail);
-    }
-    const blob=await response.blob();
-    if(!blob.size)throw new Error('Aisha فایل صوتی خالی برگرداند.');
-    const oldSrc=audio.src;
-    audio.pause();
-    audio.src=URL.createObjectURL(blob);
-    if(oldSrc && oldSrc.startsWith('blob:'))URL.revokeObjectURL(oldSrc);
-    await audio.play();
+    window.speechSynthesis.cancel();
+    const utterance=new SpeechSynthesisUtterance(textToSpeak);
+    utterance.lang='ar-SA';
+    utterance.rate=0.9;
+    utterance.pitch=1;
+    const voices=window.speechSynthesis.getVoices();
+    const preferred=voices.find(v=>/^ar/i.test(v.lang)) ||
+                    voices.find(v=>/arabic/i.test(v.name));
+    if(preferred) utterance.voice=preferred;
+    utterance.onerror=()=>showAudioError('پخش صدای سیستم‌عامل انجام نشد. صدای گفتار دستگاه را بررسی کنید.');
+    utterance.onend=clearAudioError;
+    window.speechSynthesis.speak(utterance);
     clearAudioError();
   }catch(err){
-    console.error('Aisha synthesis failed:',err);
-    showAudioError('سرویس Aisha در دسترس نیست: '+(err.message||'تنظیمات API را بررسی کن.'));
+    console.error('System TTS failed:',err);
+    showAudioError('گفتار سیستم‌عامل در این مرورگر در دسترس نیست.');
   }
 }
+
 function showAudioError(message){
   let status=document.getElementById('audioStatus');
   if(!status){
@@ -1436,6 +1400,65 @@ function closeModal(id){document.getElementById(id).classList.add('hidden');}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal('helpModal');closeModal('aboutModal');}});
 
 
+
+// =======================================
+// PWA INSTALL PROMPT — Chrome/Android
+// =======================================
+let deferredInstallPrompt=null;
+
+function isStandaloneApp(){
+  return window.matchMedia('(display-mode: standalone)').matches ||
+         window.navigator.standalone===true;
+}
+
+function showInstallBanner(){
+  if(isStandaloneApp())return;
+  const banner=document.getElementById('installBanner');
+  if(banner)banner.classList.remove('hidden');
+}
+
+function hideInstallBanner(){
+  const banner=document.getElementById('installBanner');
+  if(banner)banner.classList.add('hidden');
+}
+
+window.addEventListener('beforeinstallprompt',event=>{
+  event.preventDefault();
+  deferredInstallPrompt=event;
+  showInstallBanner();
+});
+
+window.addEventListener('appinstalled',()=>{
+  deferredInstallPrompt=null;
+  hideInstallBanner();
+  try{
+    if('Notification' in window && Notification.permission==='granted'){
+      new Notification('صلوات شمار نصب شد', {body:'وب‌اپلیکیشن با موفقیت روی دستگاه شما نصب شد.'});
+    }
+  }catch(e){}
+});
+
+document.addEventListener('DOMContentLoaded',()=>{
+  const installBtn=document.getElementById('installAppBtn');
+  const closeBtn=document.getElementById('closeInstallBtn');
+
+  if(installBtn)installBtn.addEventListener('click',async()=>{
+    if(deferredInstallPrompt){
+      deferredInstallPrompt.prompt();
+      try{await deferredInstallPrompt.userChoice;}catch(e){}
+      deferredInstallPrompt=null;
+      hideInstallBanner();
+    }else{
+      alert('برای نصب، از منوی سه‌نقطه Google Chrome گزینه «Install app / نصب برنامه» یا «Add to Home screen» را انتخاب کنید.');
+    }
+  });
+
+  if(closeBtn)closeBtn.addEventListener('click',hideInstallBanner);
+
+  if(!isStandaloneApp() && 'serviceWorker' in navigator){
+    // اگر رویداد نصب توسط Chrome قابل ارائه باشد، بنر خودکار نمایش داده می‌شود.
+  }
+});
 init();
 </script>
 
