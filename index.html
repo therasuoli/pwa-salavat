@@ -248,7 +248,9 @@ button:disabled{opacity:.55;cursor:not-allowed}
     <button type="button" class="gold" onclick="toggleCloudPanel()">☁ فضای ابری</button>
     <button type="button" onclick="openHelp()">راهنمای استفاده از اپ</button>
     <button type="button" onclick="openAbout()">درباره ما</button>
+    <button type="button" id="checkUpdateBtn" onclick="checkForAppUpdate()">⬆ بررسی بروزرسانی</button>
   </div>
+  <div id="appUpdateStatus" class="small" role="status" aria-live="polite"></div>
   <div class="network-indicator" role="status" aria-live="polite">
     <span id="networkDot" class="network-dot offline"></span>
     <strong id="networkLabel">در حال بررسی اتصال…</strong>
@@ -443,7 +445,7 @@ button:disabled{opacity:.55;cursor:not-allowed}
       <p>کاربر گرامی، برای شادی روح این مرحوم مغفور، یک صلوات هدیه بفرمایید.</p>
     </div>
     <p><strong>توسعه و برنامه نویسی هادی رسولی</strong></p>
-    <p>ورژن ۱.۱.۱</p>
+    <p>ورژن <strong id="appVersionText">۱.۱.۲</strong></p>
     <p>انتشار: آبان ماه ۱۴۰۵</p>
     <div class="about-contact">
       <h3 class="section-title">ارتباط با ما</h3>
@@ -623,10 +625,86 @@ function number(n){
 }
 
 // =======================================
+// APP VERSION + PWA UPDATE
+// =======================================
+const APP_VERSION = '1.1.2';
+const APP_VERSION_DISPLAY = '۱.۱.۲';
+let appUpdateReloading = false;
+
+function setUpdateStatus(message){
+  const el=document.getElementById('appUpdateStatus');
+  if(el)el.textContent=message;
+}
+
+async function checkForAppUpdate(){
+  const btn=document.getElementById('checkUpdateBtn');
+  if(!('serviceWorker' in navigator)){
+    setUpdateStatus('بروزرسانی خودکار در این مرورگر پشتیبانی نمی‌شود.');
+    return;
+  }
+  if(!navigator.onLine){
+    setUpdateStatus('برای بررسی بروزرسانی، ابتدا به اینترنت متصل شوید.');
+    return;
+  }
+  if(btn){btn.disabled=true;btn.textContent='در حال بررسی…';}
+  setUpdateStatus('در حال بررسی نسخه جدید صلوات شمار…');
+  try{
+    const reg=await navigator.serviceWorker.getRegistration('./');
+    if(!reg){
+      setUpdateStatus('سرویس بروزرسانی هنوز فعال نیست؛ صفحه را یک‌بار با اینترنت باز کنید.');
+      return;
+    }
+    await reg.update();
+    // اگر نسخه جدید از قبل دریافت شده و در انتظار فعال‌سازی است.
+    if(reg.waiting){
+      setUpdateStatus('نسخه جدید دریافت شد؛ در حال بروزرسانی…');
+      reg.waiting.postMessage({type:'SKIP_WAITING'});
+      return;
+    }
+    // منتظر تکمیل نصب احتمالی نسخه تازه می‌مانیم.
+    const installing=reg.installing;
+    if(installing){
+      await new Promise(resolve=>{
+        const done=()=>{
+          if(installing.state==='installed' || installing.state==='activated' ||
+             installing.state==='redundant'){
+            installing.removeEventListener('statechange',done);
+            resolve();
+          }
+        };
+        installing.addEventListener('statechange',done);
+        done();
+      });
+      if(reg.waiting){
+        setUpdateStatus('نسخه جدید دریافت شد؛ در حال بروزرسانی…');
+        reg.waiting.postMessage({type:'SKIP_WAITING'});
+        return;
+      }
+    }
+    setUpdateStatus('کاربر گرامی، شما از آخرین نسخه صلوات شمار استفاده می‌کنید. (نسخه '+APP_VERSION_DISPLAY+')');
+  }catch(error){
+    console.error('بررسی بروزرسانی ناموفق بود:',error);
+    setUpdateStatus('بررسی بروزرسانی انجام نشد؛ اتصال اینترنت را بررسی و دوباره تلاش کنید.');
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='⬆ بررسی بروزرسانی';}
+  }
+}
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{
+    if(appUpdateReloading)return;
+    appUpdateReloading=true;
+    window.location.reload();
+  });
+}
+
+// =======================================
 // INITIALIZE
 // =======================================
 
 function init(){
+  const versionEl=document.getElementById('appVersionText');
+  if(versionEl)versionEl.textContent=APP_VERSION_DISPLAY;
   loadLocal();
   const select = document.getElementById('dhikrSelect');
 
