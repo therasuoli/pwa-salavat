@@ -1,0 +1,15 @@
+{
+  "name": "صلوات شمار",
+  "short_name": "صلوات شمار",
+  "description": "شمارنده ذکر و صلوات با ذخیره‌سازی محلی و امکانات آماری",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#061d19",
+  "theme_color": "#063d32",
+  "icons": [
+    {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}
