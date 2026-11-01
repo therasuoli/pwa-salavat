@@ -3,297 +3,299 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#07211c">
-<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#104d32">
+<meta name="color-scheme" content="light dark">
 <!-- منبع واحد شماره نسخه: فقط همین مقدار را تغییر دهید -->
-<meta name="app-version" content="1.4.0">
+<meta name="app-version" content="1.5.0">
 <title>صلوات شمار</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- فونت‌ها بدون مسدود کردن نمایش صفحه بارگذاری می‌شوند -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Amiri:wght@400;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Amiri:wght@400;700&display=swap"></noscript>
 
 <style>
-@property --p{syntax:'<number>';inherits:true;initial-value:0}
-@layer reset,tokens,base,layout,components,responsive,motion;
+@layer reset,base,components,responsive;
 
 /* =============== RESET =============== */
 @layer reset{
   *,*::before,*::after{box-sizing:border-box}
   *{-webkit-tap-highlight-color:transparent}
-  :where(h1,h2,h3,p){margin:0;text-wrap:balance}
-  :where(button,input,select){font:inherit;color:inherit}
-  :where(button){cursor:pointer;touch-action:manipulation}
-}
-
-/* =============== TOKENS =============== */
-@layer tokens{
-  :root{
-    color-scheme:dark;
-    --ink:#07211c;--jade:#0e3a30;--jade2:#15503f;
-    --brass:#d7b46a;--brass2:#f2dc9f;
-    --ivory:#f5f0e4;--muted:#9fb9ae;
-    --line:rgba(215,180,106,.18);
-    --glass:rgba(16,58,47,.55);
-    --mint:#7fe0c0;
-    --r-lg:28px;--r-md:20px;--r-sm:14px;
-    --gap:clamp(10px,2vw,18px);
-    --pad:clamp(14px,3vw,22px);
-    --fs-0:clamp(.8rem,.77rem + .15vw,.875rem);
-    --fs-1:clamp(.9rem,.86rem + .2vw,1rem);
-    --fs-2:clamp(1.1rem,1rem + .5vw,1.4rem);
-    --fs-count:clamp(3.4rem,2.6rem + 4vw,5.5rem);
-    --ring-size:clamp(210px,58vw,300px);
-    --nav-h:68px;
-    --p:0;
-  }
+  :where(h1,h2,h3,p){margin:0}
+  .hidden{display:none!important}
 }
 
 /* =============== BASE =============== */
 @layer base{
-  html{scroll-padding-block-end:110px;-webkit-text-size-adjust:100%}
-  body{
-    margin:0;min-block-size:100dvh;
-    background:
-      radial-gradient(900px 500px at 85% -10%,rgb(215 180 106/.16),transparent 60%),
-      radial-gradient(700px 500px at 0% 20%,#14604a55,transparent 65%),
-      var(--ink);
-    background-attachment:fixed;
-    color:var(--ivory);
-    font-family:Vazirmatn,"Segoe UI",system-ui,Tahoma,Arial,sans-serif;
-    font-size:var(--fs-1);line-height:1.7;
-    padding-block-end:calc(var(--nav-h) + 36px + env(safe-area-inset-bottom,0px));
+  :root{
+    color-scheme:light;
+    --green:#104d32;--green2:#1b7048;--gold:#c5a267;
+    --bg:#f4f8f5;--card:#fff;--text:#1d2b23;--muted:#78877e;
+    --border:#e3ebe5;--soft:#eaf4ed;--red:#c34d4d;
+    --shadow:0 8px 28px rgb(15 65 40/.08);
   }
-  .hidden{display:none!important}
-  .small{font-size:var(--fs-0);color:var(--muted)}
-  footer{text-align:center;color:var(--muted);padding:22px;font-size:var(--fs-0)}
-  :focus-visible{outline:2px solid var(--brass2);outline-offset:2px}
-  a{color:var(--brass2)}
-}
+  body.dark{
+    color-scheme:dark;
+    --bg:#101914;--card:#1a251e;--text:#edf4ef;--muted:#a2b0a7;
+    --border:#2c3a31;--soft:#243a2c;--shadow:0 8px 28px rgb(0 0 0/.2);
+  }
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;min-block-size:100dvh;background:var(--bg);color:var(--text);
+    font-family:Vazirmatn,"Segoe UI",system-ui,Tahoma,sans-serif;line-height:1.7;
+    padding-block-end:calc(92px + env(safe-area-inset-bottom,0px));
+    transition:background .2s,color .2s;
+  }
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  a{color:var(--green2)}
+  body.dark a{color:#e5c985}
+  .small,.muted{font-size:.6875rem;color:var(--muted)}
 
-/* =============== LAYOUT =============== */
-@layer layout{
-  .shell{inline-size:min(100% - 2*var(--pad),1180px);margin-inline:auto}
-  header.shell{padding-block-start:calc(16px + env(safe-area-inset-top,0px));container-type:inline-size}
-  .brand{display:flex;align-items:center;justify-content:space-between;gap:10px}
-  .brand h1{font-size:var(--fs-2);font-weight:800;color:var(--brass2)}
-  .brand .mark{color:var(--brass);font-size:1.7rem;line-height:1}
+  button,input,select{font:inherit;color:inherit}
+  button{
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    min-block-size:40px;padding:0 14px;border:1px solid var(--border);border-radius:12px;
+    background:var(--bg);color:var(--text);font-size:.6875rem;font-weight:600;
+    cursor:pointer;touch-action:manipulation;transition:transform .12s,filter .2s,background .2s;
+  }
+  button:hover{filter:brightness(.98)}
+  button:active{transform:scale(.97)}
+  button:disabled{opacity:.55;cursor:not-allowed}
+  button.green{background:var(--green);color:#fff;border-color:var(--green)}
+  button.gold{background:#f8f0df;color:#765a28;border-color:#ead8ad}
+  body.dark button.gold{background:#3a3220;color:#f0dfb7;border-color:#5a4a28}
+  button.red,button.danger{color:var(--red)}
+  button.primary{
+    inline-size:100%;block-size:46px;border:0;border-radius:13px;
+    background:linear-gradient(135deg,#1b7048,#104d32);color:#fff;font-size:.8125rem;font-weight:700;
+  }
+  button.full{inline-size:100%;margin-block-start:8px}
 
-  .ticker{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-block-start:14px}
-  @container (width < 460px){.ticker{grid-template-columns:1fr}}
-
-  .header-actions{display:flex;gap:6px;flex-wrap:wrap;margin-block:12px 4px}
-  .network-indicator{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 2px 0;font-size:var(--fs-0);color:var(--muted)}
-
-  /* ستون‌بندی هوشمند: هر تب به‌صورت خودکار تک‌ستونه یا چندستونه می‌شود */
-  .tab-grid{display:grid;gap:var(--gap);grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));align-items:start;margin-block-start:var(--gap)}
-  .tab-grid>.card{margin:0}
-
-  .counter-layout{display:grid;gap:var(--gap);grid-template-columns:1fr;margin-block-start:var(--gap)}
-  .counter-layout>.card{margin:0}
-  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-  .row>*{flex:1;min-inline-size:100px}
-  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-  .grid .stat:first-child{grid-column:1/-1}
+  select,
+  input:where([type=text],[type=number],[type=email],[type=password]){
+    display:block;inline-size:100%;block-size:45px;margin-block:4px;padding:0 12px;
+    border:1px solid var(--border);border-radius:13px;background:var(--bg);color:var(--text);
+    font-size:.75rem;outline:none;
+  }
+  select:focus,input:focus{border-color:var(--gold)}
+  input[type=file]{inline-size:100%;padding:10px;border:1px dashed var(--border);border-radius:13px;font-size:.6875rem;background:var(--bg)}
+  label.field-label{display:block;font-size:.6875rem;color:var(--muted);margin-block:8px 6px}
 }
 
 /* =============== COMPONENTS =============== */
 @layer components{
-  .card{
-    background:var(--glass);border:1px solid var(--line);border-radius:var(--r-lg);
-    padding:var(--pad);backdrop-filter:blur(16px);
+  .app{max-inline-size:900px;margin-inline:auto}
+
+  /* --- هدر --- */
+  header{
+    background:linear-gradient(135deg,#0b3d27,#1b7048);color:#fff;
+    padding:calc(20px + env(safe-area-inset-top,0px)) 17px 22px;
+    border-radius:0 0 28px 28px;box-shadow:0 8px 25px #104d3225;
   }
-  .section-title{color:var(--brass2);margin-block-end:12px;font-size:var(--fs-1);font-weight:700}
-
-  button,input,select{border-radius:var(--r-sm);border:1px solid var(--line);padding:12px 14px;min-block-size:44px}
-  button{background:var(--jade2);transition:transform .12s ease,background .2s,filter .2s}
-  button:hover{filter:brightness(1.12)}
-  button:active{transform:scale(.97)}
-  button.gold{background:linear-gradient(135deg,var(--brass2),#bb8d3e);color:#1a2a22;border:0;font-weight:700}
-  button.danger{background:#6c2f35}
-  button.full{inline-size:100%;margin-block-start:8px}
-  button:disabled{opacity:.55;cursor:not-allowed}
-  input,select{inline-size:100%;margin-block:5px;background:rgb(4 22 18/.7)}
-  input[type=checkbox]{inline-size:auto;min-block-size:0;margin-inline-end:8px;accent-color:var(--brass)}
-  input[type=file]{padding:10px}
-  label{display:block;margin-block:8px;font-size:var(--fs-1)}
-
-  .header-actions button{font-size:var(--fs-0);padding:8px 14px;min-block-size:40px;border-radius:999px;background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(14px)}
-  .header-actions button.gold{background:linear-gradient(135deg,var(--brass2),#bb8d3e);color:#1a2a22;border:0}
-
-  .network-dot{inline-size:8px;block-size:8px;border-radius:50%;background:#e06b6b;color:#e06b6b;box-shadow:0 0 10px currentColor}
+  body.dark header{background:linear-gradient(135deg,#0a2a1c,#14543a)}
+  .head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px}
+  .brand-icon{inline-size:46px;block-size:46px;border-radius:15px;display:grid;place-items:center;background:#ffffff19;font-size:1.6rem;border:1px solid #ffffff30}
+  .brand h1{font-size:1.25rem;font-weight:800}
+  .brand p{font-size:.6875rem;margin-block-start:2px;opacity:.75}
+  .head-actions{display:flex;gap:7px}
+  .head-btn{inline-size:40px;block-size:40px;min-block-size:0;padding:0;border-radius:13px;border:1px solid #ffffff35;background:#ffffff16;color:#fff;font-size:1.1rem}
+  .head-btn.on{background:linear-gradient(135deg,#f2dc9f,#c5a267);color:#1a2a22;border-color:transparent}
+  .header-sub{margin-block-start:18px;font-family:Amiri,"Noto Naskh Arabic",serif;font-size:1.19rem;text-align:center;color:#f0dfb7}
+  .net-line{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-block-start:12px;font-size:.625rem;color:#ffffffb8}
+  .network-dot{inline-size:8px;block-size:8px;border-radius:50%;background:#e06b6b;box-shadow:0 0 8px currentColor;color:#e06b6b}
   .network-dot.online{background:#62d69b;color:#62d69b}
-  .cloud-status{border-inline-start:1px solid var(--line);padding-inline-start:9px}
-  #appUpdateStatus{font-size:var(--fs-0);color:var(--brass2)}
+  .cloud-status{border-inline-start:1px solid #ffffff40;padding-inline-start:9px}
 
-  .asma-slider,.daily-dhikr-slider{
-    display:flex;flex-direction:column;justify-content:center;gap:2px;
-    padding:12px 14px;min-block-size:92px;border-radius:var(--r-md);
-    background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(14px);
+  main{padding:15px}
+  .tab{animation:appear .2s ease}
+  @keyframes appear{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+  .tab-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));align-items:start}
+  .tab-grid>.card{margin:0}
+
+  /* --- کارت --- */
+  .card{background:var(--card);border:1px solid var(--border);border-radius:21px;padding:16px;margin-block-end:14px;box-shadow:var(--shadow)}
+  .card-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-block-end:14px}
+  .card-title h2{font-size:.9375rem}
+  .card-title small{font-size:.625rem;color:var(--muted)}
+  .divider{block-size:1px;background:var(--border);margin-block:14px}
+  .row{display:flex;gap:8px;flex-wrap:wrap}
+  .row>*{flex:1;min-inline-size:110px}
+  .actions{display:flex;flex-wrap:wrap;justify-content:center;gap:7px}
+  .status{background:var(--soft);color:var(--green);border-radius:12px;padding:9px 11px;font-size:.625rem;margin-block-start:12px;text-align:center;line-height:1.9}
+  body.dark .status{color:#d6ebdc}
+  .status:empty{display:none}
+  .voice-status.warn{color:#9a6a12;background:#f8f0df}
+  body.dark .voice-status.warn{color:#f3dda1;background:#3a3220}
+
+  /* --- اوقات شرعی --- */
+  .prayer-card{background:linear-gradient(135deg,#fff,#eff8f1);border:1px solid var(--border);border-radius:20px;padding:15px;margin-block-end:14px;box-shadow:var(--shadow)}
+  body.dark .prayer-card{background:#1a2920}
+  .prayer-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .clock{font-size:1.8rem;font-weight:800;color:var(--green);direction:ltr;text-align:right;font-variant-numeric:tabular-nums}
+  body.dark .clock{color:#e5c985}
+  .prayer-date{font-size:.625rem;color:var(--muted)}
+  .next-prayer{text-align:start;font-size:.625rem;color:var(--muted)}
+  .next-prayer strong{display:block;color:var(--green);font-size:.8125rem}
+  body.dark .next-prayer strong{color:#e5c985}
+  .prayer-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-block-start:13px}
+  .prayer-item{background:#104d320b;border-radius:12px;padding:9px 2px;text-align:center}
+  body.dark .prayer-item{background:#ffffff0b}
+  .prayer-item small{display:block;color:var(--muted);font-size:.5625rem}
+  .prayer-item b{display:block;font-size:.75rem;color:var(--green);margin-block-start:3px}
+  body.dark .prayer-item b{color:#e5c985}
+
+  /* --- شمارنده --- */
+  .arabic{font-family:Amiri,"Scheherazade New","Noto Naskh Arabic",serif;font-size:clamp(1.6rem,1.3rem + 1vw,1.9rem);line-height:1.9;text-align:center;color:var(--green);padding-block:12px 2px}
+  body.dark .arabic{color:#e8cf96}
+  .translation{text-align:center;color:var(--muted);font-size:.6875rem;min-block-size:20px}
+  .mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-block:6px 13px}
+  .mode-option{position:relative;display:block}
+  .mode-option input{position:absolute;inset:0;inline-size:100%;block-size:100%;margin:0;opacity:0;cursor:pointer}
+  .mode-option span{display:flex;align-items:center;justify-content:center;gap:7px;min-block-size:46px;border:1px solid var(--border);border-radius:13px;background:var(--bg);font-size:.75rem;font-weight:700;transition:background .2s,border-color .2s}
+  .mode-option input:checked+span{background:var(--soft);border-color:var(--green);color:var(--green)}
+  body.dark .mode-option input:checked+span{color:#d7eddd}
+  .mode-option:has(input:focus-visible) span{outline:2px solid var(--gold);outline-offset:2px}
+  .group-field{margin-block-end:6px}
+
+  .counter-area{text-align:center;padding-block:8px 4px}
+  .target-badge{display:inline-flex;align-items:center;max-inline-size:100%;padding:5px 14px;border-radius:999px;background:var(--soft);color:var(--green);border:1px solid var(--border);font-size:.625rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  body.dark .target-badge{color:#d7eddd}
+  body[data-mode=group] .target-badge{background:#f8f0df;color:#765a28;border-color:#ead8ad}
+  body.dark[data-mode=group] .target-badge{background:#3a3220;color:#f0dfb7;border-color:#5a4a28}
+  .counter-label{font-size:.6875rem;color:var(--muted);margin-block-start:10px}
+  .counter-number{font-size:clamp(3rem,2.4rem + 3vw,4rem);font-weight:800;direction:ltr;color:var(--green);line-height:1.3;font-variant-numeric:tabular-nums}
+  body.dark .counter-number{color:#e5c985}
+  .count-sub{min-block-size:1.6em;max-inline-size:40ch;margin-inline:auto}
+  .goal-line{display:flex;justify-content:space-between;align-items:center;gap:8px;max-inline-size:340px;margin:8px auto 0;font-size:.6875rem;color:var(--muted)}
+  .goal-line strong{color:var(--green);font-size:.75rem}
+  body.dark .goal-line strong{color:#e5c985}
+  .progress{block-size:8px;background:var(--border);border-radius:20px;overflow:hidden;max-inline-size:340px;margin:8px auto 13px}
+  .progress.thin{block-size:6px;max-inline-size:none;margin:9px 0 0}
+  .progress>div{block-size:100%;inline-size:0;background:linear-gradient(90deg,var(--green2),var(--gold));transition:inline-size .2s}
+  .count-btn{
+    --d:clamp(150px,46vw,190px);
+    inline-size:var(--d);block-size:var(--d);min-block-size:0;padding:0;border-radius:50%;
+    border:9px solid #c5a26735;background:linear-gradient(145deg,#218052,#0c4229);color:#fff;
+    font-size:1.3rem;font-weight:800;box-shadow:0 12px 30px #104d3240,inset 0 0 0 2px #ffffff20;
+    flex-direction:column;gap:0;margin:12px auto 16px;user-select:none;-webkit-user-select:none;
   }
-  .asma-caption,.daily-dhikr-caption{font-size:11px;color:var(--muted)}
-  .asma-slider strong{font-family:Amiri,"Scheherazade New","Noto Naskh Arabic",serif;font-size:1.65rem;line-height:1.5;color:var(--brass2);animation:fade .6s ease}
-  .asma-slider span:last-child{font-size:var(--fs-0);color:#d9ccaa}
-  .daily-dhikr-slider strong{font-size:.9rem;color:var(--brass2)}
-  .daily-dhikr-slider span:last-child{font-family:Amiri,"Scheherazade New","Noto Naskh Arabic",serif;font-size:1rem;line-height:1.8}
+  .count-btn:active{transform:scale(.95)}
+  .count-btn small{font-size:.625rem;opacity:.8;margin-block-start:5px;font-weight:500}
 
-  /* --- مراحل: ۱) ذکر  ۲) نیت --- */
-  .step{
-    margin-block-end:12px;padding:12px 14px 14px;
-    border:1px solid var(--line);border-radius:var(--r-md);
-    background:color-mix(in oklab,var(--ink) 55%,transparent);
-    transition:border-color .2s;
-    &:last-child{margin-block-end:0}
-    &:has(:focus-visible){border-color:var(--brass2)}
-  }
-  .step-title{display:flex;align-items:center;gap:8px;margin-block-end:10px;font-size:var(--fs-1);color:var(--brass2)}
-  .step-no{display:grid;place-items:center;inline-size:24px;block-size:24px;border-radius:50%;background:var(--brass);color:var(--ink);font-size:var(--fs-0);font-weight:800}
-  .arabic{font-family:Amiri,"Scheherazade New","Noto Naskh Arabic",serif;font-size:clamp(1.5rem,1.2rem + 1.2vw,2rem);line-height:2.1;color:#f6e5b6;margin-block-start:10px;text-align:center}
-  .translation{color:var(--muted);font-size:var(--fs-0);text-align:center}
+  /* --- آمار و فهرست --- */
+  .grid-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+  .stat{padding:13px;background:var(--bg);border:1px solid var(--border);border-radius:15px}
+  .stat small{display:block;color:var(--muted);font-size:.625rem}
+  .stat strong{display:block;font-size:1.4rem;color:var(--green);margin-block-start:4px;font-variant-numeric:tabular-nums}
+  body.dark .stat strong{color:#e3c785}
+  .list{display:grid;gap:9px}
+  .item{background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:12px}
+  .list>.item,.card>.item,#khatmList>.item,#groupList>.item{margin-block-end:9px}
+  .item strong{font-size:.75rem}
+  .item p.small{margin-block-start:4px;line-height:1.9}
+  .item button{margin-block-start:8px;margin-inline-end:6px}
+  .list-row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .empty{text-align:center;color:var(--muted);font-size:.75rem;padding:18px 5px}
 
-  .segmented{
-    display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:999px;
-    background:color-mix(in oklab,var(--ink) 75%,transparent);border:1px solid var(--line);
-    & label{position:relative;display:block;margin:0}
-    & input{position:absolute;inset:0;inline-size:100%;block-size:100%;margin:0;padding:0;opacity:0;cursor:pointer;min-block-size:0}
-    & span{display:block;padding:11px;border-radius:999px;text-align:center;color:var(--muted);transition:background .25s,color .25s}
-    & label:has(input:checked) span{background:linear-gradient(135deg,var(--brass2),#bb8d3e);color:#1a2a22;font-weight:700}
-    & label:has(input:focus-visible){outline:2px solid var(--brass2);outline-offset:2px;border-radius:999px}
-  }
-  .group-picker{margin-block-start:10px;&[hidden]{display:none}}
+  /* --- تنظیمات --- */
+  .setting{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-block-end:1px solid var(--border)}
+  .setting:last-child{border:0}
+  .setting strong{font-size:.75rem}
+  .setting small{display:block;color:var(--muted);font-size:.625rem}
+  .toggle{position:relative;flex:none;inline-size:43px;block-size:24px}
+  .toggle input{position:absolute;inset:0;margin:0;opacity:0;cursor:pointer;z-index:1}
+  .toggle span{position:absolute;inset:0;border-radius:30px;background:#b6c1ba;transition:.2s}
+  .toggle span::before{content:"";position:absolute;inline-size:18px;block-size:18px;inset-inline-start:3px;inset-block-start:3px;background:#fff;border-radius:50%;transition:transform .2s}
+  .toggle input:checked+span{background:var(--green)}
+  .toggle input:checked+span::before{transform:translateX(-19px)}
+  .toggle input:focus-visible+span{outline:2px solid var(--gold);outline-offset:2px}
 
-  /* --- صحنهٔ شمارش --- */
-  .stage{text-align:center;display:flex;flex-direction:column;align-items:center}
-  .target-badge{
-    display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;
-    font-size:var(--fs-0);background:rgb(215 180 106/.12);border:1px solid var(--line);color:var(--brass2);
-    max-inline-size:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  }
-  body[data-mode=group] .target-badge{background:rgb(127 224 192/.12);color:var(--mint)}
-  .count-label{margin-block-start:14px;font-size:var(--fs-0);color:var(--muted)}
-  .count{font-size:var(--fs-count);font-weight:800;color:var(--brass2);direction:ltr;line-height:1.1;font-variant-numeric:tabular-nums}
-  .count-sub{min-block-size:1.6em;max-inline-size:36ch}
+  /* --- نوار ورود و کارت‌های کوچک --- */
+  .login-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-block-end:14px;padding:12px 14px;background:var(--soft);border:1px solid var(--border);border-radius:16px;font-size:.6875rem;color:var(--green)}
+  body.dark .login-banner{color:#d6ebdc}
+  .login-banner span{flex:1;min-inline-size:200px}
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-block-end:14px}
+  .duo>.card{margin:0;display:flex;flex-direction:column;justify-content:center;gap:2px;min-block-size:96px;text-align:center}
+  .mini-cap{font-size:.625rem;color:var(--muted)}
+  .mini-ar{font-family:Amiri,"Noto Naskh Arabic",serif;font-size:1.5rem;line-height:1.6;color:var(--green)}
+  body.dark .mini-ar{color:#e8cf96}
+  .mini-ar.sm{font-size:1rem;line-height:1.9}
+  .mini-title{font-size:.8125rem;color:var(--green)}
+  body.dark .mini-title{color:#e5c985}
+  .mini-sub{font-size:.6875rem;color:var(--muted)}
+  #asmaName{animation:fade .6s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 
-  .ring{
-    inline-size:var(--ring-size);block-size:var(--ring-size);margin-block:14px 6px;border-radius:50%;
-    display:grid;place-items:center;
-    background:conic-gradient(from 0deg,var(--ring,var(--brass2)) calc(var(--p)*1%),rgb(255 255 255/.07) 0);
-    box-shadow:0 0 60px rgb(215 180 106/.14);
-  }
-  body[data-mode=group]{--ring:var(--mint)}
-  body[data-mode=group] .ring{box-shadow:0 0 60px rgb(127 224 192/.16)}
-  body[data-mode=group] [data-action=resetCount]{display:none}
-  .big-button{
-    inline-size:calc(var(--ring-size) - 26px);block-size:calc(var(--ring-size) - 26px);border-radius:50%;border:0;padding:0;
-    background:radial-gradient(circle at 35% 30%,#2a7f63,#0b3b2e 70%);
-    box-shadow:inset 0 2px 0 rgb(255 255 255/.14),inset 0 -10px 30px rgb(0 0 0/.35),0 14px 30px rgb(0 0 0/.35);
-    font-size:clamp(1.5rem,1.2rem + 1vw,2rem);font-weight:800;color:var(--brass2);
-    user-select:none;-webkit-user-select:none;
-  }
-  .big-button:active{transform:scale(.96);box-shadow:inset 0 6px 22px rgb(0 0 0/.45)}
-  .controls{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-block-start:16px}
-  .controls button{font-size:var(--fs-0);padding:10px 14px}
-  .goal{margin-block-start:18px;text-align:start;inline-size:100%}
-  .progress{block-size:8px;background:rgb(255 255 255/.08);border-radius:99px;overflow:hidden;margin-block-start:8px}
-  .progress div{block-size:100%;inline-size:0;background:linear-gradient(90deg,#b58b3d,var(--brass2));transition:inline-size .25s ease}
+  footer{text-align:center;color:var(--muted);font-size:.625rem;padding:12px 15px 20px}
+  footer strong{color:var(--green)}
+  body.dark footer strong{color:#e5c985}
 
-  /* --- آمار --- */
-  .stat{background:rgb(4 22 18/.55);border:1px solid var(--line);padding:14px;border-radius:var(--r-md);font-size:var(--fs-0);color:var(--muted)}
-  .stat strong{display:block;color:var(--brass2);font-size:1.6rem;font-weight:800;margin-block-start:4px}
-  .grid .stat:first-child{background:linear-gradient(135deg,rgb(215 180 106/.2),rgb(21 80 63/.5))}
-  .grid .stat:first-child strong{font-size:2.4rem}
-  .item{padding:12px 4px;border-block-end:1px solid var(--line)}
-  .item:last-child{border:0}
-  .item .small{line-height:1.9}
-  .item button{margin-block-start:6px;margin-inline-end:6px;padding:8px 14px;min-block-size:40px;font-size:var(--fs-0)}
-  .auth-note{line-height:1.9}
-  .cloud-panel{margin-block-start:var(--gap);display:grid;gap:var(--gap);grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))}
-  .cloud-panel>.card{margin:0}
+  /* --- ناوبری پایین --- */
+  .nav{position:fixed;z-index:20;inset-inline:0;inset-block-end:0;background:var(--card);border-block-start:1px solid var(--border);display:flex;justify-content:center;padding:7px 3px calc(7px + env(safe-area-inset-bottom,0px))}
+  .nav-inner{inline-size:100%;max-inline-size:900px;display:grid;grid-template-columns:repeat(5,1fr);gap:3px}
+  .nav button{min-block-size:0;background:none;border:0;border-radius:12px;color:var(--muted);font-size:.5625rem;flex-direction:column;gap:4px;padding:5px 1px}
+  .nav button .ico{font-size:1.2rem;line-height:1}
+  .nav button.active{color:var(--green);font-weight:800}
+  body.dark .nav button.active{color:#e5c985}
 
-  /* --- ناوبری --- */
-  .tabs{
-    position:fixed;z-index:900;inset-inline:12px;
-    bottom:calc(12px + env(safe-area-inset-bottom,0px));
-    max-inline-size:520px;margin-inline:auto;display:flex;gap:4px;padding:6px;
-    background:rgb(7 33 28/.8);border:1px solid var(--line);border-radius:999px;
-    backdrop-filter:blur(22px) saturate(1.4);box-shadow:0 18px 40px rgb(0 0 0/.45);
-  }
-  .tabs button{flex:1;white-space:nowrap;border:0;border-radius:999px;background:transparent;padding:11px 4px;font-size:var(--fs-0);color:var(--muted)}
-  .tabs button.gold{background:linear-gradient(135deg,var(--brass2),#bb8d3e);color:#1a2a22;font-weight:700}
+  /* --- نصب و پنجره‌ها --- */
+  .install-banner{position:fixed;z-index:30;inset-inline:12px;inset-block-end:calc(86px + env(safe-area-inset-bottom,0px));max-inline-size:520px;margin-inline:auto;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;background:var(--card);border:1px solid var(--gold);border-radius:16px;box-shadow:var(--shadow)}
+  .install-text{flex:1;font-size:.6875rem;line-height:1.8}
+  .install-actions{display:flex;gap:7px;align-items:center}
 
-  /* --- نصب و مودال --- */
-  .install-banner{position:fixed;inset-inline:12px;bottom:calc(88px + env(safe-area-inset-bottom,0px));z-index:1200;max-inline-size:520px;margin-inline:auto;padding:12px 14px;border:1px solid var(--brass);border-radius:var(--r-md);background:rgb(7 33 28/.94);backdrop-filter:blur(18px);display:flex;align-items:center;gap:10px;justify-content:space-between}
-  .install-banner .install-text{font-size:var(--fs-0);line-height:1.8;flex:1}
-  .install-banner .install-actions{display:flex;gap:7px;align-items:center}
-  .install-banner button{padding:9px 12px}
-
-  dialog{
-    padding:0;border:0;background:transparent;color:inherit;margin:auto;
-    max-inline-size:100vi;max-block-size:100dvh;overflow:visible;
-    &::backdrop{background:rgb(0 0 0/.65);backdrop-filter:blur(6px)}
-    &[open]{animation:dlg .25s ease}
-  }
-  .modal-panel{position:relative;inline-size:min(92vw,480px);max-block-size:90dvh;overflow:auto;padding:26px 20px 20px;border:1px solid var(--line);border-radius:var(--r-lg);background:linear-gradient(160deg,#15503f,#071f19);box-shadow:0 24px 70px rgb(0 0 0/.6);text-align:center}
-  .modal-panel h2{font-size:1.2rem;color:var(--brass2);margin-block:8px 16px}
-  .modal-panel h3{font-size:var(--fs-1);color:var(--brass2)}
-  .modal-panel p{font-size:var(--fs-0);line-height:2}
-  .modal-close{position:absolute;inset-inline-start:12px;inset-block-start:10px;inline-size:40px;block-size:40px;padding:0;border-radius:50%;font-size:1.4rem;line-height:1}
-  .help-step-count{font-size:var(--fs-0);color:var(--muted)}
-  .help-progress{block-size:6px;background:rgb(255 255 255/.08);border-radius:99px;overflow:hidden;margin-block:18px}
-  .help-progress span{display:block;block-size:100%;inline-size:0;background:linear-gradient(90deg,#b58b3d,var(--brass2));transition:inline-size .25s ease}
+  dialog{padding:0;border:0;background:transparent;color:inherit;margin:auto;max-inline-size:100vi;max-block-size:100dvh;overflow:visible}
+  dialog::backdrop{background:rgb(0 0 0/.55);backdrop-filter:blur(4px)}
+  dialog[open]{animation:dlg .25s ease}
+  @keyframes dlg{from{opacity:0;transform:translateY(10px) scale(.98)}}
+  .modal-panel{position:relative;inline-size:min(92vw,440px);max-block-size:88dvh;overflow:auto;padding:22px 20px 20px;background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:22px;box-shadow:0 24px 70px rgb(0 0 0/.35);text-align:center}
+  .modal-panel h2{font-size:1rem;margin-block:6px 14px}
+  .modal-panel h3{font-size:.875rem;color:var(--green)}
+  body.dark .modal-panel h3{color:#e5c985}
+  .modal-panel p{font-size:.75rem;line-height:2}
+  .modal-close{position:absolute;inset-inline-start:12px;inset-block-start:10px;inline-size:36px;block-size:36px;min-block-size:0;padding:0;border-radius:50%;font-size:1.25rem}
+  .help-step-count{font-size:.625rem;color:var(--muted)}
+  .help-progress{block-size:6px;background:var(--border);border-radius:99px;overflow:hidden;margin-block:16px}
+  .help-progress span{display:block;block-size:100%;inline-size:0;background:linear-gradient(90deg,var(--green2),var(--gold));transition:inline-size .25s}
   .modal-actions{display:flex;gap:9px}
   .modal-actions button{flex:1}
-  .about-symbol{font-size:2.2rem;color:var(--brass)}
-  .memorial-card{text-align:center;border-color:rgb(215 180 106/.4);margin-block:12px}
-  .memorial-card p{margin-block:6px;color:#f1e8d4}
-  .about-contact{margin-block-start:16px;padding-block-start:12px;border-block-start:1px solid var(--line)}
-  .about-contact a{text-decoration:none;direction:ltr;unicode-bidi:embed}
+  .about-symbol{font-size:2rem;color:var(--gold)}
+  .memorial-card{margin-block:12px;text-align:center;box-shadow:none;background:var(--soft)}
+  .memorial-card h3{margin-block-end:8px}
+  .about-contact{margin-block-start:14px;padding-block-start:12px;border-block-start:1px solid var(--border)}
+  .about-contact a{direction:ltr;unicode-bidi:embed;text-decoration:none}
   .about-contact p{overflow-wrap:anywhere}
 }
 
 /* =============== RESPONSIVE =============== */
 @layer responsive{
-  /* تبلت */
-  @media (min-width:700px){
-    .counter-layout{grid-template-columns:minmax(300px,.9fr) 1.1fr;align-items:start}
-    .stage{position:sticky;inset-block-start:16px}
+  @media (max-width:419px){.duo{grid-template-columns:1fr}}
+  @media (max-width:360px){
+    .prayer-item b{font-size:.625rem}
+    .clock{font-size:1.5rem}
   }
-  /* دسکتاپ: ناوبری از پایین به بالای صفحه می‌آید */
+  @media (min-width:650px){
+    main{padding:22px}
+    .grid-stats{grid-template-columns:repeat(3,1fr)}
+    .card{padding:20px}
+    .prayer-item b{font-size:.8125rem}
+  }
+  /* دسکتاپ: صفحهٔ اول دو ستونه (شمارنده | اوقات و کارت‌ها) */
   @media (min-width:900px){
-    body{padding-block-end:24px}
-    .tabs{
-      position:sticky;inset:auto;inset-block-start:12px;
-      inline-size:max-content;max-inline-size:calc(100% - 2*var(--pad));
-      margin-block:16px 0;
-    }
-    .tabs button{padding:10px 24px;font-size:var(--fs-1)}
-    .install-banner{bottom:24px}
-    .counter-layout{grid-template-columns:minmax(360px,.85fr) 1.15fr}
+    html{font-size:112.5%}
+    .app{max-inline-size:1080px}
+    .nav-inner{max-inline-size:1080px}
+    .home-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);grid-template-rows:repeat(5,auto) 1fr;column-gap:18px;align-items:start}
+    .home-grid>*{grid-column:2}
+    .home-grid>.counter-card{grid-column:1;grid-row:1/-1;position:sticky;inset-block-start:16px}
   }
-  @media (min-width:1280px){
-    :root{--ring-size:320px}
-  }
-  /* موبایل کوچک */
-  @media (max-width:380px){
-    .tabs button{font-size:11px;padding-inline:2px}
-    .grid{gap:8px}
-  }
-  /* موبایل افقی */
   @media (max-height:520px) and (orientation:landscape){
-    :root{--ring-size:170px}
-    .count{font-size:2.6rem}
+    .count-btn{--d:130px}
   }
   @media (hover:none){button:hover{filter:none}}
-}
-
-/* =============== MOTION =============== */
-@layer motion{
-  @property --p{syntax:'<number>';inherits:true;initial-value:0}
-  .ring{transition:--p .45s cubic-bezier(.2,.8,.2,1)}
-  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-  @keyframes dlg{from{opacity:0;transform:translateY(10px) scale(.98)}}
-  ::view-transition-old(root),::view-transition-new(root){animation-duration:.18s}
   @media (prefers-reduced-motion:reduce){
     *,*::before,*::after{transition:none!important;animation:none!important}
-    ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}
   }
 }
 </style>
@@ -307,1544 +309,28 @@
 </head>
 
 <body data-mode="personal">
-
-<audio id="dhikrAudio" preload="none" playsinline></audio>
+<script>try{if(localStorage.getItem('salavat_theme')==='dark')document.body.classList.add('dark')}catch(e){}</script>
 
 <div id="installBanner" class="install-banner hidden" role="dialog" aria-label="نصب برنامه">
   <div class="install-text"><strong>صلوات شمار را نصب کنید</strong><br><span>برای دسترسی سریع‌تر، برنامه را روی دستگاه نصب کنید.</span></div>
   <div class="install-actions">
-    <button type="button" class="gold" id="installAppBtn">نصب</button>
+    <button type="button" class="green" id="installAppBtn">نصب</button>
     <button type="button" id="closeInstallBtn" aria-label="بستن">×</button>
   </div>
 </div>
 
-<header class="shell">
-  <div class="brand">
-    <h1>صلوات شمار</h1>
-    <span class="mark" aria-hidden="true">۞</span>
-  </div>
+<div class="app">
 
-  <div class="ticker">
-    <div class="asma-slider" aria-live="polite" aria-label="اسلایدر اسماء الهی">
-      <span class="asma-caption">از نام‌های زیبای خداوند</span>
-      <strong id="asmaName">الرَّحْمٰن</strong>
-      <span id="asmaMeaning">بخشاینده</span>
-    </div>
-    <div class="daily-dhikr-slider" aria-label="ذکر هر روز">
-      <span class="daily-dhikr-caption">ذکر هر روز</span>
-      <strong id="dailyDhikrName">استغفار</strong>
-      <span id="dailyDhikrText">أَسْتَغْفِرُ اللَّهَ رَبِّي وَأَتُوبُ إِلَيْهِ</span>
-    </div>
-  </div>
-
-  <div class="header-actions">
-    <button type="button" class="gold" data-action="toggleCloudPanel">☁ فضای ابری</button>
-    <button type="button" data-action="openHelp">راهنما</button>
-    <button type="button" data-action="openAbout">درباره ما</button>
-    <button type="button" id="checkUpdateBtn" data-action="checkForAppUpdate">⬆ بروزرسانی</button>
-  </div>
-  <div id="appUpdateStatus" role="status" aria-live="polite"></div>
-  <div class="network-indicator" role="status" aria-live="polite">
-    <span id="networkDot" class="network-dot offline"></span>
-    <strong id="networkLabel">در حال بررسی اتصال…</strong>
-    <span id="connectionStatus" class="cloud-status">وضعیت فضای ابری: بررسی نشده</span>
-  </div>
-</header>
-
-<!-- ناوبری: موبایل = نوار شناور پایین | دسکتاپ = نوار چسبان بالای محتوا -->
-<nav class="tabs" aria-label="بخش‌های برنامه">
-  <button class="gold" data-action="showTab" data-arg="counterTab" aria-current="page">شمارنده</button>
-  <button data-action="showTab" data-arg="statsTab">آمار</button>
-  <button data-action="showTab" data-arg="khatmTab">ختم شخصی</button>
-  <button data-action="showTab" data-arg="groupTab">ختم گروهی</button>
-  <button data-action="showTab" data-arg="settingsTab">تنظیمات</button>
-</nav>
-
-<main class="shell">
-
-<div id="cloudPanel" class="cloud-panel hidden">
-  <div class="card" id="authCard">
-    <h3 class="section-title">فضای ابری | ثبت‌نام، ورود و همگام‌سازی</h3>
-    <p class="small">برای ذخیره اطلاعات در حساب شخصی و مشارکت در ختم‌های گروهی، وارد حساب شوید.</p>
-    <input id="email" type="email" inputmode="email" autocomplete="email" placeholder="ایمیل">
-    <input id="password" type="password" autocomplete="current-password" placeholder="رمز عبور">
-    <div class="row">
-      <button class="gold" data-action="signUp">ثبت‌نام</button>
-      <button data-action="signIn">ورود</button>
-    </div>
-    <button class="full" data-action="resetPassword">بازیابی رمز عبور</button>
-    <p class="small auth-note" id="authMessage" role="status" aria-live="polite"></p>
-  </div>
-
-  <div class="card hidden" id="accountCard">
-    <div class="row">
+<header>
+  <div class="head">
+    <div class="brand">
+      <div class="brand-icon" aria-hidden="true">۞</div>
       <div>
-        <strong id="accountEmail"></strong>
-        <p class="small">حساب ابری فعال است</p>
-      </div>
-      <button data-action="signOut">خروج</button>
-    </div>
-    <button class="full" data-action="syncCloud">همگام‌سازی دستی</button>
-  </div>
-</div>
-
-<!-- ===== صفحهٔ اول: ۱) نوع ذکر ← ۲) نیت ← شمارش ===== -->
-<section id="counterTab" class="tab">
-  <div class="counter-layout">
-
-    <div class="card setup">
-      <section class="step" aria-labelledby="stepDhikr">
-        <h3 class="step-title" id="stepDhikr"><span class="step-no">۱</span>نوع ذکر</h3>
-        <select id="dhikrSelect" data-change="changeDhikr" aria-label="نوع ذکر"></select>
-        <div class="arabic" id="arabicText" lang="ar" dir="rtl"></div>
-        <div class="translation" id="translation"></div>
-      </section>
-
-      <section class="step" aria-labelledby="stepIntent">
-        <h3 class="step-title" id="stepIntent"><span class="step-no">۲</span>نوع نیت</h3>
-        <div class="segmented" role="radiogroup" aria-labelledby="stepIntent">
-          <label><input type="radio" name="mode" value="personal" checked data-change="setMode"><span>شخصی</span></label>
-          <label><input type="radio" name="mode" value="group" data-change="setMode"><span>گروهی</span></label>
-        </div>
-        <div class="group-picker" id="groupPicker" hidden>
-          <select id="groupSelect" data-change="setGroup" aria-label="ختم گروهی"></select>
-          <p class="small" id="groupHint" role="status"></p>
-        </div>
-      </section>
-    </div>
-
-    <div class="card stage">
-      <span class="target-badge" id="targetBadge">ثبت در: آمار شخصی من</span>
-      <div class="count-label" id="countLabel">شمارندهٔ شخصی</div>
-      <div class="count" id="count">۰</div>
-      <div class="count-sub small" id="countSub" role="status"></div>
-
-      <div class="ring" id="goalRing">
-        <button class="big-button" data-action="increment" aria-label="افزودن یک ذکر">ذکر</button>
-      </div>
-
-      <div class="controls">
-        <button data-action="undo">↶ بازگشت</button>
-        <button data-action="resetCount" class="danger">شروع مجدد</button>
-        <button id="audioToggle" data-action="toggleDhikrAudio" aria-pressed="true">🔊 صدا روشن</button>
-      </div>
-
-      <div class="goal">
-        <div class="row">
-          <span class="small" id="goalLabel">هدف روزانه</span>
-          <strong id="goalText">۱۰۰</strong>
-        </div>
-        <div class="progress"><div id="goalProgress"></div></div>
+        <h1>صلوات شمار</h1>
+        <p>رفیق آرام لحظه‌های معنوی تو</p>
       </div>
     </div>
-
-  </div>
-</section>
-
-<section id="statsTab" class="tab hidden">
-  <div class="tab-grid">
-    <div class="card">
-      <h3 class="section-title">گزارش فعالیت شخصی</h3>
-      <div class="grid">
-        <div class="stat">امروز<strong id="todayStat">۰</strong></div>
-        <div class="stat">این هفته<strong id="weekStat">۰</strong></div>
-        <div class="stat">این ماه<strong id="monthStat">۰</strong></div>
-        <div class="stat">مجموع کل<strong id="totalStat">۰</strong></div>
-        <div class="stat">روزهای فعال<strong id="activeDays">۰</strong></div>
-        <div class="stat">رکورد روزانه<strong id="recordStat">۰</strong></div>
-      </div>
-    </div>
-    <div class="card">
-      <h3 class="section-title">هفت روز اخیر</h3>
-      <div id="weeklyHistory"></div>
-    </div>
-  </div>
-</section>
-
-<section id="khatmTab" class="tab hidden">
-  <div class="tab-grid">
-    <div class="card">
-      <h3 class="section-title">ساخت ختم شخصی</h3>
-      <input id="khatmTitle" placeholder="عنوان ختم">
-      <input id="khatmTarget" type="number" inputmode="numeric" min="1" value="1000" placeholder="تعداد هدف">
-      <input id="khatmIntention" placeholder="نیت ختم">
-      <button class="gold full" data-action="createKhatm">ایجاد ختم</button>
-    </div>
-    <div class="card">
-      <h3 class="section-title">ختم‌های من</h3>
-      <div id="khatmList"></div>
-    </div>
-  </div>
-</section>
-
-<section id="groupTab" class="tab hidden">
-  <div class="tab-grid">
-    <div class="card">
-      <h3 class="section-title">ساخت ختم گروهی</h3>
-      <input id="groupName" placeholder="نام ختم گروهی">
-      <input id="groupTarget" type="number" inputmode="numeric" value="10000" placeholder="هدف کل">
-      <button class="gold full" data-action="createGroup">ساخت گروه</button>
-    </div>
-
-    <div class="card">
-      <h3 class="section-title">عضویت با کد دعوت</h3>
-      <input id="inviteCode" placeholder="کد دعوت">
-      <button class="full" data-action="joinGroup">عضویت در گروه</button>
-    </div>
-
-    <div class="card">
-      <h3 class="section-title">آمار کلی ختم‌های گروهی</h3>
-      <div class="grid">
-        <div class="stat">مجموع صلوات گروه‌ها<strong id="allGroupTotal">۰</strong></div>
-        <div class="stat">تعداد گروه‌های فعال<strong id="activeGroupCount">۰</strong></div>
-        <div class="stat">مجموع اهداف گروه‌ها<strong id="allGroupTarget">۰</strong></div>
-        <div class="stat">درصد پیشرفت کل<strong id="allGroupPercent">۰٪</strong></div>
-      </div>
-      <p class="small auth-note">این آمار بر اساس مشارکت‌هایی است که اعضا در فضای ابری ثبت کرده‌اند.</p>
-    </div>
-    <div class="card">
-      <h3 class="section-title">گروه‌های من و آمار هر گروه</h3>
-      <div id="groupList"></div>
-    </div>
-  </div>
-</section>
-
-<section id="settingsTab" class="tab hidden">
-  <div class="tab-grid">
-    <div class="card">
-      <h3 class="section-title">تنظیمات برنامه</h3>
-      <label for="dailyGoal">هدف روزانه</label>
-      <input type="number" inputmode="numeric" id="dailyGoal" min="1" value="100" data-change="setGoal">
-      <p class="small" id="systemVoiceStatus">با فعال بودن صدا، پس از هر بار لمس دکمه «ذکر»، متن ذکر با صدای موتور گفتار سیستم‌عامل خوانده می‌شود.</p>
-      <label><input type="checkbox" id="vibration" checked data-change="saveSettings">لرزش هنگام شمارش</label>
-      <label><input type="checkbox" id="sound" data-change="saveSettings">بیپ هنگام شمارش</label>
-      <label><input type="checkbox" id="touchMode" data-change="saveSettings">شمارش با لمس کل صفحه</label>
-    </div>
-
-    <div class="card">
-      <h3 class="section-title">پشتیبان‌گیری و بازیابی</h3>
-      <button class="gold full" data-action="exportBackup">دریافت فایل پشتیبان JSON</button>
-      <input type="file" accept=".json,application/json" id="backupFile">
-      <button class="full" data-action="importBackup">ادغام و بازیابی اطلاعات</button>
-    </div>
-  </div>
-</section>
-
-</main>
-
-<footer>توسعه و برنامه نویسی هادی رسولی · نسخه <span id="footerVersion"></span></footer>
-
-<dialog id="helpModal" aria-labelledby="helpTitle">
-  <div class="modal-panel">
-    <button class="modal-close" type="button" data-action="closeModal" data-arg="helpModal" aria-label="بستن">×</button>
-    <h2 id="helpTitle">راهنمای استفاده از صلوات شمار</h2>
-    <div class="help-step-count" id="helpStepCount"></div>
-    <h3 id="helpStepTitle"></h3>
-    <p id="helpStepText"></p>
-    <div class="help-progress"><span id="helpProgress"></span></div>
-    <div class="modal-actions">
-      <button type="button" data-action="changeHelpStep" data-arg="-1" id="helpPrev">مرحله قبل</button>
-      <button type="button" class="gold" data-action="changeHelpStep" data-arg="1" id="helpNext">مرحله بعد</button>
-    </div>
-  </div>
-</dialog>
-
-<dialog id="aboutModal" aria-labelledby="aboutTitle">
-  <div class="modal-panel about-panel">
-    <button class="modal-close" type="button" data-action="closeModal" data-arg="aboutModal" aria-label="بستن">×</button>
-    <div class="about-symbol" aria-hidden="true">۞</div>
-    <h2 id="aboutTitle">درباره صلوات شمار</h2>
-    <div class="card memorial-card">
-      <h3 class="section-title">هدیه‌ای از جنس صلوات</h3>
-      <p>این اپلیکیشن به یاد زنده‌یاد عبدالعزیز رسولی منتشر شده است.</p>
-      <p>کاربر گرامی، برای شادی روح این مرحوم مغفور، یک صلوات هدیه بفرمایید.</p>
-    </div>
-    <p><strong>توسعه و برنامه نویسی هادی رسولی</strong></p>
-    <p>ورژن <strong id="appVersionText"></strong></p>
-    <p>انتشار: آبان ماه ۱۴۰۵</p>
-    <div class="about-contact">
-      <h3 class="section-title">ارتباط با ما</h3>
-      <p>ایمیل: <a href="mailto:HADI76DEN@GMAIL.COM">HADI76DEN@GMAIL.COM</a></p>
-      <p>صفحه اینستاگرام: <a href="https://www.instagram.com/the.rasuoli/" target="_blank" rel="noopener noreferrer">THE.RASUOLI</a></p>
-    </div>
-  </div>
-</dialog>
-
-<script type="module">
-// =======================================
-// SUPABASE CONFIGURATION — مقادیر پروژه موجود حفظ شده‌اند؛ هیچ جدول/رکوردی حذف نمی‌شود
-// =======================================
-
-const SUPABASE_URL =
-'https://ywysztcedqralijeccmz.supabase.co';
-
-const SUPABASE_KEY =
-'sb_publishable_H4KXnNLT85Q5zUdmBfz8Hw_-dDfgfjT';
-
-// اگر کتابخانه Supabase بارگذاری نشود، شمارش و ذخیره‌سازی محلی همچنان کار می‌کند.
-let db = null;
-try {
-  if (window.supabase && typeof window.supabase.createClient === 'function') {
-    db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  }
-} catch (e) {
-  console.error('راه‌اندازی Supabase ناموفق بود:', e);
-}
-
-// =======================================
-// DHIKR LIBRARY
-// =======================================
-
-const dhikrs = [
- ['صلوات','اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ وَآلِ مُحَمَّدٍ','خدایا بر محمد و خاندان محمد درود فرست'],
- ['استغفار','أَسْتَغْفِرُ اللَّهَ رَبِّي وَأَتُوبُ إِلَيْهِ','از خداوند آمرزش می‌خواهم و به سوی او بازمی‌گردم'],
- ['تسبیحات اربعه','سُبْحَانَ اللَّهِ وَالْحَمْدُ لِلَّهِ وَلَا إِلَهَ إِلَّا اللَّهُ وَاللَّهُ أَكْبَرُ','پاکی از آن خداست و ستایش برای اوست'],
- ['سبحان الله','سُبْحَانَ اللَّهِ','خداوند پاک و منزه است'],
- ['الحمدلله','الْحَمْدُ لِلَّهِ','همه ستایش‌ها از آن خداست'],
- ['الله اکبر','اللَّهُ أَكْبَرُ','خداوند بزرگ‌تر است'],
- ['لا اله الا الله','لَا إِلَهَ إِلَّا اللَّهُ','معبودی جز خدا نیست'],
- ['یا رحمان','يَا رَحْمَٰنُ','ای بخشنده'],
- ['یا رحیم','يَا رَحِيمُ','ای مهربان'],
- ['یا کریم','يَا كَرِيمُ','ای بزرگوار'],
- ['یا لطیف','يَا لَطِيفُ','ای مهربان و لطیف'],
- ['یا رزاق','يَا رَزَّاقُ','ای روزی‌رسان'],
- ['یا فتاح','يَا فَتَّاحُ','ای گشاینده'],
- ['یا نور','يَا نُورُ','ای نور'],
- ['یا سلام','يَا سَلَامُ','ای سرچشمه سلامتی'],
- ['یا غفور','يَا غَفُورُ','ای بسیار آمرزنده'],
- ['یا ودود','يَا وَدُودُ','ای دوستدار'],
- ['یا حی','يَا حَيُّ','ای زنده'],
- ['یا قیوم','يَا قَيُّومُ','ای پاینده'],
- ['حسبی الله','حَسْبِيَ اللَّهُ','خداوند مرا کافی است'],
- ['توکلت علی الله','تَوَكَّلْتُ عَلَى اللَّهِ','بر خدا توکل کردم'],
- ['لا حول و لا قوة','لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ','هیچ نیرو و توانی جز به خدا نیست'],
- ['رب اغفر لی','رَبِّ اغْفِرْ لِي','پروردگارا مرا بیامرز'],
- ['یا الله','يَا اللَّهُ','ای خدا'],
- ['یا حی یا قیوم','يَا حَيُّ يَا قَيُّومُ','ای زنده و پاینده'],
- ['ربنا آتنا','رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً','پروردگارا در دنیا به ما نیکی عطا کن'],
- ['سبحان ربی العظیم','سُبْحَانَ رَبِّيَ الْعَظِيمِ','پروردگار بزرگ من پاک و منزه است'],
- ['سبحان ربی الاعلی','سُبْحَانَ رَبِّيَ الْأَعْلَى','پروردگار بلندمرتبه من پاک و منزه است'],
- ['یا شکور','يَا شَكُورُ','ای بسیار سپاس‌پذیر'],
- ['یا هادی','يَا هَادِي','ای هدایتگر']
-];
-
-// =======================================
-// LOCAL STATE
-// =======================================
-
-const KEY = 'salavat_shomar_v3';
-
-function dayKey(d=new Date()){
-  return d.getFullYear()+'-'+
-    String(d.getMonth()+1).padStart(2,'0')+'-'+
-    String(d.getDate()).padStart(2,'0');
-}
-const todayKey=()=>dayKey();
-
-let data = {
-  count:0,total:0,goal:100,selected:0,daily:{},khatms:[],
-  vibration:true,sound:false,touchMode:false,voiceEnabled:true,history:[]
-};
-
-let user = null;
-let undoSnapshot = null;
-let syncTimer = null;
-let groups = [];
-let groupsLoaded = false;
-
-function normalizeData(source={}){
-  const base={
-    count:0,total:0,goal:100,selected:0,daily:{},khatms:[],
-    vibration:true,sound:false,touchMode:false,voiceEnabled:true,history:[],
-    updatedAt:0,uid:null,deletedKhatms:[],mode:'personal',groupId:null
-  };
-  const out={...base,...(source&&typeof source==='object'?source:{})};
-  out.count=Math.max(0,Number(out.count)||0);
-  out.total=Math.max(0,Number(out.total)||0);
-  out.goal=Math.max(1,Number(out.goal)||100);
-  out.selected=Math.min(dhikrs.length-1,Math.max(0,Number(out.selected)||0));
-  out.daily=out.daily&&typeof out.daily==='object'&&!Array.isArray(out.daily)?out.daily:{};
-  out.khatms=Array.isArray(out.khatms)?out.khatms:[];
-  out.history=Array.isArray(out.history)?out.history:[];
-  out.vibration=out.vibration!==false;
-  out.sound=!!out.sound;
-  out.touchMode=!!out.touchMode;
-  out.voiceEnabled=out.voiceEnabled!==false;
-  out.updatedAt=Number(out.updatedAt)||0;
-  out.uid=out.uid||null;
-  out.mode=out.mode==='group'?'group':'personal';
-  out.groupId=typeof out.groupId==='string'?out.groupId:null;
-  out.deletedKhatms=Array.isArray(out.deletedKhatms)?out.deletedKhatms.slice(-200):[];
-  return out;
-}
-
-function loadLocal(){
-  try{
-    const saved=JSON.parse(localStorage.getItem(KEY));
-    if(saved) data=normalizeData(saved);
-  }catch(e){
-    console.warn('ذخیره محلی قابل خواندن نیست:',e);
-  }
-}
-
-function saveLocalOnly(){
-  try{localStorage.setItem(KEY,JSON.stringify(data));}
-  catch(e){console.error('ذخیره محلی انجام نشد:',e);}
-  render();
-}
-
-function saveLocal(){
-  data=normalizeData(data);
-  saveLocalOnly();
-  scheduleCloudSave();
-}
-
-// ادغام محافظه‌کارانه: داده ابری حذف یا با داده خالی جایگزین نمی‌شود.
-function mergeStates(localState,cloudState){
-  const local=normalizeData(localState);
-  const cloud=normalizeData(cloudState);
-  const merged={...local,...cloud};
-  merged.count=local.updatedAt>=cloud.updatedAt?local.count:cloud.count;
-  merged.total=Math.max(local.total,cloud.total);
-  merged.goal=cloud.goal||local.goal||100;
-  merged.selected=Number.isInteger(cloud.selected)?cloud.selected:local.selected;
-  merged.daily={...local.daily};
-  for(const [day,value] of Object.entries(cloud.daily)){
-    merged.daily[day]=Math.max(Number(merged.daily[day])||0,Number(value)||0);
-  }
-  const historyMap=new Map();
-  [...local.history,...cloud.history].forEach(item=>{
-    if(item&&typeof item==='object') historyMap.set(JSON.stringify(item),item);
-  });
-  merged.history=[...historyMap.values()].slice(-500);
-  const khatmMap=new Map();
-  [...local.khatms,...cloud.khatms].forEach(k=>{
-    if(!k||!k.id)return;
-    const old=khatmMap.get(k.id);
-    khatmMap.set(k.id,old?{...old,...k,current_count:Math.max(Number(old.current_count)||0,Number(k.current_count)||0)}:k);
-  });
-  merged.deletedKhatms=[...new Set([...local.deletedKhatms,...cloud.deletedKhatms])].slice(-200);
-  merged.khatms=[...khatmMap.values()].filter(k=>!merged.deletedKhatms.includes(k.id));
-  merged.updatedAt=Math.max(local.updatedAt,cloud.updatedAt);
-  merged.uid=local.uid||cloud.uid||null;
-  // نیت و گروه انتخابی، تنظیم همین دستگاه است
-  merged.mode=local.mode;
-  merged.groupId=local.groupId||cloud.groupId;
-  return normalizeData(merged);
-}
-
-function todayCount(){
-  return Number(data.daily[todayKey()] || 0);
-}
-
-const faNum=new Intl.NumberFormat('fa-IR');
-function number(n){
-  return faNum.format(Number(n || 0));
-}
-
-// =======================================
-// APP VERSION + PWA UPDATE
-// =======================================
-const APP_VERSION = (document.querySelector('meta[name="app-version"]')||{}).content || '1.4.0';
-const APP_VERSION_DISPLAY = APP_VERSION.replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
-let appUpdateReloading = false;
-
-function setUpdateStatus(message){
-  const el=document.getElementById('appUpdateStatus');
-  if(el)el.textContent=message;
-}
-
-async function checkForAppUpdate(){
-  const btn=document.getElementById('checkUpdateBtn');
-  if(!('serviceWorker' in navigator)){
-    setUpdateStatus('بروزرسانی خودکار در این مرورگر پشتیبانی نمی‌شود.');
-    return;
-  }
-  if(!navigator.onLine){
-    setUpdateStatus('برای بررسی بروزرسانی، ابتدا به اینترنت متصل شوید.');
-    return;
-  }
-  if(btn){btn.disabled=true;btn.textContent='در حال بررسی…';}
-  setUpdateStatus('در حال بررسی نسخه جدید صلوات شمار…');
-  try{
-    const reg=await navigator.serviceWorker.getRegistration('./');
-    if(!reg){
-      setUpdateStatus('سرویس بروزرسانی هنوز فعال نیست؛ صفحه را یک‌بار با اینترنت باز کنید.');
-      return;
-    }
-    await reg.update();
-    if(reg.waiting){
-      setUpdateStatus('نسخه جدید دریافت شد؛ در حال بروزرسانی…');
-      reg.waiting.postMessage({type:'SKIP_WAITING'});
-      return;
-    }
-    const installing=reg.installing;
-    if(installing){
-      await new Promise(resolve=>{
-        const done=()=>{
-          if(['installed','activated','redundant'].includes(installing.state)){
-            installing.removeEventListener('statechange',done);
-            resolve();
-          }
-        };
-        installing.addEventListener('statechange',done);
-        done();
-      });
-      if(reg.waiting){
-        setUpdateStatus('نسخه جدید دریافت شد؛ در حال بروزرسانی…');
-        reg.waiting.postMessage({type:'SKIP_WAITING'});
-        return;
-      }
-    }
-    setUpdateStatus('کاربر گرامی، شما از آخرین نسخه صلوات شمار استفاده می‌کنید. (نسخه '+APP_VERSION_DISPLAY+')');
-  }catch(error){
-    console.error('بررسی بروزرسانی ناموفق بود:',error);
-    setUpdateStatus('بررسی بروزرسانی انجام نشد؛ اتصال اینترنت را بررسی و دوباره تلاش کنید.');
-  }finally{
-    if(btn){btn.disabled=false;btn.textContent='⬆ بروزرسانی';}
-  }
-}
-
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.addEventListener('controllerchange',()=>{
-    if(appUpdateReloading)return;
-    appUpdateReloading=true;
-    window.location.reload();
-  });
-}
-
-// =======================================
-// INITIALIZE
-// =======================================
-
-function syncControls(){
-  const s=document.getElementById('dhikrSelect');
-  s.value=data.selected;
-  const d=dhikrs[data.selected];
-  if(d){
-    document.getElementById('arabicText').textContent=d[1];
-    document.getElementById('translation').textContent=d[2];
-  }
-  document.getElementById('dailyGoal').value=data.goal;
-  document.getElementById('vibration').checked=data.vibration;
-  document.getElementById('sound').checked=data.sound;
-  document.getElementById('touchMode').checked=data.touchMode;
-  const radio=document.querySelector(`input[name=mode][value=${data.mode}]`);
-  if(radio)radio.checked=true;
-  updateAudioButton();
-  renderGroupPicker();
-}
-
-function init(){
-  const versionEl=document.getElementById('appVersionText');
-  if(versionEl)versionEl.textContent=APP_VERSION_DISPLAY;
-  const footerVer=document.getElementById('footerVersion');
-  if(footerVer)footerVer.textContent=APP_VERSION_DISPLAY;
-  loadLocal();
-  const select = document.getElementById('dhikrSelect');
-
-  dhikrs.forEach((d,i)=>{
-    const o = document.createElement('option');
-    o.value = i;
-    o.textContent = d[0];
-    select.appendChild(o);
-  });
-
-  syncControls();
-  updateNetworkStatus();
-  window.addEventListener('online',updateNetworkStatus);
-  window.addEventListener('offline',updateNetworkStatus);
-
-  changeDhikr();
-  render();
-  loadAuth();
-
-  document.addEventListener('keydown',e=>{
-    if(e.code==='Space' && ['BODY','HTML'].includes(document.activeElement.tagName) &&
-       !document.getElementById('counterTab').classList.contains('hidden') &&
-       document.querySelector('dialog[open]')===null){
-      e.preventDefault();
-      increment();
-    }
-  });
-
-  document.addEventListener('click',e=>{
-    if(data.touchMode &&
-       !e.target.closest('button,input,select,textarea,label,a,[role=button]') &&
-       !e.target.closest('.tabs,dialog,.install-banner,header,#cloudPanel') &&
-       !document.getElementById('counterTab').classList.contains('hidden')){
-      increment();
-    }
-  });
-}
-
-// =======================================
-// COUNTER — شخصی: آمار شخصی | گروهی: ختم گروه
-// =======================================
-
-function increment(amount=1){
-  const n=Number(amount);
-  if(!Number.isFinite(n)||n<=0||n>1000000)return;
-  if(data.mode==='group')return incrementGroup(n);
-  lastAction=null;
-  undoSnapshot=JSON.stringify(data);
-  data.count+=n;
-  data.total+=n;
-  data.daily[todayKey()]=(Number(data.daily[todayKey()])||0)+n;
-  data.history.push({date:todayKey(),count:n,dhikr:data.selected,at:new Date().toISOString()});
-  if(data.history.length>500)data.history=data.history.slice(-500);
-
-  // هر ختم شخصی فعال سهم خودش را دریافت می‌کند.
-  data.khatms.forEach(k=>{
-    if(k.status==='active'){
-      k.current_count=(Number(k.current_count)||0)+n;
-      if(k.current_count>=Number(k.target_count))k.status='completed';
-    }
-  });
-  feedback();
-  data.updatedAt=Date.now();
-  saveLocal();
-}
-
-function undo(){
-  if(lastAction?.mode==='group'){
-    const {gid,n}=lastAction;lastAction=null;
-    if((groupPending[gid]||0)>=n){
-      groupPending[gid]-=n;if(!groupPending[gid])delete groupPending[gid];
-      const g=groups.find(x=>x.id===gid);
-      if(g){g.current_total=Math.max(0,(g.current_total||0)-n);g.my_count=Math.max(0,(g.my_count||0)-n);}
-      savePending();render();
-    }
-    return;
-  }
-  if(!undoSnapshot) return;
-  const keepMode=data.mode,keepGroup=data.groupId;
-  data = JSON.parse(undoSnapshot);
-  data.mode=keepMode;data.groupId=keepGroup;
-  undoSnapshot=null;
-  data.updatedAt=Date.now();
-  saveLocal();
-}
-
-function resetCount(){
-  if(data.mode==='group')return;
-  if(!confirm('فقط شمارنده فعلی صفر شود؟ آمار روزانه و مجموع کل حفظ می‌شوند.'))return;
-  undoSnapshot=JSON.stringify(data);
-  data.count=0;
-  data.updatedAt=Date.now();
-  saveLocal();
-}
-
-function changeDhikr(){
-  const select=document.getElementById('dhikrSelect');
-  const index=Number(select.value);
-  if(!Number.isInteger(index)||!dhikrs[index])return;
-  data.selected=index;
-  const d=dhikrs[index];
-  document.getElementById('arabicText').textContent=d[1];
-  document.getElementById('translation').textContent=d[2];
-  saveLocal();
-}
-
-function updateAudioButton(){
-  const btn=document.getElementById('audioToggle');
-  if(!btn)return;
-  btn.textContent=data.voiceEnabled?'🔊 صدا روشن':'🔇 صدا خاموش';
-  btn.setAttribute('aria-pressed',String(data.voiceEnabled));
-}
-function toggleDhikrAudio(){
-  data.voiceEnabled=!data.voiceEnabled;
-  const audio=document.getElementById('dhikrAudio');
-  if(!data.voiceEnabled){
-    try{window.speechSynthesis?.cancel();}catch(e){}
-    if(audio){
-      audio.pause();
-      if(audio.src && audio.src.startsWith('blob:')) URL.revokeObjectURL(audio.src);
-      audio.removeAttribute('src');
-      audio.load();
-    }
-  }
-  updateAudioButton();
-  saveLocal();
-}
-
-let systemVoices=[];
-function refreshSystemVoices(){
-  try{ systemVoices=window.speechSynthesis.getVoices()||[]; }catch(e){ systemVoices=[]; }
-}
-if('speechSynthesis' in window){
-  refreshSystemVoices();
-  window.speechSynthesis.onvoiceschanged=refreshSystemVoices;
-}
-
-function speakDhikr(){
-  if(!data.voiceEnabled) return;
-  if(!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance==='undefined'){
-    showAudioError('گفتار سیستم‌عامل در این مرورگر در دسترس نیست.');
-    return;
-  }
-  const textToSpeak=(dhikrs[data.selected] && dhikrs[data.selected][1]) || 'اللهم صل على محمد وآل محمد';
-  try{
-    refreshSystemVoices();
-    window.speechSynthesis.cancel();
-    if(window.speechSynthesis.paused) window.speechSynthesis.resume();
-
-    const utterance=new SpeechSynthesisUtterance(textToSpeak);
-    utterance.lang='ar-SA';
-    utterance.rate=0.9;
-    utterance.pitch=1;
-    utterance.volume=1;
-
-    const preferred=systemVoices.find(v=>/^ar/i.test(v.lang)) ||
-                    systemVoices.find(v=>/arabic|arab/i.test(v.name)) ||
-                    systemVoices.find(v=>/^fa/i.test(v.lang)) ||
-                    systemVoices[0];
-    if(preferred) utterance.voice=preferred;
-
-    utterance.onstart=()=>clearAudioError();
-    utterance.onend=clearAudioError;
-    utterance.onerror=(e)=>{
-      if(e.error==='canceled'||e.error==='interrupted')return;
-      console.warn('TTS error:',e);
-      showAudioError('صدای گفتار اجرا نشد. صدای خروجی دستگاه و نصب بودن یک صدای عربی را بررسی کنید.');
-    };
-
-    window.speechSynthesis.speak(utterance);
-    setTimeout(()=>{ try{ if(window.speechSynthesis.paused) window.speechSynthesis.resume(); }catch(e){} },100);
-  }catch(err){
-    console.error('System TTS failed:',err);
-    showAudioError('گفتار سیستم‌عامل اجرا نشد. تنظیمات صدای دستگاه و مرورگر را بررسی کنید.');
-  }
-}
-
-function showAudioError(message){
-  let status=document.getElementById('audioStatus');
-  if(!status){
-    status=document.createElement('div');
-    status.id='audioStatus';
-    status.className='small';
-    status.setAttribute('role','status');
-    status.style.cssText='color:#f3dda1;margin:8px auto 0;text-align:center;max-width:440px;inline-size:100%';
-    const controls=document.querySelector('.controls');
-    if(controls && controls.parentNode)controls.insertAdjacentElement('afterend',status);
-  }
-  status.textContent=message;
-}
-function clearAudioError(){
-  const status=document.getElementById('audioStatus');
-  if(status)status.textContent='';
-}
-
-function setGoal(v){
-  data.goal=Math.max(1,Number(v)||100);
-  saveLocal();
-}
-
-function saveSettings(){
-  data.vibration=document.getElementById('vibration').checked;
-  data.sound=document.getElementById('sound').checked;
-  data.touchMode=document.getElementById('touchMode').checked;
-  saveLocal();
-}
-
-// =======================================
-// RENDER
-// =======================================
-
-function render(){
-  const pct=renderCounter();
-  document.getElementById('goalProgress').style.width=pct+'%';
-  const ring=document.getElementById('goalRing');
-  if(ring)ring.style.setProperty('--p',pct);
-
-  document.getElementById('todayStat').textContent=number(todayCount());
-  document.getElementById('totalStat').textContent=number(data.total);
-
-  const now=new Date();
-  const month=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
-  let monthTotal=0,weekTotal=0,active=0,record=0;
-  const weekKeys=new Set();
-  for(let i=0;i<7;i++){
-    const w=new Date();w.setDate(w.getDate()-i);
-    weekKeys.add(dayKey(w));
-  }
-
-  Object.entries(data.daily).forEach(([date,count])=>{
-    const safeCount=Math.max(0,Number(count)||0);
-    if(date.startsWith(month)) monthTotal+=safeCount;
-    if(safeCount>0) active++;
-    record=Math.max(record,safeCount);
-    if(weekKeys.has(date)) weekTotal+=safeCount;
-  });
-
-  document.getElementById('weekStat').textContent=number(weekTotal);
-  document.getElementById('monthStat').textContent=number(monthTotal);
-  document.getElementById('activeDays').textContent=number(active);
-  document.getElementById('recordStat').textContent=number(record);
-
-  const history=document.getElementById('weeklyHistory');
-  history.replaceChildren();
-  for(let i=6;i>=0;i--){
-    const d=new Date();
-    d.setDate(d.getDate()-i);
-    const div=document.createElement('div');
-    div.className='item';
-    div.textContent=d.toLocaleDateString('fa-IR')+' — '+number(data.daily[dayKey(d)]||0)+' ذکر';
-    history.appendChild(div);
-  }
-
-  renderKhatms();
-}
-
-// =======================================
-// PERSONAL KHATMS
-// =======================================
-
-async function createKhatm(){
-  const title=document.getElementById('khatmTitle').value.trim();
-  const target=Number(document.getElementById('khatmTarget').value);
-  const intention=document.getElementById('khatmIntention').value.trim();
-  if(!title||!Number.isSafeInteger(target)||target<=0)return alert('عنوان و هدف معتبر وارد کن');
-  const k={id:crypto.randomUUID(),title,target_count:target,current_count:0,intention,status:'active'};
-  data.khatms.push(k);
-  saveLocal();
-  document.getElementById('khatmTitle').value='';
-  document.getElementById('khatmIntention').value='';
-  if(user&&db){
-    const {error}=await db.from('khatms').insert({
-      id:k.id,user_id:user.id,title:k.title,target_count:k.target_count,current_count:0,intention:k.intention
-    });
-    if(error){
-      document.getElementById('connectionStatus').textContent='ختم روی دستگاه ذخیره شد؛ ذخیره ابری ناموفق بود';
-      alert('ختم روی دستگاه باقی ماند، اما در فضای ابری ذخیره نشد: '+error.message);
-    }
-  }
-}
-
-function renderKhatms(){
-  const el=document.getElementById('khatmList');
-  el.replaceChildren();
-  if(!data.khatms.length){
-    const p=document.createElement('p');
-    p.className='small';
-    p.textContent='هنوز ختم شخصی نساخته‌اید.';
-    el.appendChild(p);
-    return;
-  }
-
-  data.khatms.forEach(k=>{
-    const target=Math.max(1,Number(k.target_count)||1);
-    const current=Math.max(0,Number(k.current_count)||0);
-    const p=Math.min(100,current/target*100);
-    const div=document.createElement('div');
-    div.className='item';
-
-    const title=document.createElement('strong');
-    title.textContent=k.title;
-
-    const detail=document.createElement('p');
-    detail.className='small';
-    detail.textContent=number(current)+' از '+number(target)+' · '+(k.status==='completed'?'تکمیل‌شده':'در حال انجام');
-
-    const bar=document.createElement('div');
-    bar.className='progress';
-    const fill=document.createElement('div');
-    fill.style.width=p+'%';
-    bar.appendChild(fill);
-
-    const remove=document.createElement('button');
-    remove.textContent='حذف ختم';
-    remove.onclick=()=>deleteKhatm(k.id);
-
-    div.append(title,detail,bar,remove);
-    el.appendChild(div);
-  });
-}
-
-async function deleteKhatm(id){
-  if(!confirm('این ختم حذف شود؟')) return;
-  data.khatms=data.khatms.filter(k=>k.id!==id);
-  data.deletedKhatms=[...data.deletedKhatms,id].slice(-200);
-  saveLocal();
-  if(user&&db){
-    await db.from('khatms').delete().eq('id',id);
-  }
-}
-
-// =======================================
-// CLOUD PANEL + NETWORK STATUS
-// =======================================
-
-function toggleCloudPanel(){
-  const panel=document.getElementById('cloudPanel');
-  panel.classList.toggle('hidden');
-  if(!panel.classList.contains('hidden')){
-    panel.scrollIntoView({behavior:'smooth',block:'start'});
-  }
-}
-function updateNetworkStatus(){
-  const online=navigator.onLine;
-  const dot=document.getElementById('networkDot');
-  const label=document.getElementById('networkLabel');
-  if(!dot||!label)return;
-  dot.classList.toggle('online',online);
-  dot.classList.toggle('offline',!online);
-  label.textContent=online?'اینترنت متصل است':'آفلاین — بدون اینترنت';
-  if(!online)document.getElementById('connectionStatus').textContent='وضعیت فضای ابری: در حالت آفلاین';
-  else if(!user)document.getElementById('connectionStatus').textContent='وضعیت فضای ابری: برای همگام‌سازی وارد شوید';
-}
-
-// =======================================
-// AUTHENTICATION
-// =======================================
-
-function authMessage(t){
-  document.getElementById('authMessage').textContent=t;
-}
-
-async function signUp(){
-  if(!db) return authMessage('کتابخانه اتصال ابری بارگذاری نشده است؛ شمارش محلی فعال است. اتصال اینترنت را بررسی و صفحه را دوباره باز کنید.');
-  const email=document.getElementById('email').value.trim();
-  const password=document.getElementById('password').value;
-  if(!email || password.length<6) return authMessage('ایمیل و رمز حداقل ۶ کاراکتری وارد کن');
-
-  const {data:d,error}=await db.auth.signUp({
-    email,password,
-    options:{data:{display_name:email.split('@')[0]}}
-  });
-
-  if(error) return authMessage(error.message);
-
-  authMessage(d.session?'ثبت‌نام موفق بود':'ثبت‌نام انجام شد. ایمیل خود را برای تأیید بررسی کن.');
-}
-
-async function signIn(){
-  if(!db) return authMessage('کتابخانه اتصال ابری بارگذاری نشده است؛ شمارش محلی فعال است. اتصال اینترنت را بررسی و صفحه را دوباره باز کنید.');
-  const email=document.getElementById('email').value.trim();
-  const password=document.getElementById('password').value;
-
-  const {error}=await db.auth.signInWithPassword({email,password});
-  if(error) return authMessage(error.message);
-  authMessage('ورود موفق؛ در حال دریافت اطلاعات شما…');
-}
-
-async function resetPassword(){
-  if(!db) return authMessage('اتصال ابری در دسترس نیست؛ اتصال اینترنت را بررسی کنید.');
-  const email=document.getElementById('email').value.trim();
-  if(!email) return authMessage('ابتدا ایمیل را وارد کن');
-
-  const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo:location.href});
-  authMessage(error?error.message:'لینک بازیابی رمز ارسال شد.');
-}
-
-async function signOut(){
-  if(!db) return;
-  await db.auth.signOut();
-}
-
-let activeUserId=null;
-let authListenerRegistered=false;
-
-async function loadAuth(){
-  if(!db){
-    authMessage('شمارش و ذخیره‌سازی روی همین دستگاه فعال است؛ برای ورود و همگام‌سازی ابری، اتصال اینترنت و بارگذاری کتابخانه Supabase لازم است.');
-    return;
-  }
-  try{
-    const {data:d,error}=await db.auth.getSession();
-    if(error)throw error;
-    if(d.session)await setUser(d.session.user);
-  }catch(e){
-    document.getElementById('connectionStatus').textContent='وضعیت فضای ابری: در دسترس نیست؛ ذخیره محلی فعال است';
-    console.error(e);
-  }
-  if(!authListenerRegistered){
-    authListenerRegistered=true;
-    db.auth.onAuthStateChange((event,session)=>{
-      setTimeout(()=>{
-        if(event==='PASSWORD_RECOVERY'){
-          const np=prompt('رمز عبور جدید را وارد کنید (حداقل ۶ کاراکتر):');
-          if(np&&np.length>=6)db.auth.updateUser({password:np}).then(({error})=>alert(error?error.message:'رمز عبور تغییر کرد.'));
-        }
-        if(session?.user)setUser(session.user);
-        else{
-          activeUserId=null;user=null;groups=[];groupsLoaded=false;groupPending={};
-          renderGroups();
-          document.getElementById('authCard').classList.remove('hidden');
-          document.getElementById('accountCard').classList.add('hidden');
-          document.getElementById('connectionStatus').textContent='وضعیت فضای ابری: حساب خارج شده؛ ذخیره محلی فعال است';
-        }
-      },0);
-    });
-  }
-}
-
-async function setUser(u){
-  if(!u)return;
-  user=u;
-  document.getElementById('authCard').classList.add('hidden');
-  document.getElementById('accountCard').classList.remove('hidden');
-  document.getElementById('accountEmail').textContent=u.email||'کاربر';
-  if(activeUserId===u.id)return;
-  activeUserId=u.id;
-  loadPending();
-  if(data.uid && data.uid!==u.id){ data=normalizeData({}); saveLocalOnly(); syncControls(); }
-  document.getElementById('connectionStatus').textContent='وضعیت فضای ابری: در حال دریافت اطلاعات…';
-  await loadCloud();
-}
-
-// =======================================
-// CLOUD SYNC — پروژه و جدول‌های موجود Supabase حفظ شده‌اند
-// =======================================
-let cloudSaveInProgress=false;
-let cloudSaveQueued=false;
-
-function scheduleCloudSave(){
-  if(!user)return;
-  clearTimeout(syncTimer);
-  syncTimer=setTimeout(()=>saveCloud(),1500);
-}
-
-async function saveCloud(){
-  if(!user||!db)return false;
-  if(cloudSaveInProgress){cloudSaveQueued=true;return false;}
-  cloudSaveInProgress=true;
-  const savingUserId=user.id;
-  try{
-    const {error}=await db.from('user_app_state').upsert({
-      user_id:savingUserId,state:data,updated_at:new Date().toISOString()
-    },{onConflict:'user_id'});
-    if(error)throw error;
-    if(user&&user.id===savingUserId)
-      document.getElementById('connectionStatus').textContent='وضعیت فضای ابری: همگام‌سازی موفق';
-    return true;
-  }catch(e){
-    console.error('Cloud save error:',e);
-    document.getElementById('connectionStatus').textContent='وضعیت فضای ابری: خطا در همگام‌سازی؛ اطلاعات محلی محفوظ است';
-    return false;
-  }finally{
-    cloudSaveInProgress=false;
-    if(cloudSaveQueued){cloudSaveQueued=false;scheduleCloudSave();}
-  }
-}
-
-async function loadCloud(){
-  if(!user||!db)return;
-  const loadingUserId=user.id;
-  try{
-    const {data:cloudRow,error}=await db.from('user_app_state')
-      .select('state').eq('user_id',loadingUserId).maybeSingle();
-    if(error)throw error;
-    if(user?.id!==loadingUserId)return;
-
-    const {data:rows,error:khatmError}=await db.from('khatms').select('*').eq('user_id',loadingUserId);
-    if(khatmError)console.warn('دریافت ختم‌ها از جدول جداگانه ناموفق بود:',khatmError);
-
-    if(cloudRow?.state)data=mergeStates(data,cloudRow.state);
-    if(Array.isArray(rows)){
-      const map=new Map(data.khatms.map(k=>[k.id,k]));
-      rows.forEach(row=>{
-        const old=map.get(row.id);
-        map.set(row.id,old?{...old,...row,current_count:Math.max(Number(old.current_count)||0,Number(row.current_count)||0)}:{...row,status:row.status||'active'});
-      });
-      data.khatms=[...map.values()];
-    }
-    data.khatms=data.khatms.filter(k=>!data.deletedKhatms.includes(k.id));
-    data.uid=user.id;
-    saveLocalOnly();
-    await saveCloud();
-    await loadGroups();
-    render();
-    syncControls();
-    flushGroupProgress();
-  }catch(e){
-    console.error('Cloud load error:',e);
-    document.getElementById('connectionStatus').textContent='وضعیت فضای ابری: دریافت ناموفق؛ اطلاعات محلی حفظ شد';
-  }
-}
-
-async function syncCloud(){
-  if(!user)return alert('ابتدا وارد حساب کاربری شو');
-  document.getElementById('connectionStatus').textContent='وضعیت فضای ابری: در حال همگام‌سازی…';
-  await loadCloud();
-  alert('فرایند همگام‌سازی پایان یافت. وضعیت را بالای صفحه بررسی کن.');
-}
-
-// =======================================
-// INTENTION MODE: personal | group
-// =======================================
-const PENDING_KEY='salavat_group_pending_v1';
-let groupPending={};
-let lastAction=null;
-let flushTimer=null,flushing=false,rpcAvailable=true;
-
-const pendingKey=()=>user?`${PENDING_KEY}:${user.id}`:null;
-function loadPending(){
-  groupPending={};
-  const k=pendingKey();if(!k)return;
-  try{groupPending=JSON.parse(localStorage.getItem(k))||{};}catch{groupPending={};}
-}
-function savePending(){
-  const k=pendingKey();if(!k)return;
-  try{localStorage.setItem(k,JSON.stringify(groupPending));}catch(e){console.warn(e);}
-}
-const selectedGroup=()=>groups.find(g=>g.id===data.groupId)??null;
-
-function feedback(){
-  if(data.vibration&&navigator.vibrate)navigator.vibrate(20);
-  if(data.voiceEnabled) speakDhikr();
-  if(data.sound){
-    try{
-      const AudioCtx=window.AudioContext||window.webkitAudioContext;
-      if(AudioCtx){
-        const a=new AudioCtx(),osc=a.createOscillator(),gain=a.createGain();
-        osc.connect(gain);gain.connect(a.destination);osc.frequency.value=750;
-        gain.gain.value=.035;osc.start();osc.stop(a.currentTime+.06);
-        osc.onended=()=>a.close();
-      }
-    }catch(e){console.warn('صدای شمارش پشتیبانی نشد',e);}
-  }
-}
-
-function incrementGroup(n){
-  const g=selectedGroup();
-  if(!user||!g){renderCounter();return;}
-  lastAction={mode:'group',gid:g.id,n};
-  groupPending[g.id]=(groupPending[g.id]||0)+n;
-  g.current_total=(Number(g.current_total)||0)+n;
-  g.my_count=(Number(g.my_count)||0)+n;
-  savePending();
-  feedback();
-  scheduleGroupFlush();
-  render();
-  renderGroups();
-}
-
-function scheduleGroupFlush(delay=1500){
-  clearTimeout(flushTimer);
-  flushTimer=setTimeout(flushGroupProgress,delay);
-}
-
-async function pushGroupCount(gid,n){
-  if(rpcAvailable){
-    const {error}=await db.rpc('increment_group_progress',{p_group_id:gid,p_amount:n});
-    if(!error)return true;
-    if(!(error.code==='PGRST202'||/function/i.test(error.message||'')))return false;
-    rpcAvailable=false;
-  }
-  const {data:old,error}=await db.from('group_progress').select('count').eq('group_id',gid).eq('user_id',user.id).maybeSingle();
-  if(error)return false;
-  const {error:e}=await db.from('group_progress').upsert(
-    {group_id:gid,user_id:user.id,count:(Number(old?.count)||0)+n,updated_at:new Date().toISOString()},
-    {onConflict:'group_id,user_id'});
-  return !e;
-}
-
-async function flushGroupProgress(){
-  if(!user||!db||flushing||!navigator.onLine)return;
-  flushing=true;
-  let failed=false;
-  try{
-    for(const [gid,n] of Object.entries(groupPending)){
-      if(!(n>0))continue;
-      if(!(await pushGroupCount(gid,n))){failed=true;break;}
-      groupPending[gid]=Math.max(0,(groupPending[gid]||0)-n);
-      if(!groupPending[gid])delete groupPending[gid];
-      savePending();
-    }
-  }finally{
-    flushing=false;
-    const left=Object.values(groupPending).some(v=>v>0);
-    if(left)scheduleGroupFlush(failed?8000:300);
-    render();
-  }
-}
-
-function renderCounter(){
-  const set=(id,t)=>{const el=document.getElementById(id);if(el)el.textContent=t;};
-  document.body.dataset.mode=data.mode;
-  if(data.mode!=='group'){
-    set('targetBadge','ثبت در: آمار شخصی من');
-    set('countLabel','شمارندهٔ شخصی');
-    set('count',number(data.count));
-    set('countSub','');
-    set('goalLabel','هدف روزانه');
-    set('goalText',number(todayCount())+' از '+number(data.goal));
-    return Math.min(100,todayCount()/Math.max(1,Number(data.goal)||100)*100);
-  }
-  const g=selectedGroup();
-  set('goalLabel','پیشرفت ختم گروه');
-  if(!g){
-    set('targetBadge','ثبت در: ختم گروهی (گروهی انتخاب نشده)');
-    set('countLabel','ختم گروهی');set('count',number(0));
-    set('countSub',!user?'برای شمارش گروهی وارد فضای ابری شوید.':'یک گروه انتخاب کنید یا از تب «ختم گروهی» بسازید.');
-    set('goalText','—');
-    return 0;
-  }
-  const total=Number(g.current_total)||0,target=Math.max(1,Number(g.target_count)||1);
-  const queued=groupPending[g.id]||0;
-  set('targetBadge','ثبت در: ختم گروه «'+g.name+'»');
-  set('countLabel',g.name);
-  set('count',number(total));
-  set('countSub','سهم شما: '+number(g.my_count||0)+' · هدف: '+number(target)+(queued?' · در صف ارسال: '+number(queued):''));
-  set('goalText',number(Math.min(100,Math.round(total/target*100)))+'٪');
-  return Math.min(100,total/target*100);
-}
-
-function renderGroupPicker(){
-  const sel=document.getElementById('groupSelect');
-  const wrap=document.getElementById('groupPicker');
-  const hint=document.getElementById('groupHint');
-  if(!sel||!wrap)return;
-  wrap.hidden=data.mode!=='group';
-  sel.replaceChildren(...groups.map(g=>new Option(g.name,g.id)));
-  // گروه ذخیره‌شده فقط پس از بارگذاری کامل گروه‌ها بازنشانی می‌شود
-  if(groupsLoaded && !groups.some(g=>g.id===data.groupId))data.groupId=groups[0]?.id??null;
-  sel.value=data.groupId??'';
-  sel.disabled=!groups.length;
-  hint.textContent=!user?'برای شمارش گروهی ابتدا وارد فضای ابری شوید.'
-    :!groups.length?'هنوز عضو گروهی نیستید؛ از تب «ختم گروهی» بسازید یا با کد دعوت عضو شوید.':'';
-  render();
-}
-
-function setMode(value){
-  data.mode=value==='group'?'group':'personal';
-  lastAction=null;
-  saveLocal();
-  renderGroupPicker();
-}
-function setGroup(value){
-  data.groupId=value||null;
-  lastAction=null;
-  saveLocal();
-}
-
-document.addEventListener('visibilitychange',()=>{
-  if(document.visibilityState==='hidden')flushGroupProgress();
-  else if(user)loadGroups();
-});
-window.addEventListener('online',()=>flushGroupProgress());
-window.addEventListener('pagehide',()=>{flushGroupProgress();});
-
-// =======================================
-// GROUP KHATMS
-// =======================================
-
-async function createGroup(){
-  if(!user||!db) return alert('برای ساخت گروه ابتدا وارد حساب شو');
-
-  const name=document.getElementById('groupName').value.trim();
-  const target=Number(document.getElementById('groupTarget').value);
-
-  if(!name || !Number.isSafeInteger(target) || target<=0) return alert('نام و هدف معتبر وارد کن');
-
-  const {error}=await db.from('group_khatms').insert({
-    owner_id:user.id,name,target_count:target
-  });
-
-  if(error) return alert(error.message);
-
-  document.getElementById('groupName').value='';
-  await loadGroups();
-  alert('گروه ساخته شد');
-}
-
-async function joinGroup(){
-  if(!user||!db) return alert('ابتدا وارد حساب شو');
-
-  const code=document.getElementById('inviteCode').value.trim();
-  if(!code) return;
-
-  const {error}=await db.rpc('join_group_by_code',{p_code:code});
-  if(error) return alert(error.message);
-
-  document.getElementById('inviteCode').value='';
-  await loadGroups();
-  alert('عضویت در گروه موفق بود');
-}
-
-async function loadGroups(){
-  if(!user||!db)return;
-  try{
-    const [{data:members,error:mErr},{data:owned,error:oErr}]=await Promise.all([
-      db.from('group_members').select('group_id').eq('user_id',user.id),
-      db.from('group_khatms').select('*').eq('owner_id',user.id)
-    ]);
-    if(mErr)throw mErr;
-    if(oErr)throw oErr;
-    const ids=[...new Set((members||[]).map(x=>x.group_id).filter(Boolean))];
-    let joined=[];
-    if(ids.length){
-      const {data:rows,error}=await db.from('group_khatms').select('*').in('id',ids);
-      if(error)throw error;
-      joined=rows||[];
-    }
-    const map=new Map();
-    [...(owned||[]),...joined].forEach(g=>map.set(g.id,g));
-    groups=[...map.values()];
-    if(groups.length){
-      const groupIds=groups.map(g=>g.id);
-      const {data:progressRows,error}=await db.from('group_progress').select('group_id,user_id,count').in('group_id',groupIds);
-      if(!error){
-        const totals={},memberCounts={},mine={};
-        (progressRows||[]).forEach(r=>{
-          totals[r.group_id]=(totals[r.group_id]||0)+(Number(r.count)||0);
-          memberCounts[r.group_id]=(memberCounts[r.group_id]||0)+1;
-          if(r.user_id===user.id)mine[r.group_id]=Number(r.count)||0;
-        });
-        groups=groups.map(g=>({...g,current_total:(totals[g.id]||0)+(groupPending[g.id]||0),my_count:(mine[g.id]||0)+(groupPending[g.id]||0),member_contributors:memberCounts[g.id]||0}));
-      }
-    }
-    groupsLoaded=true;
-    renderGroups();
-  }catch(e){console.error(e);document.getElementById('connectionStatus').textContent='خطا در دریافت گروه‌ها';}
-}
-
-function renderGroups(){
-  const el=document.getElementById('groupList');
-  el.replaceChildren();
-  const total=groups.reduce((s,g)=>s+(Number(g.current_total)||0),0);
-  const target=groups.reduce((s,g)=>s+(Number(g.target_count)||0),0);
-  const active=groups.filter(g=>(Number(g.current_total)||0)<(Number(g.target_count)||0)).length;
-  document.getElementById('allGroupTotal').textContent=number(total);
-  document.getElementById('activeGroupCount').textContent=number(active);
-  document.getElementById('allGroupTarget').textContent=number(target);
-  document.getElementById('allGroupPercent').textContent=number(target?Math.round(total/target*100):0)+'٪';
-
-  if(!groups.length){
-    const empty=document.createElement('p');
-    empty.className='small';
-    empty.textContent='هنوز عضو هیچ ختم گروهی نیستید. برای مشاهده آمار گروه، وارد فضای ابری شوید و یک گروه بسازید یا با کد دعوت عضو شوید.';
-    el.appendChild(empty);
-  }
-  groups.forEach(g=>{
-    const div=document.createElement('div');
-    div.className='item';
-
-    const title=document.createElement('strong');
-    title.textContent=g.name;
-
-    const code=document.createElement('p');
-    code.className='small';
-    code.textContent='کد دعوت: '+(g.invite_code||'در دسترس نیست');
-    const summary=document.createElement('p');
-    summary.className='small';
-    summary.textContent='مجموع صلوات ثبت‌شده: '+number(g.current_total||0)+' از '+number(g.target_count||0);
-    const contributors=document.createElement('p');
-    contributors.className='small';
-    contributors.textContent='تعداد اعضای مشارکت‌کننده: '+number(g.member_contributors||0);
-    const bar=document.createElement('div');bar.className='progress';
-    const fill=document.createElement('div');
-    fill.style.width=Math.min(100,(Number(g.current_total)||0)/Math.max(1,Number(g.target_count)||1)*100)+'%';
-    bar.appendChild(fill);
-
-    const copy=document.createElement('button');
-    copy.textContent='کپی کد دعوت';
-    copy.onclick=async()=>{try{await navigator.clipboard.writeText(g.invite_code||'');alert('کد دعوت کپی شد');}catch(e){alert('کپی خودکار ممکن نیست؛ کد را دستی انتخاب کن');}};
-
-    const progress=document.createElement('button');
-    progress.className='gold';
-    progress.textContent='شمارش برای این گروه';
-    progress.onclick=()=>addGroupProgress(g.id);
-
-    div.append(title,code,summary,contributors,bar,copy,progress);
-    el.appendChild(div);
-  });
-  renderGroupPicker();
-}
-
-function addGroupProgress(groupId){
-  data.mode='group';data.groupId=groupId;lastAction=null;
-  saveLocal();syncControls();showTab('counterTab');
-}
-
-// =======================================
-// BACKUP
-// =======================================
-
-function exportBackup(){
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;
-  a.download='salavat-backup-'+todayKey()+'.json';
-  a.click();
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
-}
-
-function importBackup(){
-  const file=document.getElementById('backupFile').files[0];
-  if(!file)return alert('فایل پشتیبان را انتخاب کن');
-  const reader=new FileReader();
-  reader.onload=()=>{
-    try{
-      const imported=JSON.parse(reader.result);
-      if(!imported||typeof imported!=='object'||Array.isArray(imported))throw new Error('ساختار نامعتبر');
-      if(!confirm('اطلاعات پشتیبان با اطلاعات فعلی ادغام شود؟ داده‌های فعلی و ابری حذف نمی‌شوند.'))return;
-      data=mergeStates(data,imported);
-      saveLocal();
-      syncControls();
-      alert('اطلاعات پشتیبان با داده‌های فعلی ادغام شد.');
-    }catch(e){alert('فایل پشتیبان معتبر نیست یا ساختار آن قابل خواندن نیست.');}
-  };
-  reader.onerror=()=>alert('خواندن فایل پشتیبان ناموفق بود');
-  reader.readAsText(file);
-}
-
-// =======================================
-// NAVIGATION (با View Transition در مرورگرهای پشتیبان)
-// =======================================
-
-const TABS=['counterTab','statsTab','khatmTab','groupTab','settingsTab'];
-function showTab(id){
-  if(!TABS.includes(id))return;
-  const apply=()=>{
-    TABS.forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==id));
-    document.querySelectorAll('.tabs button').forEach(b=>{
-      const on=b.dataset.arg===id;
-      b.classList.toggle('gold',on);
-      if(on)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
-    });
-    window.scrollTo({top:0});
-  };
-  if(document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches)
-    document.startViewTransition(apply);
-  else apply();
-}
-
-// اسلایدر خودکار اسماء الهی
-const asmaNames = [
-  ['الرَّحْمٰن','بخشاینده'],['الرَّحِيم','مهربان'],['الْمَلِك','فرمانروا'],
-  ['الْقُدُّوس','پاک و منزّه'],['السَّلَام','سلامت‌بخش'],['الْمُؤْمِن','ایمنی‌بخش'],
-  ['الْعَزِيز','شکست‌ناپذیر'],['الْغَفَّار','بسیار آمرزنده'],['الرَّزَّاق','روزی‌رسان'],
-  ['النُّور','نور و روشنایی'],['الْوَدُود','دوستدار'],['الْهَادِي','هدایتگر']
-];
-let asmaIndex = 0;
-function rotateAsma(){
-  if(document.hidden)return;
-  const name=document.getElementById('asmaName');
-  const meaning=document.getElementById('asmaMeaning');
-  if(!name || !meaning) return;
-  asmaIndex=(asmaIndex+1)%asmaNames.length;
-  name.textContent=asmaNames[asmaIndex][0];
-  meaning.textContent=asmaNames[asmaIndex][1];
-  name.style.animation='none'; void name.offsetWidth; name.style.animation='';
-}
-setInterval(rotateAsma,3500);
-
-// ذکر روز؛ بر اساس روز سال
-const dailyDhikrs = [
-  ['صلوات','اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ وَآلِ مُحَمَّدٍ'],
-  ['استغفار','أَسْتَغْفِرُ اللَّهَ رَبِّي وَأَتُوبُ إِلَيْهِ'],
-  ['سبحان الله','سُبْحَانَ اللَّهِ'],
-  ['الحمدلله','الْحَمْدُ لِلَّهِ'],
-  ['الله اکبر','اللَّهُ أَكْبَرُ'],
-  ['لا اله الا الله','لَا إِلَهَ إِلَّا اللَّهُ'],
-  ['یا رحمان','يَا رَحْمَٰنُ']
-];
-function renderDailyDhikr(){
-  const n=new Date();
-  const dayNumber=Math.floor((new Date(n.getFullYear(),n.getMonth(),n.getDate())-new Date(n.getFullYear(),0,0))/86400000);
-  const item=dailyDhikrs[dayNumber%dailyDhikrs.length];
-  const title=document.getElementById('dailyDhikrName');
-  const text=document.getElementById('dailyDhikrText');
-  if(title && text){title.textContent=item[0];text.textContent=item[1];}
-}
-renderDailyDhikr();
-
-// راهنمای مرحله‌ای
-const helpSteps=[
-  ['شروع شمارش','ابتدا «نوع ذکر» را انتخاب کنید، سپس «نوع نیت» را مشخص کنید: «شخصی» برای ثبت در آمار خودتان یا «گروهی» برای افزودن به ختم یکی از گروه‌هایتان. بعد دکمه بزرگ «ذکر» را لمس کنید.'],
-  ['بازگشت و شروع مجدد','برای برگشت از آخرین عملیات شمارش، «بازگشت» را بزنید. با «شروع مجدد» شمارنده شخصی صفر می‌شود؛ پیش از تأیید، پیام نمایش داده خواهد شد.'],
-  ['هدف روزانه و آمار','در بخش تنظیمات هدف روزانه را تعیین کنید. از بخش «آمار» می‌توانید گزارش امروز، هفته، ماه و مجموع فعالیت شخصی را ببینید.'],
-  ['ختم شخصی','عنوان، تعداد هدف و نیت ختم را وارد و گزینه «ایجاد ختم» را انتخاب کنید. پیشرفت ختم در بخش ختم‌های من نمایش داده می‌شود.'],
-  ['ختم گروهی','برای ساخت یا پیوستن به ختم گروهی، ابتدا با ایمیل وارد حساب شوید. سپس گروه بسازید یا کد دعوت را وارد کنید. در صفحه اول، نیت «گروهی» را انتخاب کنید تا شمارش به ختم گروه اضافه شود.'],
-  ['فضای ابری','از دکمه «فضای ابری» در بالای برنامه وارد بخش ثبت‌نام و ورود شوید. پس از ورود، اطلاعات حساب همگام‌سازی می‌شود.'],
-  ['پشتیبان‌گیری','از بخش تنظیمات فایل پشتیبان JSON دریافت کنید. برای بازیابی، فایل را انتخاب کنید و گزینه بازیابی را بزنید. فایل پشتیبان را در جای امن نگه دارید.']
-];
-let helpIndex=0;
-function renderHelpStep(){
-  const step=helpSteps[helpIndex];
-  document.getElementById('helpStepCount').textContent=`مرحله ${number(helpIndex+1)} از ${number(helpSteps.length)}`;
-  document.getElementById('helpStepTitle').textContent=step[0];
-  document.getElementById('helpStepText').textContent=step[1];
-  document.getElementById('helpProgress').style.width=((helpIndex+1)/helpSteps.length*100)+'%';
-  document.getElementById('helpPrev').disabled=helpIndex===0;
-  document.getElementById('helpNext').textContent=helpIndex===helpSteps.length-1?'پایان':'مرحله بعد';
-}
-function openHelp(){helpIndex=0;renderHelpStep();document.getElementById('helpModal').showModal();}
-function changeHelpStep(direction){
-  if(helpIndex===helpSteps.length-1 && direction>0){closeModal('helpModal');return;}
-  helpIndex=Math.max(0,Math.min(helpSteps.length-1,helpIndex+direction));renderHelpStep();
-}
-function openAbout(){document.getElementById('aboutModal').showModal();}
-function closeModal(id){document.getElementById(id)?.close();}
-
-// =======================================
-// PWA INSTALL PROMPT
-// =======================================
-let deferredInstallPrompt=null;
-
-function isStandaloneApp(){
-  return window.matchMedia('(display-mode: standalone)').matches ||
-         window.navigator.standalone===true;
-}
-function showInstallBanner(){
-  if(isStandaloneApp())return;
-  document.getElementById('installBanner')?.classList.remove('hidden');
-}
-function hideInstallBanner(){
-  document.getElementById('installBanner')?.classList.add('hidden');
-}
-
-window.addEventListener('beforeinstallprompt',event=>{
-  event.preventDefault();
-  deferredInstallPrompt=event;
-  showInstallBanner();
-});
-window.addEventListener('appinstalled',()=>{
-  deferredInstallPrompt=null;
-  hideInstallBanner();
-});
-
-document.getElementById('installAppBtn')?.addEventListener('click',async()=>{
-  if(deferredInstallPrompt){
-    deferredInstallPrompt.prompt();
-    try{await deferredInstallPrompt.userChoice;}catch(e){}
-    deferredInstallPrompt=null;
-    hideInstallBanner();
-  }else{
-    alert('برای نصب، از منوی مرورگر گزینه «Install app / نصب برنامه» یا «Add to Home screen» را انتخاب کنید.');
-  }
-});
-document.getElementById('closeInstallBtn')?.addEventListener('click',hideInstallBanner);
-
-// =======================================
-// EVENT DELEGATION (بدون onclick درون‌خطی)
-// =======================================
-const registry={changeDhikr,changeHelpStep,checkForAppUpdate,closeModal,createGroup,createKhatm,exportBackup,importBackup,increment,joinGroup,openAbout,openHelp,resetCount,resetPassword,saveSettings,setGoal,setGroup,setMode,showTab,signIn,signOut,signUp,syncCloud,toggleCloudPanel,toggleDhikrAudio,undo};
-document.addEventListener('click',e=>{
-  const el=e.target.closest('[data-action]');
-  if(el){
-    const a=el.dataset.arg;
-    // رویداد کلیک به‌عنوان آرگومان به increment پاس داده نمی‌شود
-    registry[el.dataset.action]?.(/^-?\d+$/.test(a??'')?Number(a):a);
-  }
-});
-document.addEventListener('change',e=>{
-  const el=e.target.closest('[data-change]');
-  if(el)registry[el.dataset.change]?.(el.type==='checkbox'?el.checked:el.value);
-});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal('helpModal');closeModal('aboutModal');}});
-document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d)d.close();}));
-init();
-</script>
-
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(console.error));
-}
-</script>
-
-</body>
-</html>
+    <div class="head-actions">
+      <button type="button" class="head-btn" data-action="toggleDark" title="حالت شب" aria-label="حالت شب">☾</button>
+      <button type="button" class="head-btn" id="accountBtn" data-action="openAccount" title="ورود / ثبت‌نام" aria-label="ورود / ثبت‌نام">👤</button>
+      <button type="button" class="head-btn" data-action="showTab" data-arg="settingsTab" title="تنظیمات" aria-labe
