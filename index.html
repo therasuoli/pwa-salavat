@@ -1,256 +1,349 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#063d32">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#07211c">
+<meta name="color-scheme" content="dark">
+<!-- منبع واحد شماره نسخه: فقط همین مقدار را تغییر دهید -->
+<meta name="app-version" content="1.4.0">
 <title>صلوات شمار</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4"></script>
 
 <style>
-:root {
-  --bg:#061d19;
-  --panel:#0c3028;
-  --panel2:#104337;
-  --gold:#d9b66d;
-  --gold2:#f3dda1;
-  --text:#f6f2e8;
-  --muted:#a9c0b7;
-  --border:#285548;
-}
-*{box-sizing:border-box}
-body{
-  margin:0;
-  background:radial-gradient(circle at top,#164d3d,var(--bg) 65%);
-  color:var(--text);
-  font-family:Tahoma,Arial,sans-serif;
-  min-height:100vh;
-}
-header{
-  text-align:center;
-  padding:25px 12px 12px;
-}
-header h1{
-  color:var(--gold2);
-  margin:8px 0;
-  font-size:25px;
-}
-header p{color:var(--muted);font-size:13px}
-.container{max-width:850px;margin:auto;padding:12px}
-.card{
-  background:linear-gradient(145deg,var(--panel2),var(--panel));
-  border:1px solid var(--border);
-  border-radius:20px;
-  padding:18px;
-  margin:13px 0;
-  box-shadow:0 10px 35px #0003;
-}
-.section-title{
-  color:var(--gold2);
-  margin:0 0 14px;
-  font-size:16px;
-}
-.counter{
-  text-align:center;
-  padding:24px 10px;
-}
-.count{
-  font-size:68px;
-  font-weight:bold;
-  color:var(--gold2);
-  margin:20px 0;
-  direction:ltr;
-}
-.arabic{
-  font-family:serif;
-  font-size:25px;
-  line-height:2;
-  color:#f6e5b6;
-}
-.translation{color:var(--muted);font-size:13px}
-button,input,select{
-  font:inherit;
-  border-radius:12px;
-  border:1px solid var(--border);
-  padding:12px;
-}
-button{
-  cursor:pointer;
-  background:var(--panel2);
-  color:var(--text);
-}
-button.gold{
-  background:linear-gradient(135deg,#f2d58e,#b88a39);
-  color:#15271e;
-  border:0;
-  font-weight:bold;
-}
-button.danger{background:#672e32}
-button:active{transform:scale(.97)}
-.big-button{
-  width:175px;height:175px;
-  border-radius:50%;
-  border:7px solid var(--gold);
-  background:radial-gradient(circle,#216b53,#0a392c);
-  font-size:24px;
-  font-weight:bold;
-  box-shadow:0 0 30px #d9b66d22;
-}
-.controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
-.row{display:flex;gap:8px;flex-wrap:wrap}
-.row>*{flex:1;min-width:100px}
-input,select{
-  background:#061e19;color:white;width:100%;
-  margin:5px 0;
-}
-button.full{width:100%;margin-top:8px}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
-}
-.stat{
-  background:#061f1a;
-  padding:14px;
-  border-radius:14px;
-  text-align:center;
-}
-.stat strong{
-  display:block;
-  color:var(--gold2);
-  font-size:24px;
-  margin-top:7px;
-}
-.small{font-size:12px;color:var(--muted)}
-.progress{
-  height:12px;background:#061b17;
-  border-radius:20px;overflow:hidden;
-  margin:12px 0;
-}
-.progress div{
-  height:100%;width:0;
-  background:linear-gradient(90deg,#b58b3d,#f5df9b);
-}
-.item{
-  padding:12px;
-  border-bottom:1px solid var(--border);
-}
-.item:last-child{border:0}
-.hidden{display:none!important}
-footer{
-  text-align:center;color:var(--muted);
-  padding:25px;font-size:12px;
-}
-.tabs{
-  display:flex;gap:7px;overflow:auto;
-  padding:5px 0 12px;
-}
-.tabs button{white-space:nowrap;flex:1}
-.status{font-size:12px;color:var(--gold2)}
-button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gold2);outline-offset:2px}
-button:disabled{opacity:.55;cursor:not-allowed}
-.item .small{line-height:1.9}
-.progress div{transition:width .25s ease}
-.auth-note{line-height:1.9}
+@property --p{syntax:'<number>';inherits:true;initial-value:0}
+@layer reset,tokens,base,layout,components,responsive,motion;
 
-.asma-slider{max-width:420px;margin:14px auto 12px;padding:13px 18px;border:1px solid #8c7447;border-radius:18px;background:linear-gradient(135deg,#0b3027,#174b3b);display:flex;flex-direction:column;gap:5px;min-height:104px;justify-content:center;box-shadow:0 8px 25px #0003}
-.daily-dhikr-slider{max-width:420px;margin:0 auto 12px;padding:11px 16px;border:1px solid #547b68;border-radius:16px;background:linear-gradient(135deg,#102b24,#173d32);display:flex;flex-direction:column;gap:5px;min-height:82px;justify-content:center;box-shadow:0 7px 20px #0002}
-.daily-dhikr-caption{font-size:11px;color:var(--gold2)}
-.daily-dhikr-slider strong{font-size:15px;color:#f3dfb0}
-.daily-dhikr-slider span:last-child{font-family:serif;font-size:17px;color:#fff;line-height:1.8}
-.about-contact{margin-top:18px;padding-top:14px;border-top:1px solid #8c7447}
-.about-contact a{color:var(--gold2);text-decoration:none;direction:ltr;unicode-bidi:embed}
-.about-contact p{overflow-wrap:anywhere}
+/* =============== RESET =============== */
+@layer reset{
+  *,*::before,*::after{box-sizing:border-box}
+  *{-webkit-tap-highlight-color:transparent}
+  :where(h1,h2,h3,p){margin:0;text-wrap:balance}
+  :where(button,input,select){font:inherit;color:inherit}
+  :where(button){cursor:pointer;touch-action:manipulation}
+}
 
-.asma-caption{font-size:11px;color:var(--muted)}
-.asma-slider strong{font-family:serif;font-size:27px;color:var(--gold2);animation:asmaFade .65s ease}
-.asma-slider span:last-child{font-size:12px;color:#e4d4aa}
-@keyframes asmaFade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-.header-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:10px auto}
-.header-actions button{font-size:12px;padding:9px 13px}
-.memorial-card{text-align:center;border-color:#9c8048;background:linear-gradient(145deg,#174b3b,#0b3027)}
-.memorial-card p{line-height:2;font-size:13px;margin:7px 0;color:#f1e8d4}
-.modal{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:18px}
-.modal.hidden{display:none!important}
-.modal-backdrop{position:absolute;inset:0;background:#000b;backdrop-filter:blur(5px)}
-.modal-panel{position:relative;width:min(100%,470px);padding:25px 20px 20px;border:1px solid var(--gold);border-radius:22px;background:linear-gradient(145deg,#174b3b,#071f19);box-shadow:0 20px 70px #0009;text-align:center}
-.modal-panel h2{font-size:19px;color:var(--gold2);margin:8px 0 18px}
-.modal-panel h3{font-size:16px;color:#f3dda1}
-.modal-panel p{font-size:13px;line-height:2;color:var(--text)}
-.modal-close{position:absolute;left:12px;top:10px;width:35px;height:35px;padding:0;border-radius:50%;font-size:24px;line-height:1}
-.help-step-count{font-size:12px;color:var(--muted)}
-.help-progress{height:7px;background:#061b17;border-radius:20px;overflow:hidden;margin:20px 0}
-.help-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,#b58b3d,#f5df9b);transition:width .25s ease}
-.modal-actions{display:flex;gap:9px;justify-content:space-between}
-.modal-actions button{flex:1}
-.about-symbol{font-size:36px;color:var(--gold)}
-.network-indicator{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:8px 12px 0;font-size:12px;color:var(--muted)}
-.network-dot{width:9px;height:9px;border-radius:50%;display:inline-block;background:#d45b5b;box-shadow:0 0 8px currentColor}
-.network-dot.online{background:#62d69b;color:#62d69b}
-.network-dot.offline{background:#e06b6b;color:#e06b6b}
-.cloud-status{border-right:1px solid var(--border);padding-right:9px}
-.cloud-panel{max-width:850px;margin:0 auto}
-.cloud-panel.hidden{display:none!important}
-.group-stat-line{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:8px 0;color:var(--muted);font-size:12px}
-@media(max-width:450px){.asma-slider{margin-top:10px}.modal-panel{padding:24px 16px 18px}}
+/* =============== TOKENS =============== */
+@layer tokens{
+  :root{
+    color-scheme:dark;
+    --ink:#07211c;--jade:#0e3a30;--jade2:#15503f;
+    --brass:#d7b46a;--brass2:#f2dc9f;
+    --ivory:#f5f0e4;--muted:#9fb9ae;
+    --line:rgba(215,180,106,.18);
+    --glass:rgba(16,58,47,.55);
+    --mint:#7fe0c0;
+    --r-lg:28px;--r-md:20px;--r-sm:14px;
+    --gap:clamp(10px,2vw,18px);
+    --pad:clamp(14px,3vw,22px);
+    --fs-0:clamp(.8rem,.77rem + .15vw,.875rem);
+    --fs-1:clamp(.9rem,.86rem + .2vw,1rem);
+    --fs-2:clamp(1.1rem,1rem + .5vw,1.4rem);
+    --fs-count:clamp(3.4rem,2.6rem + 4vw,5.5rem);
+    --ring-size:clamp(210px,58vw,300px);
+    --nav-h:68px;
+    --p:0;
+  }
+}
 
+/* =============== BASE =============== */
+@layer base{
+  html{scroll-padding-block-end:110px;-webkit-text-size-adjust:100%}
+  body{
+    margin:0;min-block-size:100dvh;
+    background:
+      radial-gradient(900px 500px at 85% -10%,rgb(215 180 106/.16),transparent 60%),
+      radial-gradient(700px 500px at 0% 20%,#14604a55,transparent 65%),
+      var(--ink);
+    background-attachment:fixed;
+    color:var(--ivory);
+    font-family:Vazirmatn,"Segoe UI",system-ui,Tahoma,Arial,sans-serif;
+    font-size:var(--fs-1);line-height:1.7;
+    padding-block-end:calc(var(--nav-h) + 36px + env(safe-area-inset-bottom,0px));
+  }
+  .hidden{display:none!important}
+  .small{font-size:var(--fs-0);color:var(--muted)}
+  footer{text-align:center;color:var(--muted);padding:22px;font-size:var(--fs-0)}
+  :focus-visible{outline:2px solid var(--brass2);outline-offset:2px}
+  a{color:var(--brass2)}
+}
 
-/* نصب وب‌اپلیکیشن */
-.install-banner{position:fixed;left:12px;right:12px;bottom:14px;z-index:1200;max-width:520px;margin:auto;padding:14px;border:1px solid var(--gold);border-radius:18px;background:linear-gradient(145deg,#174b3b,#071f19);box-shadow:0 15px 45px #0009;display:flex;align-items:center;gap:10px;justify-content:space-between}
-.install-banner .install-text{font-size:12px;line-height:1.8;flex:1}
-.install-banner .install-actions{display:flex;gap:7px;align-items:center}
-.install-banner button{padding:9px 12px}
+/* =============== LAYOUT =============== */
+@layer layout{
+  .shell{inline-size:min(100% - 2*var(--pad),1180px);margin-inline:auto}
+  header.shell{padding-block-start:calc(16px + env(safe-area-inset-top,0px));container-type:inline-size}
+  .brand{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .brand h1{font-size:var(--fs-2);font-weight:800;color:var(--brass2)}
+  .brand .mark{color:var(--brass);font-size:1.7rem;line-height:1}
 
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
-@media(max-width:450px){
-  .count{font-size:56px}
-  .big-button{width:155px;height:155px}
-  .grid{grid-template-columns:1fr 1fr}
+  .ticker{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-block-start:14px}
+  @container (width < 460px){.ticker{grid-template-columns:1fr}}
+
+  .header-actions{display:flex;gap:6px;flex-wrap:wrap;margin-block:12px 4px}
+  .network-indicator{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 2px 0;font-size:var(--fs-0);color:var(--muted)}
+
+  /* ستون‌بندی هوشمند: هر تب به‌صورت خودکار تک‌ستونه یا چندستونه می‌شود */
+  .tab-grid{display:grid;gap:var(--gap);grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));align-items:start;margin-block-start:var(--gap)}
+  .tab-grid>.card{margin:0}
+
+  .counter-layout{display:grid;gap:var(--gap);grid-template-columns:1fr;margin-block-start:var(--gap)}
+  .counter-layout>.card{margin:0}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+  .row>*{flex:1;min-inline-size:100px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .grid .stat:first-child{grid-column:1/-1}
+}
+
+/* =============== COMPONENTS =============== */
+@layer components{
+  .card{
+    background:var(--glass);border:1px solid var(--line);border-radius:var(--r-lg);
+    padding:var(--pad);backdrop-filter:blur(16px);
+  }
+  .section-title{color:var(--brass2);margin-block-end:12px;font-size:var(--fs-1);font-weight:700}
+
+  button,input,select{border-radius:var(--r-sm);border:1px solid var(--line);padding:12px 14px;min-block-size:44px}
+  button{background:var(--jade2);transition:transform .12s ease,background .2s,filter .2s}
+  button:hover{filter:brightness(1.12)}
+  button:active{transform:scale(.97)}
+  button.gold{background:linear-gradient(135deg,var(--brass2),#bb8d3e);color:#1a2a22;border:0;font-weight:700}
+  button.danger{background:#6c2f35}
+  button.full{inline-size:100%;margin-block-start:8px}
+  button:disabled{opacity:.55;cursor:not-allowed}
+  input,select{inline-size:100%;margin-block:5px;background:rgb(4 22 18/.7)}
+  input[type=checkbox]{inline-size:auto;min-block-size:0;margin-inline-end:8px;accent-color:var(--brass)}
+  input[type=file]{padding:10px}
+  label{display:block;margin-block:8px;font-size:var(--fs-1)}
+
+  .header-actions button{font-size:var(--fs-0);padding:8px 14px;min-block-size:40px;border-radius:999px;background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(14px)}
+  .header-actions button.gold{background:linear-gradient(135deg,var(--brass2),#bb8d3e);color:#1a2a22;border:0}
+
+  .network-dot{inline-size:8px;block-size:8px;border-radius:50%;background:#e06b6b;color:#e06b6b;box-shadow:0 0 10px currentColor}
+  .network-dot.online{background:#62d69b;color:#62d69b}
+  .cloud-status{border-inline-start:1px solid var(--line);padding-inline-start:9px}
+  #appUpdateStatus{font-size:var(--fs-0);color:var(--brass2)}
+
+  .asma-slider,.daily-dhikr-slider{
+    display:flex;flex-direction:column;justify-content:center;gap:2px;
+    padding:12px 14px;min-block-size:92px;border-radius:var(--r-md);
+    background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(14px);
+  }
+  .asma-caption,.daily-dhikr-caption{font-size:11px;color:var(--muted)}
+  .asma-slider strong{font-family:Amiri,"Scheherazade New","Noto Naskh Arabic",serif;font-size:1.65rem;line-height:1.5;color:var(--brass2);animation:fade .6s ease}
+  .asma-slider span:last-child{font-size:var(--fs-0);color:#d9ccaa}
+  .daily-dhikr-slider strong{font-size:.9rem;color:var(--brass2)}
+  .daily-dhikr-slider span:last-child{font-family:Amiri,"Scheherazade New","Noto Naskh Arabic",serif;font-size:1rem;line-height:1.8}
+
+  /* --- مراحل: ۱) ذکر  ۲) نیت --- */
+  .step{
+    margin-block-end:12px;padding:12px 14px 14px;
+    border:1px solid var(--line);border-radius:var(--r-md);
+    background:color-mix(in oklab,var(--ink) 55%,transparent);
+    transition:border-color .2s;
+    &:last-child{margin-block-end:0}
+    &:has(:focus-visible){border-color:var(--brass2)}
+  }
+  .step-title{display:flex;align-items:center;gap:8px;margin-block-end:10px;font-size:var(--fs-1);color:var(--brass2)}
+  .step-no{display:grid;place-items:center;inline-size:24px;block-size:24px;border-radius:50%;background:var(--brass);color:var(--ink);font-size:var(--fs-0);font-weight:800}
+  .arabic{font-family:Amiri,"Scheherazade New","Noto Naskh Arabic",serif;font-size:clamp(1.5rem,1.2rem + 1.2vw,2rem);line-height:2.1;color:#f6e5b6;margin-block-start:10px;text-align:center}
+  .translation{color:var(--muted);font-size:var(--fs-0);text-align:center}
+
+  .segmented{
+    display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:999px;
+    background:color-mix(in oklab,var(--ink) 75%,transparent);border:1px solid var(--line);
+    & label{position:relative;display:block;margin:0}
+    & input{position:absolute;inset:0;inline-size:100%;block-size:100%;margin:0;padding:0;opacity:0;cursor:pointer;min-block-size:0}
+    & span{display:block;padding:11px;border-radius:999px;text-align:center;color:var(--muted);transition:background .25s,color .25s}
+    & label:has(input:checked) span{background:linear-gradient(135deg,var(--brass2),#bb8d3e);color:#1a2a22;font-weight:700}
+    & label:has(input:focus-visible){outline:2px solid var(--brass2);outline-offset:2px;border-radius:999px}
+  }
+  .group-picker{margin-block-start:10px;&[hidden]{display:none}}
+
+  /* --- صحنهٔ شمارش --- */
+  .stage{text-align:center;display:flex;flex-direction:column;align-items:center}
+  .target-badge{
+    display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;
+    font-size:var(--fs-0);background:rgb(215 180 106/.12);border:1px solid var(--line);color:var(--brass2);
+    max-inline-size:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  body[data-mode=group] .target-badge{background:rgb(127 224 192/.12);color:var(--mint)}
+  .count-label{margin-block-start:14px;font-size:var(--fs-0);color:var(--muted)}
+  .count{font-size:var(--fs-count);font-weight:800;color:var(--brass2);direction:ltr;line-height:1.1;font-variant-numeric:tabular-nums}
+  .count-sub{min-block-size:1.6em;max-inline-size:36ch}
+
+  .ring{
+    inline-size:var(--ring-size);block-size:var(--ring-size);margin-block:14px 6px;border-radius:50%;
+    display:grid;place-items:center;
+    background:conic-gradient(from 0deg,var(--ring,var(--brass2)) calc(var(--p)*1%),rgb(255 255 255/.07) 0);
+    box-shadow:0 0 60px rgb(215 180 106/.14);
+  }
+  body[data-mode=group]{--ring:var(--mint)}
+  body[data-mode=group] .ring{box-shadow:0 0 60px rgb(127 224 192/.16)}
+  body[data-mode=group] [data-action=resetCount]{display:none}
+  .big-button{
+    inline-size:calc(var(--ring-size) - 26px);block-size:calc(var(--ring-size) - 26px);border-radius:50%;border:0;padding:0;
+    background:radial-gradient(circle at 35% 30%,#2a7f63,#0b3b2e 70%);
+    box-shadow:inset 0 2px 0 rgb(255 255 255/.14),inset 0 -10px 30px rgb(0 0 0/.35),0 14px 30px rgb(0 0 0/.35);
+    font-size:clamp(1.5rem,1.2rem + 1vw,2rem);font-weight:800;color:var(--brass2);
+    user-select:none;-webkit-user-select:none;
+  }
+  .big-button:active{transform:scale(.96);box-shadow:inset 0 6px 22px rgb(0 0 0/.45)}
+  .controls{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-block-start:16px}
+  .controls button{font-size:var(--fs-0);padding:10px 14px}
+  .goal{margin-block-start:18px;text-align:start;inline-size:100%}
+  .progress{block-size:8px;background:rgb(255 255 255/.08);border-radius:99px;overflow:hidden;margin-block-start:8px}
+  .progress div{block-size:100%;inline-size:0;background:linear-gradient(90deg,#b58b3d,var(--brass2));transition:inline-size .25s ease}
+
+  /* --- آمار --- */
+  .stat{background:rgb(4 22 18/.55);border:1px solid var(--line);padding:14px;border-radius:var(--r-md);font-size:var(--fs-0);color:var(--muted)}
+  .stat strong{display:block;color:var(--brass2);font-size:1.6rem;font-weight:800;margin-block-start:4px}
+  .grid .stat:first-child{background:linear-gradient(135deg,rgb(215 180 106/.2),rgb(21 80 63/.5))}
+  .grid .stat:first-child strong{font-size:2.4rem}
+  .item{padding:12px 4px;border-block-end:1px solid var(--line)}
+  .item:last-child{border:0}
+  .item .small{line-height:1.9}
+  .item button{margin-block-start:6px;margin-inline-end:6px;padding:8px 14px;min-block-size:40px;font-size:var(--fs-0)}
+  .auth-note{line-height:1.9}
+  .cloud-panel{margin-block-start:var(--gap);display:grid;gap:var(--gap);grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))}
+  .cloud-panel>.card{margin:0}
+
+  /* --- ناوبری --- */
+  .tabs{
+    position:fixed;z-index:900;inset-inline:12px;
+    bottom:calc(12px + env(safe-area-inset-bottom,0px));
+    max-inline-size:520px;margin-inline:auto;display:flex;gap:4px;padding:6px;
+    background:rgb(7 33 28/.8);border:1px solid var(--line);border-radius:999px;
+    backdrop-filter:blur(22px) saturate(1.4);box-shadow:0 18px 40px rgb(0 0 0/.45);
+  }
+  .tabs button{flex:1;white-space:nowrap;border:0;border-radius:999px;background:transparent;padding:11px 4px;font-size:var(--fs-0);color:var(--muted)}
+  .tabs button.gold{background:linear-gradient(135deg,var(--brass2),#bb8d3e);color:#1a2a22;font-weight:700}
+
+  /* --- نصب و مودال --- */
+  .install-banner{position:fixed;inset-inline:12px;bottom:calc(88px + env(safe-area-inset-bottom,0px));z-index:1200;max-inline-size:520px;margin-inline:auto;padding:12px 14px;border:1px solid var(--brass);border-radius:var(--r-md);background:rgb(7 33 28/.94);backdrop-filter:blur(18px);display:flex;align-items:center;gap:10px;justify-content:space-between}
+  .install-banner .install-text{font-size:var(--fs-0);line-height:1.8;flex:1}
+  .install-banner .install-actions{display:flex;gap:7px;align-items:center}
+  .install-banner button{padding:9px 12px}
+
+  dialog{
+    padding:0;border:0;background:transparent;color:inherit;margin:auto;
+    max-inline-size:100vi;max-block-size:100dvh;overflow:visible;
+    &::backdrop{background:rgb(0 0 0/.65);backdrop-filter:blur(6px)}
+    &[open]{animation:dlg .25s ease}
+  }
+  .modal-panel{position:relative;inline-size:min(92vw,480px);max-block-size:90dvh;overflow:auto;padding:26px 20px 20px;border:1px solid var(--line);border-radius:var(--r-lg);background:linear-gradient(160deg,#15503f,#071f19);box-shadow:0 24px 70px rgb(0 0 0/.6);text-align:center}
+  .modal-panel h2{font-size:1.2rem;color:var(--brass2);margin-block:8px 16px}
+  .modal-panel h3{font-size:var(--fs-1);color:var(--brass2)}
+  .modal-panel p{font-size:var(--fs-0);line-height:2}
+  .modal-close{position:absolute;inset-inline-start:12px;inset-block-start:10px;inline-size:40px;block-size:40px;padding:0;border-radius:50%;font-size:1.4rem;line-height:1}
+  .help-step-count{font-size:var(--fs-0);color:var(--muted)}
+  .help-progress{block-size:6px;background:rgb(255 255 255/.08);border-radius:99px;overflow:hidden;margin-block:18px}
+  .help-progress span{display:block;block-size:100%;inline-size:0;background:linear-gradient(90deg,#b58b3d,var(--brass2));transition:inline-size .25s ease}
+  .modal-actions{display:flex;gap:9px}
+  .modal-actions button{flex:1}
+  .about-symbol{font-size:2.2rem;color:var(--brass)}
+  .memorial-card{text-align:center;border-color:rgb(215 180 106/.4);margin-block:12px}
+  .memorial-card p{margin-block:6px;color:#f1e8d4}
+  .about-contact{margin-block-start:16px;padding-block-start:12px;border-block-start:1px solid var(--line)}
+  .about-contact a{text-decoration:none;direction:ltr;unicode-bidi:embed}
+  .about-contact p{overflow-wrap:anywhere}
+}
+
+/* =============== RESPONSIVE =============== */
+@layer responsive{
+  /* تبلت */
+  @media (min-width:700px){
+    .counter-layout{grid-template-columns:minmax(300px,.9fr) 1.1fr;align-items:start}
+    .stage{position:sticky;inset-block-start:16px}
+  }
+  /* دسکتاپ: ناوبری از پایین به بالای صفحه می‌آید */
+  @media (min-width:900px){
+    body{padding-block-end:24px}
+    .tabs{
+      position:sticky;inset:auto;inset-block-start:12px;
+      inline-size:max-content;max-inline-size:calc(100% - 2*var(--pad));
+      margin-block:16px 0;
+    }
+    .tabs button{padding:10px 24px;font-size:var(--fs-1)}
+    .install-banner{bottom:24px}
+    .counter-layout{grid-template-columns:minmax(360px,.85fr) 1.15fr}
+  }
+  @media (min-width:1280px){
+    :root{--ring-size:320px}
+  }
+  /* موبایل کوچک */
+  @media (max-width:380px){
+    .tabs button{font-size:11px;padding-inline:2px}
+    .grid{gap:8px}
+  }
+  /* موبایل افقی */
+  @media (max-height:520px) and (orientation:landscape){
+    :root{--ring-size:170px}
+    .count{font-size:2.6rem}
+  }
+  @media (hover:none){button:hover{filter:none}}
+}
+
+/* =============== MOTION =============== */
+@layer motion{
+  @property --p{syntax:'<number>';inherits:true;initial-value:0}
+  .ring{transition:--p .45s cubic-bezier(.2,.8,.2,1)}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  @keyframes dlg{from{opacity:0;transform:translateY(10px) scale(.98)}}
+  ::view-transition-old(root),::view-transition-new(root){animation-duration:.18s}
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{transition:none!important;animation:none!important}
+    ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}
+  }
 }
 </style>
 
-  <meta name="application-name" content="صلوات شمار">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="apple-touch-icon" href="icon.svg">
+<meta name="application-name" content="صلوات شمار">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon.svg">
 </head>
 
-<body>
+<body data-mode="personal">
 
 <audio id="dhikrAudio" preload="none" playsinline></audio>
 
 <div id="installBanner" class="install-banner hidden" role="dialog" aria-label="نصب برنامه">
-  <div class="install-text"><strong>صلوات شمار را نصب کنید</strong><br><span>برای دسترسی سریع‌تر، برنامه را روی گوشی نصب کنید.</span></div>
+  <div class="install-text"><strong>صلوات شمار را نصب کنید</strong><br><span>برای دسترسی سریع‌تر، برنامه را روی دستگاه نصب کنید.</span></div>
   <div class="install-actions">
     <button type="button" class="gold" id="installAppBtn">نصب</button>
     <button type="button" id="closeInstallBtn" aria-label="بستن">×</button>
   </div>
 </div>
 
+<header class="shell">
+  <div class="brand">
+    <h1>صلوات شمار</h1>
+    <span class="mark" aria-hidden="true">۞</span>
+  </div>
 
-<header>
-  <div style="color:var(--gold);font-size:30px">۞</div>
-  <h1>صلوات شمار</h1>
-  <div class="asma-slider" aria-live="polite" aria-label="اسلایدر اسماء الهی">
-    <span class="asma-caption">از نام‌های زیبای خداوند</span>
-    <strong id="asmaName">الرَّحْمٰن</strong>
-    <span id="asmaMeaning">بخشاینده</span>
+  <div class="ticker">
+    <div class="asma-slider" aria-live="polite" aria-label="اسلایدر اسماء الهی">
+      <span class="asma-caption">از نام‌های زیبای خداوند</span>
+      <strong id="asmaName">الرَّحْمٰن</strong>
+      <span id="asmaMeaning">بخشاینده</span>
+    </div>
+    <div class="daily-dhikr-slider" aria-label="ذکر هر روز">
+      <span class="daily-dhikr-caption">ذکر هر روز</span>
+      <strong id="dailyDhikrName">استغفار</strong>
+      <span id="dailyDhikrText">أَسْتَغْفِرُ اللَّهَ رَبِّي وَأَتُوبُ إِلَيْهِ</span>
+    </div>
   </div>
-  <div class="daily-dhikr-slider" aria-live="polite" aria-label="ذکر هر روز">
-    <span class="daily-dhikr-caption">ذکر هر روز</span>
-    <strong id="dailyDhikrName">استغفار</strong>
-    <span id="dailyDhikrText">أَسْتَغْفِرُ اللَّهَ رَبِّي وَأَتُوبُ إِلَيْهِ</span>
-  </div>
+
   <div class="header-actions">
-    <button type="button" class="gold" onclick="toggleCloudPanel()">☁ فضای ابری</button>
-    <button type="button" onclick="openHelp()">راهنمای استفاده از اپ</button>
-    <button type="button" onclick="openAbout()">درباره ما</button>
-    <button type="button" id="checkUpdateBtn" onclick="checkForAppUpdate()">⬆ بررسی بروزرسانی</button>
+    <button type="button" class="gold" data-action="toggleCloudPanel">☁ فضای ابری</button>
+    <button type="button" data-action="openHelp">راهنما</button>
+    <button type="button" data-action="openAbout">درباره ما</button>
+    <button type="button" id="checkUpdateBtn" data-action="checkForAppUpdate">⬆ بروزرسانی</button>
   </div>
-  <div id="appUpdateStatus" class="small" role="status" aria-live="polite"></div>
+  <div id="appUpdateStatus" role="status" aria-live="polite"></div>
   <div class="network-indicator" role="status" aria-live="polite">
     <span id="networkDot" class="network-dot offline"></span>
     <strong id="networkLabel">در حال بررسی اتصال…</strong>
@@ -258,186 +351,208 @@ button:disabled{opacity:.55;cursor:not-allowed}
   </div>
 </header>
 
-<div class="container">
+<!-- ناوبری: موبایل = نوار شناور پایین | دسکتاپ = نوار چسبان بالای محتوا -->
+<nav class="tabs" aria-label="بخش‌های برنامه">
+  <button class="gold" data-action="showTab" data-arg="counterTab" aria-current="page">شمارنده</button>
+  <button data-action="showTab" data-arg="statsTab">آمار</button>
+  <button data-action="showTab" data-arg="khatmTab">ختم شخصی</button>
+  <button data-action="showTab" data-arg="groupTab">ختم گروهی</button>
+  <button data-action="showTab" data-arg="settingsTab">تنظیمات</button>
+</nav>
+
+<main class="shell">
 
 <div id="cloudPanel" class="cloud-panel hidden">
-<div class="card" id="authCard">
-  <h3 class="section-title">فضای ابری | ثبت‌نام، ورود و همگام‌سازی</h3>
-  <p class="small">برای ذخیره اطلاعات در حساب شخصی و مشارکت در ختم‌های گروهی، وارد حساب شوید.</p>
-  <input id="email" type="email" placeholder="ایمیل">
-  <input id="password" type="password" placeholder="رمز عبور">
-  <div class="row">
-    <button class="gold" onclick="signUp()">ثبت‌نام</button>
-    <button onclick="signIn()">ورود</button>
-  </div>
-  <button class="full" onclick="resetPassword()">بازیابی رمز عبور</button>
-  <p class="small auth-note" id="authMessage" role="status" aria-live="polite"></p>
-</div>
-
-<div class="card hidden" id="accountCard">
-  <div class="row">
-    <div>
-      <strong id="accountEmail"></strong>
-      <p class="small">حساب ابری فعال است</p>
-    </div>
-    <button onclick="signOut()">خروج</button>
-  </div>
-  <button class="full" onclick="syncCloud()">همگام‌سازی دستی</button>
-</div>
-</div>
-
-<div class="tabs">
-  <button class="gold" onclick="showTab('counterTab')">شمارنده</button>
-  <button onclick="showTab('statsTab')">آمار</button>
-  <button onclick="showTab('khatmTab')">ختم شخصی</button>
-  <button onclick="showTab('groupTab')">ختم گروهی</button>
-  <button onclick="showTab('settingsTab')">تنظیمات</button>
-</div>
-
-<section id="counterTab">
-
-<div class="card counter">
-  <h3 class="section-title">ذکر انتخابی</h3>
-
-  <select id="dhikrSelect" onchange="changeDhikr()"></select>
-
-  <div class="arabic" id="arabicText"></div>
-  <div class="translation" id="translation"></div>
-
-  <div class="count" id="count">۰</div>
-
-  <div class="controls">
-    <button class="big-button" onclick="increment()">ذکر</button>
-  </div>
-
-  <div class="controls" style="margin-top:18px">
-    <button onclick="undo()">↶ بازگشت</button>
-    <button onclick="resetCount()" class="danger">شروع مجدد</button>
-    <button id="audioToggle" onclick="toggleDhikrAudio()" aria-pressed="true">🔊 صدا روشن</button>
-  </div>
-
-  <div style="margin-top:20px">
+  <div class="card" id="authCard">
+    <h3 class="section-title">فضای ابری | ثبت‌نام، ورود و همگام‌سازی</h3>
+    <p class="small">برای ذخیره اطلاعات در حساب شخصی و مشارکت در ختم‌های گروهی، وارد حساب شوید.</p>
+    <input id="email" type="email" inputmode="email" autocomplete="email" placeholder="ایمیل">
+    <input id="password" type="password" autocomplete="current-password" placeholder="رمز عبور">
     <div class="row">
-      <span class="small">هدف روزانه</span>
-      <strong id="goalText">۱۰۰</strong>
+      <button class="gold" data-action="signUp">ثبت‌نام</button>
+      <button data-action="signIn">ورود</button>
     </div>
-    <div class="progress"><div id="goalProgress"></div></div>
+    <button class="full" data-action="resetPassword">بازیابی رمز عبور</button>
+    <p class="small auth-note" id="authMessage" role="status" aria-live="polite"></p>
+  </div>
+
+  <div class="card hidden" id="accountCard">
+    <div class="row">
+      <div>
+        <strong id="accountEmail"></strong>
+        <p class="small">حساب ابری فعال است</p>
+      </div>
+      <button data-action="signOut">خروج</button>
+    </div>
+    <button class="full" data-action="syncCloud">همگام‌سازی دستی</button>
   </div>
 </div>
 
+<!-- ===== صفحهٔ اول: ۱) نوع ذکر ← ۲) نیت ← شمارش ===== -->
+<section id="counterTab" class="tab">
+  <div class="counter-layout">
+
+    <div class="card setup">
+      <section class="step" aria-labelledby="stepDhikr">
+        <h3 class="step-title" id="stepDhikr"><span class="step-no">۱</span>نوع ذکر</h3>
+        <select id="dhikrSelect" data-change="changeDhikr" aria-label="نوع ذکر"></select>
+        <div class="arabic" id="arabicText" lang="ar" dir="rtl"></div>
+        <div class="translation" id="translation"></div>
+      </section>
+
+      <section class="step" aria-labelledby="stepIntent">
+        <h3 class="step-title" id="stepIntent"><span class="step-no">۲</span>نوع نیت</h3>
+        <div class="segmented" role="radiogroup" aria-labelledby="stepIntent">
+          <label><input type="radio" name="mode" value="personal" checked data-change="setMode"><span>شخصی</span></label>
+          <label><input type="radio" name="mode" value="group" data-change="setMode"><span>گروهی</span></label>
+        </div>
+        <div class="group-picker" id="groupPicker" hidden>
+          <select id="groupSelect" data-change="setGroup" aria-label="ختم گروهی"></select>
+          <p class="small" id="groupHint" role="status"></p>
+        </div>
+      </section>
+    </div>
+
+    <div class="card stage">
+      <span class="target-badge" id="targetBadge">ثبت در: آمار شخصی من</span>
+      <div class="count-label" id="countLabel">شمارندهٔ شخصی</div>
+      <div class="count" id="count">۰</div>
+      <div class="count-sub small" id="countSub" role="status"></div>
+
+      <div class="ring" id="goalRing">
+        <button class="big-button" data-action="increment" aria-label="افزودن یک ذکر">ذکر</button>
+      </div>
+
+      <div class="controls">
+        <button data-action="undo">↶ بازگشت</button>
+        <button data-action="resetCount" class="danger">شروع مجدد</button>
+        <button id="audioToggle" data-action="toggleDhikrAudio" aria-pressed="true">🔊 صدا روشن</button>
+      </div>
+
+      <div class="goal">
+        <div class="row">
+          <span class="small" id="goalLabel">هدف روزانه</span>
+          <strong id="goalText">۱۰۰</strong>
+        </div>
+        <div class="progress"><div id="goalProgress"></div></div>
+      </div>
+    </div>
+
+  </div>
 </section>
 
-<section id="statsTab" class="hidden">
-  <div class="card">
-    <h3 class="section-title">گزارش فعالیت</h3>
-    <div class="grid">
-      <div class="stat">امروز<strong id="todayStat">۰</strong></div>
-      <div class="stat">این هفته<strong id="weekStat">۰</strong></div>
-      <div class="stat">این ماه<strong id="monthStat">۰</strong></div>
-      <div class="stat">مجموع کل<strong id="totalStat">۰</strong></div>
-      <div class="stat">روزهای فعال<strong id="activeDays">۰</strong></div>
-      <div class="stat">رکورد روزانه<strong id="recordStat">۰</strong></div>
+<section id="statsTab" class="tab hidden">
+  <div class="tab-grid">
+    <div class="card">
+      <h3 class="section-title">گزارش فعالیت شخصی</h3>
+      <div class="grid">
+        <div class="stat">امروز<strong id="todayStat">۰</strong></div>
+        <div class="stat">این هفته<strong id="weekStat">۰</strong></div>
+        <div class="stat">این ماه<strong id="monthStat">۰</strong></div>
+        <div class="stat">مجموع کل<strong id="totalStat">۰</strong></div>
+        <div class="stat">روزهای فعال<strong id="activeDays">۰</strong></div>
+        <div class="stat">رکورد روزانه<strong id="recordStat">۰</strong></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3 class="section-title">هفت روز اخیر</h3>
+      <div id="weeklyHistory"></div>
     </div>
   </div>
-  <div class="card">
-    <h3 class="section-title">هفت روز اخیر</h3>
-    <div id="weeklyHistory"></div>
-  </div>
 </section>
 
-<section id="khatmTab" class="hidden">
-  <div class="card">
-    <h3 class="section-title">ساخت ختم شخصی</h3>
-    <input id="khatmTitle" placeholder="عنوان ختم">
-    <input id="khatmTarget" type="number" min="1" value="1000" placeholder="تعداد هدف">
-    <input id="khatmIntention" placeholder="نیت ختم">
-    <button class="gold full" onclick="createKhatm()">ایجاد ختم</button>
-  </div>
-  <div class="card">
-    <h3 class="section-title">ختم‌های من</h3>
-    <div id="khatmList"></div>
-  </div>
-</section>
-
-<section id="groupTab" class="hidden">
-  <div class="card">
-    <h3 class="section-title">ساخت ختم گروهی</h3>
-    <input id="groupName" placeholder="نام ختم گروهی">
-    <input id="groupTarget" type="number" value="10000" placeholder="هدف کل">
-    <button class="gold full" onclick="createGroup()">ساخت گروه</button>
-  </div>
-
-  <div class="card">
-    <h3 class="section-title">عضویت با کد دعوت</h3>
-    <input id="inviteCode" placeholder="کد دعوت">
-    <button class="full" onclick="joinGroup()">عضویت در گروه</button>
-  </div>
-
-  <div class="card">
-    <h3 class="section-title">آمار کلی ختم‌های گروهی</h3>
-    <div class="grid">
-      <div class="stat">مجموع صلوات گروه‌ها<strong id="allGroupTotal">۰</strong></div>
-      <div class="stat">تعداد گروه‌های فعال<strong id="activeGroupCount">۰</strong></div>
-      <div class="stat">مجموع اهداف گروه‌ها<strong id="allGroupTarget">۰</strong></div>
-      <div class="stat">درصد پیشرفت کل<strong id="allGroupPercent">۰٪</strong></div>
+<section id="khatmTab" class="tab hidden">
+  <div class="tab-grid">
+    <div class="card">
+      <h3 class="section-title">ساخت ختم شخصی</h3>
+      <input id="khatmTitle" placeholder="عنوان ختم">
+      <input id="khatmTarget" type="number" inputmode="numeric" min="1" value="1000" placeholder="تعداد هدف">
+      <input id="khatmIntention" placeholder="نیت ختم">
+      <button class="gold full" data-action="createKhatm">ایجاد ختم</button>
     </div>
-    <p class="small auth-note">این آمار بر اساس مشارکت‌هایی است که اعضا در فضای ابری ثبت کرده‌اند.</p>
-  </div>
-  <div class="card">
-    <h3 class="section-title">گروه‌های من و آمار هر گروه</h3>
-    <div id="groupList"></div>
+    <div class="card">
+      <h3 class="section-title">ختم‌های من</h3>
+      <div id="khatmList"></div>
+    </div>
   </div>
 </section>
 
-<section id="settingsTab" class="hidden">
-  <div class="card">
-    <h3 class="section-title">تنظیمات برنامه</h3>
-    <label>هدف روزانه</label>
-    <input type="number" id="dailyGoal" min="1" value="100"
-      onchange="setGoal(this.value)">
-    <p class="small" id="systemVoiceStatus">با فعال بودن صدا، پس از هر بار لمس دکمه «ذکر»، متن ذکر با صدای موتور گفتار سیستم‌عامل خوانده می‌شود.</p>
-    <label><input type="checkbox" id="vibration" checked
-      style="width:auto" onchange="saveSettings()"> لرزش هنگام شمارش</label>
-    <label><input type="checkbox" id="sound" 
-      style="width:auto" onchange="saveSettings()"> صدای شمارش</label>
-    <label><input type="checkbox" id="touchMode"
-      style="width:auto" onchange="saveSettings()"> شمارش با لمس کل صفحه</label>
-  </div>
+<section id="groupTab" class="tab hidden">
+  <div class="tab-grid">
+    <div class="card">
+      <h3 class="section-title">ساخت ختم گروهی</h3>
+      <input id="groupName" placeholder="نام ختم گروهی">
+      <input id="groupTarget" type="number" inputmode="numeric" value="10000" placeholder="هدف کل">
+      <button class="gold full" data-action="createGroup">ساخت گروه</button>
+    </div>
 
-  <div class="card">
-    <h3 class="section-title">پشتیبان‌گیری و بازیابی</h3>
-    <button class="gold full" onclick="exportBackup()">دریافت فایل پشتیبان JSON</button>
-    <input type="file" accept=".json,application/json" id="backupFile">
-    <button class="full" onclick="importBackup()">ادغام و بازیابی اطلاعات</button>
-  </div>
+    <div class="card">
+      <h3 class="section-title">عضویت با کد دعوت</h3>
+      <input id="inviteCode" placeholder="کد دعوت">
+      <button class="full" data-action="joinGroup">عضویت در گروه</button>
+    </div>
 
+    <div class="card">
+      <h3 class="section-title">آمار کلی ختم‌های گروهی</h3>
+      <div class="grid">
+        <div class="stat">مجموع صلوات گروه‌ها<strong id="allGroupTotal">۰</strong></div>
+        <div class="stat">تعداد گروه‌های فعال<strong id="activeGroupCount">۰</strong></div>
+        <div class="stat">مجموع اهداف گروه‌ها<strong id="allGroupTarget">۰</strong></div>
+        <div class="stat">درصد پیشرفت کل<strong id="allGroupPercent">۰٪</strong></div>
+      </div>
+      <p class="small auth-note">این آمار بر اساس مشارکت‌هایی است که اعضا در فضای ابری ثبت کرده‌اند.</p>
+    </div>
+    <div class="card">
+      <h3 class="section-title">گروه‌های من و آمار هر گروه</h3>
+      <div id="groupList"></div>
+    </div>
+  </div>
 </section>
 
-</div>
+<section id="settingsTab" class="tab hidden">
+  <div class="tab-grid">
+    <div class="card">
+      <h3 class="section-title">تنظیمات برنامه</h3>
+      <label for="dailyGoal">هدف روزانه</label>
+      <input type="number" inputmode="numeric" id="dailyGoal" min="1" value="100" data-change="setGoal">
+      <p class="small" id="systemVoiceStatus">با فعال بودن صدا، پس از هر بار لمس دکمه «ذکر»، متن ذکر با صدای موتور گفتار سیستم‌عامل خوانده می‌شود.</p>
+      <label><input type="checkbox" id="vibration" checked data-change="saveSettings">لرزش هنگام شمارش</label>
+      <label><input type="checkbox" id="sound" data-change="saveSettings">بیپ هنگام شمارش</label>
+      <label><input type="checkbox" id="touchMode" data-change="saveSettings">شمارش با لمس کل صفحه</label>
+    </div>
 
-<footer>توسعه و برنامه نویسی هادی رسولی</footer>
+    <div class="card">
+      <h3 class="section-title">پشتیبان‌گیری و بازیابی</h3>
+      <button class="gold full" data-action="exportBackup">دریافت فایل پشتیبان JSON</button>
+      <input type="file" accept=".json,application/json" id="backupFile">
+      <button class="full" data-action="importBackup">ادغام و بازیابی اطلاعات</button>
+    </div>
+  </div>
+</section>
 
-<!-- راهنمای پویا و پنجره درباره ما -->
-<div class="modal hidden" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
-  <div class="modal-backdrop" onclick="closeModal('helpModal')"></div>
+</main>
+
+<footer>توسعه و برنامه نویسی هادی رسولی · نسخه <span id="footerVersion"></span></footer>
+
+<dialog id="helpModal" aria-labelledby="helpTitle">
   <div class="modal-panel">
-    <button class="modal-close" type="button" onclick="closeModal('helpModal')" aria-label="بستن">×</button>
+    <button class="modal-close" type="button" data-action="closeModal" data-arg="helpModal" aria-label="بستن">×</button>
     <h2 id="helpTitle">راهنمای استفاده از صلوات شمار</h2>
     <div class="help-step-count" id="helpStepCount"></div>
     <h3 id="helpStepTitle"></h3>
     <p id="helpStepText"></p>
     <div class="help-progress"><span id="helpProgress"></span></div>
     <div class="modal-actions">
-      <button type="button" onclick="changeHelpStep(-1)" id="helpPrev">مرحله قبل</button>
-      <button type="button" class="gold" onclick="changeHelpStep(1)" id="helpNext">مرحله بعد</button>
+      <button type="button" data-action="changeHelpStep" data-arg="-1" id="helpPrev">مرحله قبل</button>
+      <button type="button" class="gold" data-action="changeHelpStep" data-arg="1" id="helpNext">مرحله بعد</button>
     </div>
   </div>
-</div>
-<div class="modal hidden" id="aboutModal" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
-  <div class="modal-backdrop" onclick="closeModal('aboutModal')"></div>
+</dialog>
+
+<dialog id="aboutModal" aria-labelledby="aboutTitle">
   <div class="modal-panel about-panel">
-    <button class="modal-close" type="button" onclick="closeModal('aboutModal')" aria-label="بستن">×</button>
-    <div class="about-symbol">۞</div>
+    <button class="modal-close" type="button" data-action="closeModal" data-arg="aboutModal" aria-label="بستن">×</button>
+    <div class="about-symbol" aria-hidden="true">۞</div>
     <h2 id="aboutTitle">درباره صلوات شمار</h2>
     <div class="card memorial-card">
       <h3 class="section-title">هدیه‌ای از جنس صلوات</h3>
@@ -445,7 +560,7 @@ button:disabled{opacity:.55;cursor:not-allowed}
       <p>کاربر گرامی، برای شادی روح این مرحوم مغفور، یک صلوات هدیه بفرمایید.</p>
     </div>
     <p><strong>توسعه و برنامه نویسی هادی رسولی</strong></p>
-    <p>ورژن <strong id="appVersionText">۱.۱.۲</strong></p>
+    <p>ورژن <strong id="appVersionText"></strong></p>
     <p>انتشار: آبان ماه ۱۴۰۵</p>
     <div class="about-contact">
       <h3 class="section-title">ارتباط با ما</h3>
@@ -453,9 +568,9 @@ button:disabled{opacity:.55;cursor:not-allowed}
       <p>صفحه اینستاگرام: <a href="https://www.instagram.com/the.rasuoli/" target="_blank" rel="noopener noreferrer">THE.RASUOLI</a></p>
     </div>
   </div>
-</div>
+</dialog>
 
-<script>
+<script type="module">
 // =======================================
 // SUPABASE CONFIGURATION — مقادیر پروژه موجود حفظ شده‌اند؛ هیچ جدول/رکوردی حذف نمی‌شود
 // =======================================
@@ -466,8 +581,7 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
 'sb_publishable_H4KXnNLT85Q5zUdmBfz8Hw_-dDfgfjT';
 
-// اگر کتابخانه Supabase به‌دلیل محدودیت اینترنت یا CDN بارگذاری نشود،
-// بخش شمارش و ذخیره‌سازی محلی همچنان باید بدون خطا کار کند.
+// اگر کتابخانه Supabase بارگذاری نشود، شمارش و ذخیره‌سازی محلی همچنان کار می‌کند.
 let db = null;
 try {
   if (window.supabase && typeof window.supabase.createClient === 'function') {
@@ -520,36 +634,29 @@ const dhikrs = [
 
 const KEY = 'salavat_shomar_v3';
 
-function todayKey(){
-  const d = new Date();
+function dayKey(d=new Date()){
   return d.getFullYear()+'-'+
     String(d.getMonth()+1).padStart(2,'0')+'-'+
     String(d.getDate()).padStart(2,'0');
 }
+const todayKey=()=>dayKey();
 
 let data = {
-  count:0,
-  total:0,
-  goal:100,
-  selected:0,
-  daily:{},
-  khatms:[],
-  vibration:true,
-  sound:false,
-  touchMode:false,
-  voiceEnabled:true,
-  history:[]
+  count:0,total:0,goal:100,selected:0,daily:{},khatms:[],
+  vibration:true,sound:false,touchMode:false,voiceEnabled:true,history:[]
 };
 
 let user = null;
 let undoSnapshot = null;
 let syncTimer = null;
 let groups = [];
+let groupsLoaded = false;
 
 function normalizeData(source={}){
   const base={
     count:0,total:0,goal:100,selected:0,daily:{},khatms:[],
-    vibration:true,sound:false,touchMode:false,voiceEnabled:true,history:[]
+    vibration:true,sound:false,touchMode:false,voiceEnabled:true,history:[],
+    updatedAt:0,uid:null,deletedKhatms:[],mode:'personal',groupId:null
   };
   const out={...base,...(source&&typeof source==='object'?source:{})};
   out.count=Math.max(0,Number(out.count)||0);
@@ -563,6 +670,11 @@ function normalizeData(source={}){
   out.sound=!!out.sound;
   out.touchMode=!!out.touchMode;
   out.voiceEnabled=out.voiceEnabled!==false;
+  out.updatedAt=Number(out.updatedAt)||0;
+  out.uid=out.uid||null;
+  out.mode=out.mode==='group'?'group':'personal';
+  out.groupId=typeof out.groupId==='string'?out.groupId:null;
+  out.deletedKhatms=Array.isArray(out.deletedKhatms)?out.deletedKhatms.slice(-200):[];
   return out;
 }
 
@@ -588,12 +700,11 @@ function saveLocal(){
 }
 
 // ادغام محافظه‌کارانه: داده ابری حذف یا با داده خالی جایگزین نمی‌شود.
-// برای شمارنده‌های تجمعی از مقدار بزرگ‌تر استفاده می‌شود تا همگام‌سازی تکراری دوباره‌شماری نکند.
 function mergeStates(localState,cloudState){
   const local=normalizeData(localState);
   const cloud=normalizeData(cloudState);
   const merged={...local,...cloud};
-  merged.count=Math.max(local.count,cloud.count);
+  merged.count=local.updatedAt>=cloud.updatedAt?local.count:cloud.count;
   merged.total=Math.max(local.total,cloud.total);
   merged.goal=cloud.goal||local.goal||100;
   merged.selected=Number.isInteger(cloud.selected)?cloud.selected:local.selected;
@@ -605,14 +716,20 @@ function mergeStates(localState,cloudState){
   [...local.history,...cloud.history].forEach(item=>{
     if(item&&typeof item==='object') historyMap.set(JSON.stringify(item),item);
   });
-  merged.history=[...historyMap.values()].slice(-3000);
+  merged.history=[...historyMap.values()].slice(-500);
   const khatmMap=new Map();
   [...local.khatms,...cloud.khatms].forEach(k=>{
     if(!k||!k.id)return;
     const old=khatmMap.get(k.id);
     khatmMap.set(k.id,old?{...old,...k,current_count:Math.max(Number(old.current_count)||0,Number(k.current_count)||0)}:k);
   });
-  merged.khatms=[...khatmMap.values()];
+  merged.deletedKhatms=[...new Set([...local.deletedKhatms,...cloud.deletedKhatms])].slice(-200);
+  merged.khatms=[...khatmMap.values()].filter(k=>!merged.deletedKhatms.includes(k.id));
+  merged.updatedAt=Math.max(local.updatedAt,cloud.updatedAt);
+  merged.uid=local.uid||cloud.uid||null;
+  // نیت و گروه انتخابی، تنظیم همین دستگاه است
+  merged.mode=local.mode;
+  merged.groupId=local.groupId||cloud.groupId;
   return normalizeData(merged);
 }
 
@@ -620,15 +737,16 @@ function todayCount(){
   return Number(data.daily[todayKey()] || 0);
 }
 
+const faNum=new Intl.NumberFormat('fa-IR');
 function number(n){
-  return Number(n || 0).toLocaleString('fa-IR');
+  return faNum.format(Number(n || 0));
 }
 
 // =======================================
 // APP VERSION + PWA UPDATE
 // =======================================
-const APP_VERSION = '1.1.2';
-const APP_VERSION_DISPLAY = '۱.۱.۲';
+const APP_VERSION = (document.querySelector('meta[name="app-version"]')||{}).content || '1.4.0';
+const APP_VERSION_DISPLAY = APP_VERSION.replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
 let appUpdateReloading = false;
 
 function setUpdateStatus(message){
@@ -655,19 +773,16 @@ async function checkForAppUpdate(){
       return;
     }
     await reg.update();
-    // اگر نسخه جدید از قبل دریافت شده و در انتظار فعال‌سازی است.
     if(reg.waiting){
       setUpdateStatus('نسخه جدید دریافت شد؛ در حال بروزرسانی…');
       reg.waiting.postMessage({type:'SKIP_WAITING'});
       return;
     }
-    // منتظر تکمیل نصب احتمالی نسخه تازه می‌مانیم.
     const installing=reg.installing;
     if(installing){
       await new Promise(resolve=>{
         const done=()=>{
-          if(installing.state==='installed' || installing.state==='activated' ||
-             installing.state==='redundant'){
+          if(['installed','activated','redundant'].includes(installing.state)){
             installing.removeEventListener('statechange',done);
             resolve();
           }
@@ -686,7 +801,7 @@ async function checkForAppUpdate(){
     console.error('بررسی بروزرسانی ناموفق بود:',error);
     setUpdateStatus('بررسی بروزرسانی انجام نشد؛ اتصال اینترنت را بررسی و دوباره تلاش کنید.');
   }finally{
-    if(btn){btn.disabled=false;btn.textContent='⬆ بررسی بروزرسانی';}
+    if(btn){btn.disabled=false;btn.textContent='⬆ بروزرسانی';}
   }
 }
 
@@ -702,9 +817,29 @@ if('serviceWorker' in navigator){
 // INITIALIZE
 // =======================================
 
+function syncControls(){
+  const s=document.getElementById('dhikrSelect');
+  s.value=data.selected;
+  const d=dhikrs[data.selected];
+  if(d){
+    document.getElementById('arabicText').textContent=d[1];
+    document.getElementById('translation').textContent=d[2];
+  }
+  document.getElementById('dailyGoal').value=data.goal;
+  document.getElementById('vibration').checked=data.vibration;
+  document.getElementById('sound').checked=data.sound;
+  document.getElementById('touchMode').checked=data.touchMode;
+  const radio=document.querySelector(`input[name=mode][value=${data.mode}]`);
+  if(radio)radio.checked=true;
+  updateAudioButton();
+  renderGroupPicker();
+}
+
 function init(){
   const versionEl=document.getElementById('appVersionText');
   if(versionEl)versionEl.textContent=APP_VERSION_DISPLAY;
+  const footerVer=document.getElementById('footerVersion');
+  if(footerVer)footerVer.textContent=APP_VERSION_DISPLAY;
   loadLocal();
   const select = document.getElementById('dhikrSelect');
 
@@ -715,12 +850,7 @@ function init(){
     select.appendChild(o);
   });
 
-  select.value = data.selected;
-  document.getElementById('dailyGoal').value = data.goal;
-  document.getElementById('vibration').checked = data.vibration;
-  document.getElementById('sound').checked = data.sound;
-  document.getElementById('touchMode').checked = data.touchMode;
-  updateAudioButton();
+  syncControls();
   updateNetworkStatus();
   window.addEventListener('online',updateNetworkStatus);
   window.addEventListener('offline',updateNetworkStatus);
@@ -730,7 +860,9 @@ function init(){
   loadAuth();
 
   document.addEventListener('keydown',e=>{
-    if(e.code==='Space' && ['BODY','HTML'].includes(document.activeElement.tagName)){
+    if(e.code==='Space' && ['BODY','HTML'].includes(document.activeElement.tagName) &&
+       !document.getElementById('counterTab').classList.contains('hidden') &&
+       document.querySelector('dialog[open]')===null){
       e.preventDefault();
       increment();
     }
@@ -739,62 +871,67 @@ function init(){
   document.addEventListener('click',e=>{
     if(data.touchMode &&
        !e.target.closest('button,input,select,textarea,label,a,[role=button]') &&
-       !e.target.closest('.tabs')){
+       !e.target.closest('.tabs,dialog,.install-banner,header,#cloudPanel') &&
+       !document.getElementById('counterTab').classList.contains('hidden')){
       increment();
     }
   });
 }
 
 // =======================================
-// COUNTER
+// COUNTER — شخصی: آمار شخصی | گروهی: ختم گروه
 // =======================================
 
 function increment(amount=1){
   const n=Number(amount);
   if(!Number.isFinite(n)||n<=0||n>1000000)return;
+  if(data.mode==='group')return incrementGroup(n);
+  lastAction=null;
   undoSnapshot=JSON.stringify(data);
   data.count+=n;
   data.total+=n;
   data.daily[todayKey()]=(Number(data.daily[todayKey()])||0)+n;
   data.history.push({date:todayKey(),count:n,dhikr:data.selected,at:new Date().toISOString()});
-  if(data.history.length>3000)data.history=data.history.slice(-3000);
+  if(data.history.length>500)data.history=data.history.slice(-500);
 
-  // هر ختم فعال سهم خودش را دریافت می‌کند.
+  // هر ختم شخصی فعال سهم خودش را دریافت می‌کند.
   data.khatms.forEach(k=>{
     if(k.status==='active'){
       k.current_count=(Number(k.current_count)||0)+n;
       if(k.current_count>=Number(k.target_count))k.status='completed';
     }
   });
-  if(data.vibration&&navigator.vibrate)navigator.vibrate(20);
-  if(data.voiceEnabled) speakDhikr();
-  if(data.sound){
-    try{
-      const AudioCtx=window.AudioContext||window.webkitAudioContext;
-      if(AudioCtx){
-        const a=new AudioCtx(),osc=a.createOscillator(),gain=a.createGain();
-        osc.connect(gain);gain.connect(a.destination);osc.frequency.value=750;
-        gain.gain.value=.035;osc.start();osc.stop(a.currentTime+.06);
-        osc.onended=()=>a.close();
-      }
-    }catch(e){console.warn('صدای شمارش پشتیبانی نشد',e);}
-  }
+  feedback();
+  data.updatedAt=Date.now();
   saveLocal();
 }
 
-function addMany(n){increment(n)}
-
 function undo(){
+  if(lastAction?.mode==='group'){
+    const {gid,n}=lastAction;lastAction=null;
+    if((groupPending[gid]||0)>=n){
+      groupPending[gid]-=n;if(!groupPending[gid])delete groupPending[gid];
+      const g=groups.find(x=>x.id===gid);
+      if(g){g.current_total=Math.max(0,(g.current_total||0)-n);g.my_count=Math.max(0,(g.my_count||0)-n);}
+      savePending();render();
+    }
+    return;
+  }
   if(!undoSnapshot) return;
+  const keepMode=data.mode,keepGroup=data.groupId;
   data = JSON.parse(undoSnapshot);
+  data.mode=keepMode;data.groupId=keepGroup;
   undoSnapshot=null;
+  data.updatedAt=Date.now();
   saveLocal();
 }
 
 function resetCount(){
+  if(data.mode==='group')return;
   if(!confirm('فقط شمارنده فعلی صفر شود؟ آمار روزانه و مجموع کل حفظ می‌شوند.'))return;
   undoSnapshot=JSON.stringify(data);
   data.count=0;
+  data.updatedAt=Date.now();
   saveLocal();
 }
 
@@ -818,16 +955,19 @@ function updateAudioButton(){
 function toggleDhikrAudio(){
   data.voiceEnabled=!data.voiceEnabled;
   const audio=document.getElementById('dhikrAudio');
-  if(!data.voiceEnabled && audio){
-    audio.pause();
-    if(audio.src && audio.src.startsWith('blob:')) URL.revokeObjectURL(audio.src);
-    audio.removeAttribute('src');
-    audio.load();
+  if(!data.voiceEnabled){
+    try{window.speechSynthesis?.cancel();}catch(e){}
+    if(audio){
+      audio.pause();
+      if(audio.src && audio.src.startsWith('blob:')) URL.revokeObjectURL(audio.src);
+      audio.removeAttribute('src');
+      audio.load();
+    }
   }
   updateAudioButton();
   saveLocal();
 }
-// Windows/Chrome TTS: فهرست صداها ممکن است با تأخیر بارگذاری شود.
+
 let systemVoices=[];
 function refreshSystemVoices(){
   try{ systemVoices=window.speechSynthesis.getVoices()||[]; }catch(e){ systemVoices=[]; }
@@ -847,7 +987,6 @@ function speakDhikr(){
   try{
     refreshSystemVoices();
     window.speechSynthesis.cancel();
-    // رفع مشکل رایج Chrome ویندوز که speechSynthesis در حالت pause باقی می‌ماند.
     if(window.speechSynthesis.paused) window.speechSynthesis.resume();
 
     const utterance=new SpeechSynthesisUtterance(textToSpeak);
@@ -865,17 +1004,16 @@ function speakDhikr(){
     utterance.onstart=()=>clearAudioError();
     utterance.onend=clearAudioError;
     utterance.onerror=(e)=>{
+      if(e.error==='canceled'||e.error==='interrupted')return;
       console.warn('TTS error:',e);
-      showAudioError('صدای گفتار اجرا نشد. در ویندوز بررسی کنید صدای خروجی قطع نباشد و یک Voice در Settings > Accessibility > Speech نصب باشد.');
+      showAudioError('صدای گفتار اجرا نشد. صدای خروجی دستگاه و نصب بودن یک صدای عربی را بررسی کنید.');
     };
 
-    // اجرای مستقیم داخل رویداد کلیک برای سازگاری با Chrome ویندوز
     window.speechSynthesis.speak(utterance);
-    // Chrome گاهی اولین درخواست را نادیده می‌گیرد؛ resume مجدد کمک می‌کند.
     setTimeout(()=>{ try{ if(window.speechSynthesis.paused) window.speechSynthesis.resume(); }catch(e){} },100);
   }catch(err){
     console.error('System TTS failed:',err);
-    showAudioError('گفتار سیستم‌عامل اجرا نشد. تنظیمات صدای Windows و Chrome را بررسی کنید.');
+    showAudioError('گفتار سیستم‌عامل اجرا نشد. تنظیمات صدای دستگاه و مرورگر را بررسی کنید.');
   }
 }
 
@@ -884,10 +1022,11 @@ function showAudioError(message){
   if(!status){
     status=document.createElement('div');
     status.id='audioStatus';
+    status.className='small';
     status.setAttribute('role','status');
-    status.style.cssText='font-size:12px;color:#f3dda1;margin:8px auto 0;text-align:center;max-width:440px;';
-    const btn=document.getElementById('audioToggle');
-    if(btn && btn.parentNode)btn.parentNode.appendChild(status);
+    status.style.cssText='color:#f3dda1;margin:8px auto 0;text-align:center;max-width:440px;inline-size:100%';
+    const controls=document.querySelector('.controls');
+    if(controls && controls.parentNode)controls.insertAdjacentElement('afterend',status);
   }
   status.textContent=message;
 }
@@ -913,29 +1052,29 @@ function saveSettings(){
 // =======================================
 
 function render(){
-  document.getElementById('count').textContent=number(data.count);
-  document.getElementById('goalText').textContent=number(data.goal);
-  document.getElementById('goalProgress').style.width=
-    Math.min(100,todayCount()/Math.max(1,Number(data.goal)||100)*100)+'%';
+  const pct=renderCounter();
+  document.getElementById('goalProgress').style.width=pct+'%';
+  const ring=document.getElementById('goalRing');
+  if(ring)ring.style.setProperty('--p',pct);
 
   document.getElementById('todayStat').textContent=number(todayCount());
   document.getElementById('totalStat').textContent=number(data.total);
-  document.getElementById('goalProgress').title=
-    Math.floor(todayCount()/data.goal*100)+'%';
 
   const now=new Date();
   const month=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
   let monthTotal=0,weekTotal=0,active=0,record=0;
+  const weekKeys=new Set();
+  for(let i=0;i<7;i++){
+    const w=new Date();w.setDate(w.getDate()-i);
+    weekKeys.add(dayKey(w));
+  }
 
   Object.entries(data.daily).forEach(([date,count])=>{
     const safeCount=Math.max(0,Number(count)||0);
     if(date.startsWith(month)) monthTotal+=safeCount;
     if(safeCount>0) active++;
     record=Math.max(record,safeCount);
-
-    const d=new Date(date+'T12:00:00');
-    const diff=(now-d)/86400000;
-    if(diff>=0 && diff<7) weekTotal+=safeCount;
+    if(weekKeys.has(date)) weekTotal+=safeCount;
   });
 
   document.getElementById('weekStat').textContent=number(weekTotal);
@@ -944,17 +1083,13 @@ function render(){
   document.getElementById('recordStat').textContent=number(record);
 
   const history=document.getElementById('weeklyHistory');
-  history.innerHTML='';
+  history.replaceChildren();
   for(let i=6;i>=0;i--){
     const d=new Date();
     d.setDate(d.getDate()-i);
-    const key=d.getFullYear()+'-'+
-      String(d.getMonth()+1).padStart(2,'0')+'-'+
-      String(d.getDate()).padStart(2,'0');
     const div=document.createElement('div');
     div.className='item';
-    div.textContent=d.toLocaleDateString('fa-IR')+
-      ' — '+number(data.daily[key]||0)+' ذکر';
+    div.textContent=d.toLocaleDateString('fa-IR')+' — '+number(data.daily[dayKey(d)]||0)+' ذکر';
     history.appendChild(div);
   }
 
@@ -975,7 +1110,7 @@ async function createKhatm(){
   saveLocal();
   document.getElementById('khatmTitle').value='';
   document.getElementById('khatmIntention').value='';
-  if(user){
+  if(user&&db){
     const {error}=await db.from('khatms').insert({
       id:k.id,user_id:user.id,title:k.title,target_count:k.target_count,current_count:0,intention:k.intention
     });
@@ -988,7 +1123,14 @@ async function createKhatm(){
 
 function renderKhatms(){
   const el=document.getElementById('khatmList');
-  el.innerHTML='';
+  el.replaceChildren();
+  if(!data.khatms.length){
+    const p=document.createElement('p');
+    p.className='small';
+    p.textContent='هنوز ختم شخصی نساخته‌اید.';
+    el.appendChild(p);
+    return;
+  }
 
   data.khatms.forEach(k=>{
     const target=Math.max(1,Number(k.target_count)||1);
@@ -1022,8 +1164,9 @@ function renderKhatms(){
 async function deleteKhatm(id){
   if(!confirm('این ختم حذف شود؟')) return;
   data.khatms=data.khatms.filter(k=>k.id!==id);
+  data.deletedKhatms=[...data.deletedKhatms,id].slice(-200);
   saveLocal();
-  if(user){
+  if(user&&db){
     await db.from('khatms').delete().eq('id',id);
   }
 }
@@ -1072,11 +1215,7 @@ async function signUp(){
 
   if(error) return authMessage(error.message);
 
-  if(d.session){
-    authMessage('ثبت‌نام موفق بود');
-  }else{
-    authMessage('ثبت‌نام انجام شد. ایمیل خود را برای تأیید بررسی کن.');
-  }
+  authMessage(d.session?'ثبت‌نام موفق بود':'ثبت‌نام انجام شد. ایمیل خود را برای تأیید بررسی کن.');
 }
 
 async function signIn(){
@@ -1094,10 +1233,7 @@ async function resetPassword(){
   const email=document.getElementById('email').value.trim();
   if(!email) return authMessage('ابتدا ایمیل را وارد کن');
 
-  const {error}=await db.auth.resetPasswordForEmail(email,{
-    redirectTo:location.href
-  });
-
+  const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo:location.href});
   authMessage(error?error.message:'لینک بازیابی رمز ارسال شد.');
 }
 
@@ -1125,11 +1261,15 @@ async function loadAuth(){
   if(!authListenerRegistered){
     authListenerRegistered=true;
     db.auth.onAuthStateChange((event,session)=>{
-      // کارهای async خارج از callback اصلی Auth اجرا می‌شوند.
       setTimeout(()=>{
+        if(event==='PASSWORD_RECOVERY'){
+          const np=prompt('رمز عبور جدید را وارد کنید (حداقل ۶ کاراکتر):');
+          if(np&&np.length>=6)db.auth.updateUser({password:np}).then(({error})=>alert(error?error.message:'رمز عبور تغییر کرد.'));
+        }
         if(session?.user)setUser(session.user);
         else{
-          activeUserId=null;user=null;
+          activeUserId=null;user=null;groups=[];groupsLoaded=false;groupPending={};
+          renderGroups();
           document.getElementById('authCard').classList.remove('hidden');
           document.getElementById('accountCard').classList.add('hidden');
           document.getElementById('connectionStatus').textContent='وضعیت فضای ابری: حساب خارج شده؛ ذخیره محلی فعال است';
@@ -1147,12 +1287,14 @@ async function setUser(u){
   document.getElementById('accountEmail').textContent=u.email||'کاربر';
   if(activeUserId===u.id)return;
   activeUserId=u.id;
+  loadPending();
+  if(data.uid && data.uid!==u.id){ data=normalizeData({}); saveLocalOnly(); syncControls(); }
   document.getElementById('connectionStatus').textContent='وضعیت فضای ابری: در حال دریافت اطلاعات…';
   await loadCloud();
 }
 
 // =======================================
-// CLOUD SYNC — keeps the existing Supabase project and tables
+// CLOUD SYNC — پروژه و جدول‌های موجود Supabase حفظ شده‌اند
 // =======================================
 let cloudSaveInProgress=false;
 let cloudSaveQueued=false;
@@ -1164,7 +1306,7 @@ function scheduleCloudSave(){
 }
 
 async function saveCloud(){
-  if(!user)return false;
+  if(!user||!db)return false;
   if(cloudSaveInProgress){cloudSaveQueued=true;return false;}
   cloudSaveInProgress=true;
   const savingUserId=user.id;
@@ -1187,7 +1329,7 @@ async function saveCloud(){
 }
 
 async function loadCloud(){
-  if(!user)return;
+  if(!user||!db)return;
   const loadingUserId=user.id;
   try{
     const {data:cloudRow,error}=await db.from('user_app_state')
@@ -1195,7 +1337,6 @@ async function loadCloud(){
     if(error)throw error;
     if(user?.id!==loadingUserId)return;
 
-    // ردیف‌های قدیمی جدول khatms نیز خوانده و با وضعیت ذخیره‌شده ادغام می‌شوند.
     const {data:rows,error:khatmError}=await db.from('khatms').select('*').eq('user_id',loadingUserId);
     if(khatmError)console.warn('دریافت ختم‌ها از جدول جداگانه ناموفق بود:',khatmError);
 
@@ -1208,11 +1349,14 @@ async function loadCloud(){
       });
       data.khatms=[...map.values()];
     }
+    data.khatms=data.khatms.filter(k=>!data.deletedKhatms.includes(k.id));
+    data.uid=user.id;
     saveLocalOnly();
-    // پس از ادغام، نسخه ترکیبی ذخیره می‌شود؛ هیچ رکوردی حذف نمی‌شود.
     await saveCloud();
     await loadGroups();
     render();
+    syncControls();
+    flushGroupProgress();
   }catch(e){
     console.error('Cloud load error:',e);
     document.getElementById('connectionStatus').textContent='وضعیت فضای ابری: دریافت ناموفق؛ اطلاعات محلی حفظ شد';
@@ -1226,29 +1370,168 @@ async function syncCloud(){
   alert('فرایند همگام‌سازی پایان یافت. وضعیت را بالای صفحه بررسی کن.');
 }
 
-async function loadKhatms(){
-  if(!user)return;
-  const {data:rows,error}=await db.from('khatms').select('*').eq('user_id',user.id);
-  if(error){console.warn(error);return;}
-  if(rows){
-    const map=new Map(data.khatms.map(k=>[k.id,k]));
-    rows.forEach(row=>{
-      const old=map.get(row.id);
-      map.set(row.id,old?{...old,...row,current_count:Math.max(Number(old.current_count)||0,Number(row.current_count)||0)}:{...row,status:row.status||'active'});
-    });
-    data.khatms=[...map.values()];
-    saveLocalOnly();
+// =======================================
+// INTENTION MODE: personal | group
+// =======================================
+const PENDING_KEY='salavat_group_pending_v1';
+let groupPending={};
+let lastAction=null;
+let flushTimer=null,flushing=false,rpcAvailable=true;
+
+const pendingKey=()=>user?`${PENDING_KEY}:${user.id}`:null;
+function loadPending(){
+  groupPending={};
+  const k=pendingKey();if(!k)return;
+  try{groupPending=JSON.parse(localStorage.getItem(k))||{};}catch{groupPending={};}
+}
+function savePending(){
+  const k=pendingKey();if(!k)return;
+  try{localStorage.setItem(k,JSON.stringify(groupPending));}catch(e){console.warn(e);}
+}
+const selectedGroup=()=>groups.find(g=>g.id===data.groupId)??null;
+
+function feedback(){
+  if(data.vibration&&navigator.vibrate)navigator.vibrate(20);
+  if(data.voiceEnabled) speakDhikr();
+  if(data.sound){
+    try{
+      const AudioCtx=window.AudioContext||window.webkitAudioContext;
+      if(AudioCtx){
+        const a=new AudioCtx(),osc=a.createOscillator(),gain=a.createGain();
+        osc.connect(gain);gain.connect(a.destination);osc.frequency.value=750;
+        gain.gain.value=.035;osc.start();osc.stop(a.currentTime+.06);
+        osc.onended=()=>a.close();
+      }
+    }catch(e){console.warn('صدای شمارش پشتیبانی نشد',e);}
   }
 }
 
+function incrementGroup(n){
+  const g=selectedGroup();
+  if(!user||!g){renderCounter();return;}
+  lastAction={mode:'group',gid:g.id,n};
+  groupPending[g.id]=(groupPending[g.id]||0)+n;
+  g.current_total=(Number(g.current_total)||0)+n;
+  g.my_count=(Number(g.my_count)||0)+n;
+  savePending();
+  feedback();
+  scheduleGroupFlush();
+  render();
+  renderGroups();
+}
 
+function scheduleGroupFlush(delay=1500){
+  clearTimeout(flushTimer);
+  flushTimer=setTimeout(flushGroupProgress,delay);
+}
+
+async function pushGroupCount(gid,n){
+  if(rpcAvailable){
+    const {error}=await db.rpc('increment_group_progress',{p_group_id:gid,p_amount:n});
+    if(!error)return true;
+    if(!(error.code==='PGRST202'||/function/i.test(error.message||'')))return false;
+    rpcAvailable=false;
+  }
+  const {data:old,error}=await db.from('group_progress').select('count').eq('group_id',gid).eq('user_id',user.id).maybeSingle();
+  if(error)return false;
+  const {error:e}=await db.from('group_progress').upsert(
+    {group_id:gid,user_id:user.id,count:(Number(old?.count)||0)+n,updated_at:new Date().toISOString()},
+    {onConflict:'group_id,user_id'});
+  return !e;
+}
+
+async function flushGroupProgress(){
+  if(!user||!db||flushing||!navigator.onLine)return;
+  flushing=true;
+  let failed=false;
+  try{
+    for(const [gid,n] of Object.entries(groupPending)){
+      if(!(n>0))continue;
+      if(!(await pushGroupCount(gid,n))){failed=true;break;}
+      groupPending[gid]=Math.max(0,(groupPending[gid]||0)-n);
+      if(!groupPending[gid])delete groupPending[gid];
+      savePending();
+    }
+  }finally{
+    flushing=false;
+    const left=Object.values(groupPending).some(v=>v>0);
+    if(left)scheduleGroupFlush(failed?8000:300);
+    render();
+  }
+}
+
+function renderCounter(){
+  const set=(id,t)=>{const el=document.getElementById(id);if(el)el.textContent=t;};
+  document.body.dataset.mode=data.mode;
+  if(data.mode!=='group'){
+    set('targetBadge','ثبت در: آمار شخصی من');
+    set('countLabel','شمارندهٔ شخصی');
+    set('count',number(data.count));
+    set('countSub','');
+    set('goalLabel','هدف روزانه');
+    set('goalText',number(todayCount())+' از '+number(data.goal));
+    return Math.min(100,todayCount()/Math.max(1,Number(data.goal)||100)*100);
+  }
+  const g=selectedGroup();
+  set('goalLabel','پیشرفت ختم گروه');
+  if(!g){
+    set('targetBadge','ثبت در: ختم گروهی (گروهی انتخاب نشده)');
+    set('countLabel','ختم گروهی');set('count',number(0));
+    set('countSub',!user?'برای شمارش گروهی وارد فضای ابری شوید.':'یک گروه انتخاب کنید یا از تب «ختم گروهی» بسازید.');
+    set('goalText','—');
+    return 0;
+  }
+  const total=Number(g.current_total)||0,target=Math.max(1,Number(g.target_count)||1);
+  const queued=groupPending[g.id]||0;
+  set('targetBadge','ثبت در: ختم گروه «'+g.name+'»');
+  set('countLabel',g.name);
+  set('count',number(total));
+  set('countSub','سهم شما: '+number(g.my_count||0)+' · هدف: '+number(target)+(queued?' · در صف ارسال: '+number(queued):''));
+  set('goalText',number(Math.min(100,Math.round(total/target*100)))+'٪');
+  return Math.min(100,total/target*100);
+}
+
+function renderGroupPicker(){
+  const sel=document.getElementById('groupSelect');
+  const wrap=document.getElementById('groupPicker');
+  const hint=document.getElementById('groupHint');
+  if(!sel||!wrap)return;
+  wrap.hidden=data.mode!=='group';
+  sel.replaceChildren(...groups.map(g=>new Option(g.name,g.id)));
+  // گروه ذخیره‌شده فقط پس از بارگذاری کامل گروه‌ها بازنشانی می‌شود
+  if(groupsLoaded && !groups.some(g=>g.id===data.groupId))data.groupId=groups[0]?.id??null;
+  sel.value=data.groupId??'';
+  sel.disabled=!groups.length;
+  hint.textContent=!user?'برای شمارش گروهی ابتدا وارد فضای ابری شوید.'
+    :!groups.length?'هنوز عضو گروهی نیستید؛ از تب «ختم گروهی» بسازید یا با کد دعوت عضو شوید.':'';
+  render();
+}
+
+function setMode(value){
+  data.mode=value==='group'?'group':'personal';
+  lastAction=null;
+  saveLocal();
+  renderGroupPicker();
+}
+function setGroup(value){
+  data.groupId=value||null;
+  lastAction=null;
+  saveLocal();
+}
+
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='hidden')flushGroupProgress();
+  else if(user)loadGroups();
+});
+window.addEventListener('online',()=>flushGroupProgress());
+window.addEventListener('pagehide',()=>{flushGroupProgress();});
 
 // =======================================
 // GROUP KHATMS
 // =======================================
 
 async function createGroup(){
-  if(!user) return alert('برای ساخت گروه ابتدا وارد حساب شو');
+  if(!user||!db) return alert('برای ساخت گروه ابتدا وارد حساب شو');
 
   const name=document.getElementById('groupName').value.trim();
   const target=Number(document.getElementById('groupTarget').value);
@@ -1256,35 +1539,32 @@ async function createGroup(){
   if(!name || !Number.isSafeInteger(target) || target<=0) return alert('نام و هدف معتبر وارد کن');
 
   const {error}=await db.from('group_khatms').insert({
-    owner_id:user.id,
-    name,
-    target_count:target
+    owner_id:user.id,name,target_count:target
   });
 
   if(error) return alert(error.message);
 
+  document.getElementById('groupName').value='';
   await loadGroups();
   alert('گروه ساخته شد');
 }
 
 async function joinGroup(){
-  if(!user) return alert('ابتدا وارد حساب شو');
+  if(!user||!db) return alert('ابتدا وارد حساب شو');
 
   const code=document.getElementById('inviteCode').value.trim();
   if(!code) return;
 
-  const {data:d,error}=await db.rpc('join_group_by_code',{
-    p_code:code
-  });
-
+  const {error}=await db.rpc('join_group_by_code',{p_code:code});
   if(error) return alert(error.message);
 
+  document.getElementById('inviteCode').value='';
   await loadGroups();
   alert('عضویت در گروه موفق بود');
 }
 
 async function loadGroups(){
-  if(!user)return;
+  if(!user||!db)return;
   try{
     const [{data:members,error:mErr},{data:owned,error:oErr}]=await Promise.all([
       db.from('group_members').select('group_id').eq('user_id',user.id),
@@ -1306,21 +1586,23 @@ async function loadGroups(){
       const groupIds=groups.map(g=>g.id);
       const {data:progressRows,error}=await db.from('group_progress').select('group_id,user_id,count').in('group_id',groupIds);
       if(!error){
-        const totals={},memberCounts={};
+        const totals={},memberCounts={},mine={};
         (progressRows||[]).forEach(r=>{
           totals[r.group_id]=(totals[r.group_id]||0)+(Number(r.count)||0);
           memberCounts[r.group_id]=(memberCounts[r.group_id]||0)+1;
+          if(r.user_id===user.id)mine[r.group_id]=Number(r.count)||0;
         });
-        groups=groups.map(g=>({...g,current_total:totals[g.id]||0,member_contributors:memberCounts[g.id]||0}));
+        groups=groups.map(g=>({...g,current_total:(totals[g.id]||0)+(groupPending[g.id]||0),my_count:(mine[g.id]||0)+(groupPending[g.id]||0),member_contributors:memberCounts[g.id]||0}));
       }
     }
+    groupsLoaded=true;
     renderGroups();
   }catch(e){console.error(e);document.getElementById('connectionStatus').textContent='خطا در دریافت گروه‌ها';}
 }
 
 function renderGroups(){
   const el=document.getElementById('groupList');
-  el.innerHTML='';
+  el.replaceChildren();
   const total=groups.reduce((s,g)=>s+(Number(g.current_total)||0),0);
   const target=groups.reduce((s,g)=>s+(Number(g.target_count)||0),0);
   const active=groups.filter(g=>(Number(g.current_total)||0)<(Number(g.target_count)||0)).length;
@@ -1361,34 +1643,19 @@ function renderGroups(){
     copy.onclick=async()=>{try{await navigator.clipboard.writeText(g.invite_code||'');alert('کد دعوت کپی شد');}catch(e){alert('کپی خودکار ممکن نیست؛ کد را دستی انتخاب کن');}};
 
     const progress=document.createElement('button');
-    progress.textContent='ثبت ۱ ذکر برای گروه';
+    progress.className='gold';
+    progress.textContent='شمارش برای این گروه';
     progress.onclick=()=>addGroupProgress(g.id);
 
     div.append(title,code,summary,contributors,bar,copy,progress);
     el.appendChild(div);
   });
+  renderGroupPicker();
 }
 
-async function addGroupProgress(groupId){
-  if(!user) return;
-
-  const {data:old,error}=await db.from('group_progress')
-    .select('count').eq('group_id',groupId)
-    .eq('user_id',user.id).maybeSingle();
-
-  if(error) return alert(error.message);
-
-  const next=(old?.count||0)+1;
-
-  const {error:e}=await db.from('group_progress').upsert({
-    group_id:groupId,
-    user_id:user.id,
-    count:next,
-    updated_at:new Date().toISOString()
-  },{onConflict:'group_id,user_id'});
-
-  if(e) return alert(e.message);
-  alert('یک ذکر برای ختم گروه ثبت شد');
+function addGroupProgress(groupId){
+  data.mode='group';data.groupId=groupId;lastAction=null;
+  saveLocal();syncControls();showTab('counterTab');
 }
 
 // =======================================
@@ -1396,17 +1663,13 @@ async function addGroupProgress(groupId){
 // =======================================
 
 function exportBackup(){
-  const blob=new Blob(
-    [JSON.stringify(data,null,2)],
-    {type:'application/json'}
-  );
-
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
   a.href=url;
   a.download='salavat-backup-'+todayKey()+'.json';
   a.click();
-  URL.revokeObjectURL(url);
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 
 function importBackup(){
@@ -1420,6 +1683,7 @@ function importBackup(){
       if(!confirm('اطلاعات پشتیبان با اطلاعات فعلی ادغام شود؟ داده‌های فعلی و ابری حذف نمی‌شوند.'))return;
       data=mergeStates(data,imported);
       saveLocal();
+      syncControls();
       alert('اطلاعات پشتیبان با داده‌های فعلی ادغام شد.');
     }catch(e){alert('فایل پشتیبان معتبر نیست یا ساختار آن قابل خواندن نیست.');}
   };
@@ -1428,16 +1692,25 @@ function importBackup(){
 }
 
 // =======================================
-// NAVIGATION
+// NAVIGATION (با View Transition در مرورگرهای پشتیبان)
 // =======================================
 
+const TABS=['counterTab','statsTab','khatmTab','groupTab','settingsTab'];
 function showTab(id){
-  ['counterTab','statsTab','khatmTab','groupTab','settingsTab']
-    .forEach(x=>document.getElementById(x).classList.add('hidden'));
-
-  document.getElementById(id).classList.remove('hidden');
+  if(!TABS.includes(id))return;
+  const apply=()=>{
+    TABS.forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==id));
+    document.querySelectorAll('.tabs button').forEach(b=>{
+      const on=b.dataset.arg===id;
+      b.classList.toggle('gold',on);
+      if(on)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
+    });
+    window.scrollTo({top:0});
+  };
+  if(document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches)
+    document.startViewTransition(apply);
+  else apply();
 }
-
 
 // اسلایدر خودکار اسماء الهی
 const asmaNames = [
@@ -1448,17 +1721,18 @@ const asmaNames = [
 ];
 let asmaIndex = 0;
 function rotateAsma(){
+  if(document.hidden)return;
   const name=document.getElementById('asmaName');
   const meaning=document.getElementById('asmaMeaning');
   if(!name || !meaning) return;
   asmaIndex=(asmaIndex+1)%asmaNames.length;
   name.textContent=asmaNames[asmaIndex][0];
   meaning.textContent=asmaNames[asmaIndex][1];
-  name.style.animation='none'; void name.offsetWidth; name.style.animation='asmaFade .65s ease';
+  name.style.animation='none'; void name.offsetWidth; name.style.animation='';
 }
 setInterval(rotateAsma,3500);
 
-// ذکر روز؛ بر اساس روز سال انتخاب می‌شود و هر روز به‌صورت خودکار تغییر می‌کند.
+// ذکر روز؛ بر اساس روز سال
 const dailyDhikrs = [
   ['صلوات','اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ وَآلِ مُحَمَّدٍ'],
   ['استغفار','أَسْتَغْفِرُ اللَّهَ رَبِّي وَأَتُوبُ إِلَيْهِ'],
@@ -1469,7 +1743,8 @@ const dailyDhikrs = [
   ['یا رحمان','يَا رَحْمَٰنُ']
 ];
 function renderDailyDhikr(){
-  const dayNumber=Math.floor((new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate())-new Date(new Date().getFullYear(),0,0))/86400000);
+  const n=new Date();
+  const dayNumber=Math.floor((new Date(n.getFullYear(),n.getMonth(),n.getDate())-new Date(n.getFullYear(),0,0))/86400000);
   const item=dailyDhikrs[dayNumber%dailyDhikrs.length];
   const title=document.getElementById('dailyDhikrName');
   const text=document.getElementById('dailyDhikrText');
@@ -1477,13 +1752,13 @@ function renderDailyDhikr(){
 }
 renderDailyDhikr();
 
-// راهنمای مرحله‌ای و پویا
+// راهنمای مرحله‌ای
 const helpSteps=[
-  ['شروع شمارش','از فهرست «ذکر انتخابی» ذکر موردنظر را انتخاب کنید؛ متن عربی و ترجمه آن نمایش داده می‌شود. سپس دکمه بزرگ «ذکر» را لمس کنید.'],
-  ['بازگشت و شروع مجدد','برای برگشت از آخرین عملیات شمارش، «بازگشت» را بزنید. با «شروع مجدد» شمارنده فعلی صفر می‌شود؛ پیش از تأیید، پیام نمایش داده خواهد شد.'],
-  ['هدف روزانه و آمار','در بخش تنظیمات هدف روزانه را تعیین کنید. از بخش «آمار» می‌توانید گزارش امروز، هفته، ماه و مجموع فعالیت را ببینید.'],
+  ['شروع شمارش','ابتدا «نوع ذکر» را انتخاب کنید، سپس «نوع نیت» را مشخص کنید: «شخصی» برای ثبت در آمار خودتان یا «گروهی» برای افزودن به ختم یکی از گروه‌هایتان. بعد دکمه بزرگ «ذکر» را لمس کنید.'],
+  ['بازگشت و شروع مجدد','برای برگشت از آخرین عملیات شمارش، «بازگشت» را بزنید. با «شروع مجدد» شمارنده شخصی صفر می‌شود؛ پیش از تأیید، پیام نمایش داده خواهد شد.'],
+  ['هدف روزانه و آمار','در بخش تنظیمات هدف روزانه را تعیین کنید. از بخش «آمار» می‌توانید گزارش امروز، هفته، ماه و مجموع فعالیت شخصی را ببینید.'],
   ['ختم شخصی','عنوان، تعداد هدف و نیت ختم را وارد و گزینه «ایجاد ختم» را انتخاب کنید. پیشرفت ختم در بخش ختم‌های من نمایش داده می‌شود.'],
-  ['ختم گروهی','برای ساخت یا پیوستن به ختم گروهی، ابتدا با ایمیل وارد حساب شوید. سپس گروه بسازید یا کد دعوت را وارد کنید.'],
+  ['ختم گروهی','برای ساخت یا پیوستن به ختم گروهی، ابتدا با ایمیل وارد حساب شوید. سپس گروه بسازید یا کد دعوت را وارد کنید. در صفحه اول، نیت «گروهی» را انتخاب کنید تا شمارش به ختم گروه اضافه شود.'],
   ['فضای ابری','از دکمه «فضای ابری» در بالای برنامه وارد بخش ثبت‌نام و ورود شوید. پس از ورود، اطلاعات حساب همگام‌سازی می‌شود.'],
   ['پشتیبان‌گیری','از بخش تنظیمات فایل پشتیبان JSON دریافت کنید. برای بازیابی، فایل را انتخاب کنید و گزینه بازیابی را بزنید. فایل پشتیبان را در جای امن نگه دارید.']
 ];
@@ -1497,19 +1772,16 @@ function renderHelpStep(){
   document.getElementById('helpPrev').disabled=helpIndex===0;
   document.getElementById('helpNext').textContent=helpIndex===helpSteps.length-1?'پایان':'مرحله بعد';
 }
-function openHelp(){helpIndex=0;renderHelpStep();document.getElementById('helpModal').classList.remove('hidden');}
+function openHelp(){helpIndex=0;renderHelpStep();document.getElementById('helpModal').showModal();}
 function changeHelpStep(direction){
   if(helpIndex===helpSteps.length-1 && direction>0){closeModal('helpModal');return;}
   helpIndex=Math.max(0,Math.min(helpSteps.length-1,helpIndex+direction));renderHelpStep();
 }
-function openAbout(){document.getElementById('aboutModal').classList.remove('hidden');}
-function closeModal(id){document.getElementById(id).classList.add('hidden');}
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal('helpModal');closeModal('aboutModal');}});
-
-
+function openAbout(){document.getElementById('aboutModal').showModal();}
+function closeModal(id){document.getElementById(id)?.close();}
 
 // =======================================
-// PWA INSTALL PROMPT — Chrome/Android
+// PWA INSTALL PROMPT
 // =======================================
 let deferredInstallPrompt=null;
 
@@ -1517,16 +1789,12 @@ function isStandaloneApp(){
   return window.matchMedia('(display-mode: standalone)').matches ||
          window.navigator.standalone===true;
 }
-
 function showInstallBanner(){
   if(isStandaloneApp())return;
-  const banner=document.getElementById('installBanner');
-  if(banner)banner.classList.remove('hidden');
+  document.getElementById('installBanner')?.classList.remove('hidden');
 }
-
 function hideInstallBanner(){
-  const banner=document.getElementById('installBanner');
-  if(banner)banner.classList.add('hidden');
+  document.getElementById('installBanner')?.classList.add('hidden');
 }
 
 window.addEventListener('beforeinstallprompt',event=>{
@@ -1534,46 +1802,49 @@ window.addEventListener('beforeinstallprompt',event=>{
   deferredInstallPrompt=event;
   showInstallBanner();
 });
-
 window.addEventListener('appinstalled',()=>{
   deferredInstallPrompt=null;
   hideInstallBanner();
-  try{
-    if('Notification' in window && Notification.permission==='granted'){
-      new Notification('صلوات شمار نصب شد', {body:'وب‌اپلیکیشن با موفقیت روی دستگاه شما نصب شد.'});
-    }
-  }catch(e){}
 });
 
-document.addEventListener('DOMContentLoaded',()=>{
-  const installBtn=document.getElementById('installAppBtn');
-  const closeBtn=document.getElementById('closeInstallBtn');
-
-  if(installBtn)installBtn.addEventListener('click',async()=>{
-    if(deferredInstallPrompt){
-      deferredInstallPrompt.prompt();
-      try{await deferredInstallPrompt.userChoice;}catch(e){}
-      deferredInstallPrompt=null;
-      hideInstallBanner();
-    }else{
-      alert('برای نصب، از منوی سه‌نقطه Google Chrome گزینه «Install app / نصب برنامه» یا «Add to Home screen» را انتخاب کنید.');
-    }
-  });
-
-  if(closeBtn)closeBtn.addEventListener('click',hideInstallBanner);
-
-  if(!isStandaloneApp() && 'serviceWorker' in navigator){
-    // اگر رویداد نصب توسط Chrome قابل ارائه باشد، بنر خودکار نمایش داده می‌شود.
+document.getElementById('installAppBtn')?.addEventListener('click',async()=>{
+  if(deferredInstallPrompt){
+    deferredInstallPrompt.prompt();
+    try{await deferredInstallPrompt.userChoice;}catch(e){}
+    deferredInstallPrompt=null;
+    hideInstallBanner();
+  }else{
+    alert('برای نصب، از منوی مرورگر گزینه «Install app / نصب برنامه» یا «Add to Home screen» را انتخاب کنید.');
   }
 });
+document.getElementById('closeInstallBtn')?.addEventListener('click',hideInstallBanner);
+
+// =======================================
+// EVENT DELEGATION (بدون onclick درون‌خطی)
+// =======================================
+const registry={changeDhikr,changeHelpStep,checkForAppUpdate,closeModal,createGroup,createKhatm,exportBackup,importBackup,increment,joinGroup,openAbout,openHelp,resetCount,resetPassword,saveSettings,setGoal,setGroup,setMode,showTab,signIn,signOut,signUp,syncCloud,toggleCloudPanel,toggleDhikrAudio,undo};
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-action]');
+  if(el){
+    const a=el.dataset.arg;
+    // رویداد کلیک به‌عنوان آرگومان به increment پاس داده نمی‌شود
+    registry[el.dataset.action]?.(/^-?\d+$/.test(a??'')?Number(a):a);
+  }
+});
+document.addEventListener('change',e=>{
+  const el=e.target.closest('[data-change]');
+  if(el)registry[el.dataset.change]?.(el.type==='checkbox'?el.checked:el.value);
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal('helpModal');closeModal('aboutModal');}});
+document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d)d.close();}));
 init();
 </script>
-
 
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(console.error));
 }
 </script>
+
 </body>
 </html>
