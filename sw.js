@@ -1,173 +1,195 @@
-/* ============================================================
-   Service Worker — صلوات شمار
-   ------------------------------------------------------------
-   ویژگی‌ها:
-   • نسخه‌بندی خودکار کش از روی <meta name="app-version"> در index.html
-   • SW_BUILD به‌عنوان «علامت نسخه» برای فعال‌سازی چرخهٔ بروزرسانی
-   • network-first برای ناوبری (index.html) → HTML همیشه تازه
-   • cache-first برای دارایی‌های هم‌origin و فونت‌های گوگل
-   • پاک‌سازی خودکار کش‌های قدیمی در activate
-   • پشتیبانی از پیام SKIP_WAITING برای بروزرسانی کنترل‌شده
-   • تایم‌اوت شبکه برای جلوگیری از انتظار بی‌پایان
-   ============================================================ */
+/* =========================================================
+   صلوات شمار - Service Worker
+   Compatible with App Version: 1.5.0
+   ========================================================= */
 
-/* ⬇⬇⬇  با هر انتشار این عدد را با app-version در index.html هم‌گام کنید  ⬇⬇⬇ */
-const SW_BUILD = '1.5.0';
-/* ⬆⬆⬆ ------------------------------------------------------------------ ⬆⬆⬆ */
+const APP_VERSION = '1.5.0';
+const CACHE_NAME = `salavat-shomar-v${APP_VERSION}`;
 
-const STATIC_ASSETS = [
+const CORE_ASSETS = [
   './',
   './index.html',
   './manifest.webmanifest',
   './icon.svg'
 ];
 
-// دامنه‌های فونت گوگل — cache-first چون URLها immutable هستند
-const FONT_HOST_RE = /(^|\.)fonts\.(googleapis|gstatic)\.com$/i;
+/* =========================================================
+   INSTALL
+   ========================================================= */
 
-const CACHE_PREFIX = 'salavat-shomar-';
-let CACHE_NAME = CACHE_PREFIX + SW_BUILD; // مقدار اولیه؛ در install با app-version overwrite می‌شود
-
-/* ---------- خواندن نسخهٔ اپ از index.html ---------- */
-async function readAppVersion() {
-  try {
-    const res = await fetch('./index.html', { cache: 'reload' });
-    if (!res.ok) return SW_BUILD;
-    const html = await res.text();
-    const m = html.match(/<meta\s+name=["']app-version["']\s+content=["']([^"']+)["']/i);
-    return (m && m[1]) ? m[1].replace(/[^0-9A-Za-z._-]/g, '') : SW_BUILD;
-  } catch (_) {
-    return SW_BUILD;
-  }
-}
-
-/* ---------- نصب ---------- */
 self.addEventListener('install', event => {
-  event.waitUntil((async () => {
-    const version = await readAppVersion();
-    CACHE_NAME = CACHE_PREFIX + version;
-    const cache = await caches.open(CACHE_NAME);
-
-    // هر آیتم جداگانه fetch می‌شود تا یک 404 کل نصب را خراب نکند.
-    // {cache:'reload'} از HTTP cache مرورگر عبور می‌کند تا کش SW مسموم نشود.
-    await Promise.allSettled(STATIC_ASSETS.map(async url => {
-      try {
-        const res = await fetch(url, { cache: 'reload' });
-        if (res && res.ok) await cache.put(url, res);
-      } catch (_) { /* نادیده */ }
-    }));
-
-    // skipWaiting عمداً اینجا صدا زده نمی‌شود؛
-    // اپ با postMessage({type:'SKIP_WAITING'}) زمان بروزرسانی را کنترل می‌کند.
-  })());
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(CORE_ASSETS))
+      .then(() => self.skipWaiting())
+  );
 });
 
-/* ---------- فعال‌سازی ---------- */
+
+/* =========================================================
+   ACTIVATE
+   حذف Cache نسخه‌های قدیمی
+   ========================================================= */
+
 self.addEventListener('activate', event => {
-  event.waitUntil((async () => {
-    // پاک‌سازی کش‌های قدیمی همین اپ
-    const keys = await caches.keys();
-    await Promise.all(
-      keys
-        .filter(k => k.startsWith(CACHE_PREFIX) && k !== CACHE_NAME)
-        .map(k => caches.delete(k))
+  event.waitUntil(
+    caches.keys()
+      .then(cacheNames => {
+        return Promise.all(
+          cacheNames
+            .filter(name =>
+              name.startsWith('salavat-shomar-v') &&
+              name !== CACHE_NAME
+            )
+            .map(name => caches.delete(name))
+        );
+      })
+      .then(() => self.clients.claim())
+  );
+});
+
+
+/* =========================================================
+   FETCH
+   ========================================================= */
+
+self.addEventListener('fetch', event => {
+
+  const request = event.request;
+
+  /* فقط GET */
+  if (request.method !== 'GET') {
+    return;
+  }
+
+  const url = new URL(request.url);
+
+  /*
+    درخواست‌های خارج از دامنه برنامه
+    مثل Google Fonts
+    مستقیماً از شبکه دریافت می‌شوند.
+  */
+  if (url.origin !== self.location.origin) {
+    return;
+  }
+
+  /*
+    برای index.html:
+    Network First
+    یعنی ابتدا نسخه جدید را از اینترنت می‌گیریم،
+    در صورت نبود اینترنت نسخه Cache استفاده می‌شود.
+  */
+
+  if (
+    request.mode === 'navigate' ||
+    url.pathname.endsWith('/index.html') ||
+    url.pathname === '/'
+  ) {
+
+    event.respondWith(
+
+      fetch(request)
+        .then(response => {
+
+          if (response && response.ok) {
+
+            const copy = response.clone();
+
+            caches.open(CACHE_NAME)
+              .then(cache => {
+                cache.put('./index.html', copy);
+              });
+
+          }
+
+          return response;
+        })
+        .catch(() => {
+          return caches.match('./index.html');
+        })
+
     );
 
-    // کنترل clients فعلی برای تریگر controllerchange در اپ
-    await self.clients.claim();
-  })());
+    return;
+  }
+
+
+  /*
+    سایر فایل‌های داخلی:
+    Cache First
+    اگر Cache وجود داشت همان را نمایش می‌دهیم.
+  */
+
+  event.respondWith(
+
+    caches.match(request)
+      .then(cachedResponse => {
+
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+
+        return fetch(request)
+          .then(response => {
+
+            if (!response || !response.ok) {
+              return response;
+            }
+
+            const copy = response.clone();
+
+            caches.open(CACHE_NAME)
+              .then(cache => {
+                cache.put(request, copy);
+              });
+
+            return response;
+          })
+          .catch(() => {
+
+            /*
+              اگر فایل پیدا نشد و اینترنت هم قطع بود،
+              برای صفحات HTML نسخه اصلی برنامه برگردانده شود.
+            */
+
+            if (request.destination === 'document') {
+              return caches.match('./index.html');
+            }
+
+            return new Response('', {
+              status: 503,
+              statusText: 'Offline'
+            });
+
+          });
+
+      })
+
+  );
+
 });
 
-/* ---------- پیام از اپ (بروزرسانی کنترل‌شده) ---------- */
+
+/* =========================================================
+   پیام از JavaScript اصلی
+   برای بررسی / اعمال نسخه جدید
+   ========================================================= */
+
 self.addEventListener('message', event => {
-  const data = event.data;
-  if (data && data.type === 'SKIP_WAITING') {
+
+  if (!event.data) {
+    return;
+  }
+
+  if (event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
+
 });
 
-/* ---------- کمکی: fetch با تایم‌اوت ---------- */
-function fetchWithTimeout(request, ms = 5000) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), ms);
-  return fetch(request, { signal: controller.signal })
-    .finally(() => clearTimeout(timer));
-}
 
-/* ---------- fetch ---------- */
-self.addEventListener('fetch', event => {
-  const req = event.request;
+/* =========================================================
+   اطلاعات نسخه
+   ========================================================= */
 
-  // فقط GET
-  if (req.method !== 'GET') return;
-
-  const url = new URL(req.url);
-
-  /* ۱) ناوبری (index.html) — network-first با fallback به کش */
-  if (req.mode === 'navigate') {
-    event.respondWith((async () => {
-      try {
-        const fresh = await fetchWithTimeout(req, 5000);
-        if (fresh && fresh.ok) {
-          const cache = await caches.open(CACHE_NAME);
-          cache.put('./index.html', fresh.clone()).catch(() => {});
-        }
-        return fresh;
-      } catch (_) {
-        const cached =
-          (await caches.match('./index.html', { cacheName: CACHE_NAME })) ||
-          (await caches.match('./index.html'));
-        if (cached) return cached;
-        return new Response(
-          '<!doctype html><meta charset="utf-8"><title>آفلاین</title>' +
-          '<body style="font-family:Tahoma;text-align:center;padding:40px;direction:rtl">' +
-          '<h2>اتصال اینترنت برقرار نیست</h2>' +
-          '<p>برای بارگذاری اولیهٔ برنامه به اینترنت نیاز است.</p></body>',
-          { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
-        );
-      }
-    })());
-    return;
-  }
-
-  /* ۲) فونت‌های گوگل — cache-first */
-  if (FONT_HOST_RE.test(url.hostname)) {
-    event.respondWith((async () => {
-      const cached = await caches.match(req, { cacheName: CACHE_NAME });
-      if (cached) return cached;
-      try {
-        const res = await fetch(req);
-        if (res && res.ok) {
-          const cache = await caches.open(CACHE_NAME);
-          cache.put(req, res.clone()).catch(() => {});
-        }
-        return res;
-      } catch (_) {
-        return Response.error();
-      }
-    })());
-    return;
-  }
-
-  /* ۳) دارایی‌های هم‌origin — cache-first با پرکردن تنبل */
-  if (url.origin === location.origin) {
-    event.respondWith((async () => {
-      const cached = await caches.match(req, { cacheName: CACHE_NAME });
-      if (cached) return cached;
-      try {
-        const res = await fetch(req);
-        if (res && res.ok) {
-          const cache = await caches.open(CACHE_NAME);
-          cache.put(req, res.clone()).catch(() => {});
-        }
-        return res;
-      } catch (_) {
-        return Response.error();
-      }
-    })());
-    return;
-  }
-
-  /* ۴) سایر منابع (Supabase، API اوقات شرعی، ...) — عبور از SW */
-  // هیچ respondWith ای صدا زده نمی‌شود تا رفتار پیش‌فرض مرورگر حفظ شود.
-});
+self.APP_VERSION = APP_VERSION;
